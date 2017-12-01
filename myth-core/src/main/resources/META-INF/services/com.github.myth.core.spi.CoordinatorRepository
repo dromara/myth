@@ -1,0 +1,5 @@
+com.github.myth.core.spi.repository.JdbcCoordinatorRepository
+com.github.myth.core.spi.repository.FileCoordinatorRepository
+com.github.myth.core.spi.repository.MongoCoordinatorRepository
+com.github.myth.core.spi.repository.RedisCoordinatorRepository
+com.github.myth.core.spi.repository.ZookeeperCoordinatorRepository

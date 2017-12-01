@@ -1,0 +1,4 @@
+com.github.myth.common.serializer.KryoSerializer
+com.github.myth.common.serializer.ProtostuffSerializer
+com.github.myth.common.serializer.HessianSerializer
+com.github.myth.common.serializer.JavaSerializer
