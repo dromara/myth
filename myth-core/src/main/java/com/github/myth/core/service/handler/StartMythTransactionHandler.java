@@ -20,6 +20,7 @@ package com.github.myth.core.service.handler;
 
 import com.github.myth.common.bean.context.MythTransactionContext;
 import com.github.myth.common.bean.entity.MythTransaction;
+import com.github.myth.common.enums.MythStatusEnum;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.service.MythTransactionHandler;
 import com.github.myth.core.service.impl.MythTransactionManager;
@@ -68,15 +69,27 @@ public class StartMythTransactionHandler implements MythTransactionHandler {
     public Object handler(ProceedingJoinPoint point, MythTransactionContext mythTransactionContext) throws Throwable {
 
         try {
+            MythTransaction begin;
             //主要防止并发问题，对事务日志的写造成压力，加了锁进行处理
             try {
                 LOCK.lock();
-                mythTransactionManager.begin(point);
+                begin = mythTransactionManager.begin(point);
             } finally {
                 LOCK.unlock();
             }
             //发起调用 执行try方法
-            return point.proceed();
+            final Object proceed = point.proceed();
+
+            try {
+                //这里为什么要这么做呢？ 主要是为了防止在极端情况下，发起者执行过程中，突然自身down 机
+                //造成消息未发送，新增一个状态标记，如果出现这种情况，通过定时任务发送消息
+                LOCK.lock();
+                mythTransactionManager.updateStatus(begin.getTransId(), MythStatusEnum.COMMIT.getCode());
+            } finally {
+                LOCK.unlock();
+            }
+
+            return proceed;
 
         } finally {
             //发送消息

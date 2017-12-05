@@ -111,18 +111,20 @@ public interface CoordinatorService {
     void setSerializer(ObjectSerializer serializer);
 
 
+
     /**
      * 接收到mq消息处理
-     *
      * @param message 消息体
+     * @return true 处理成功  false 处理失败
      */
-    void processMessage(byte[] message);
+    Boolean processMessage(byte[] message);
 
 
     /**
      * 发送消息
      * @param mythTransaction 消息体
+     * @return true 处理成功  false 处理失败
      */
-    void sendMessage(MythTransaction mythTransaction);
+    Boolean sendMessage(MythTransaction mythTransaction);
 
 }

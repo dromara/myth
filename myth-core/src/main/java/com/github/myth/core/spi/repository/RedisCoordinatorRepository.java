@@ -22,6 +22,7 @@ import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.config.MythConfig;
 import com.github.myth.common.config.MythRedisConfig;
 import com.github.myth.common.constant.CommonConstant;
+import com.github.myth.common.enums.MythStatusEnum;
 import com.github.myth.common.enums.RepositorySupportEnum;
 import com.github.myth.common.exception.MythException;
 import com.github.myth.common.exception.MythRuntimeException;
@@ -34,6 +35,7 @@ import com.github.myth.common.utils.RepositoryConvertUtils;
 import com.github.myth.common.utils.RepositoryPathUtils;
 import com.github.myth.core.spi.CoordinatorRepository;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -186,6 +189,38 @@ public class RedisCoordinatorRepository implements CoordinatorRepository {
             throw new MythRuntimeException(e);
         }
     }
+
+    /**
+     * 获取延迟多长时间后的事务信息,只要为了防止并发的时候，刚新增的数据被执行
+     *
+     * @param date 延迟后的时间
+     * @return List<MythTransaction>
+     */
+    @Override
+    public List<MythTransaction> listAllByDelay(Date date) {
+        final List<MythTransaction> mythTransactionList = listAll();
+        return mythTransactionList.stream()
+                .filter(mythTransaction -> mythTransaction.getLastTime().compareTo(date) > 0)
+                .filter(mythTransaction -> mythTransaction.getStatus() == MythStatusEnum.BEGIN.getCode())
+                .collect(Collectors.toList());
+    }
+
+    private List<MythTransaction> listAll() {
+        try {
+            List<MythTransaction> transactions = Lists.newArrayList();
+            Set<byte[]> keys = jedisClient.keys((keyPrefix + "*").getBytes());
+            for (final byte[] key : keys) {
+                byte[] contents = jedisClient.get(key);
+                if (contents != null) {
+                    transactions.add(RepositoryConvertUtils.transformBean(contents, objectSerializer));
+                }
+            }
+            return transactions;
+        } catch (Exception e) {
+            throw new MythRuntimeException(e);
+        }
+    }
+
 
     /**
      * 初始化操作

@@ -27,6 +27,8 @@ import com.alibaba.dubbo.rpc.Invoker;
 import com.alibaba.dubbo.rpc.Result;
 import com.alibaba.dubbo.rpc.RpcContext;
 import com.alibaba.dubbo.rpc.RpcException;
+import com.alibaba.dubbo.rpc.RpcResult;
+import com.github.myth.annotation.MessageTypeEnum;
 import com.github.myth.annotation.Myth;
 import com.github.myth.common.bean.context.MythTransactionContext;
 import com.github.myth.common.bean.entity.MythInvocation;
@@ -83,13 +85,13 @@ public class MythTransactionFilter implements Filter {
                         buildParticipant(mythTransactionContext, myth,
                                 method, clazz, arguments, args);
                 if (Objects.nonNull(participant)) {
-                    mythTransactionManager.enlistParticipant(participant);
+                    mythTransactionManager.registerParticipant(participant);
                 }
                 return invoker.invoke(invocation);
 
             } catch (RpcException e) {
                 e.printStackTrace();
-                throw e;
+                return new RpcResult();
             }
         } else {
             return invoker.invoke(invocation);
@@ -110,10 +112,14 @@ public class MythTransactionFilter implements Filter {
 
             final String destination = myth.destination();
 
+            final Integer pattern = myth.pattern().getCode();
+
+
             //封装调用点
             return new MythParticipant(
                     mythTransactionContext.getTransId(),
                     destination,
+                    pattern,
                     mythInvocation);
 
         }

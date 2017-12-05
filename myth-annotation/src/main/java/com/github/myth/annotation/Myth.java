@@ -38,4 +38,11 @@ public @interface Myth {
     String destination();
 
 
+    /**
+     * mq 消息模式
+     * @return MessageTypeEnum
+     */
+    MessageTypeEnum pattern() default MessageTypeEnum.P2P;
+
+
 }

@@ -43,14 +43,13 @@ public class MythMqReceiveServiceImpl implements MythMqReceiveService {
         this.coordinatorService = coordinatorService;
     }
 
-
     /**
-     * 处理消息
-     *
-     * @param message MythTransaction实体对象转换成byte[]后的数据
+     * myth框架处理发出的mq消息
+     * @param message 实体对象转换成byte[]后的数据
+     * @return true 成功 false 失败
      */
     @Override
-    public void processMessage(byte[] message) {
-        coordinatorService.processMessage(message);
+    public Boolean processMessage(byte[] message) {
+        return coordinatorService.processMessage(message);
     }
 }

@@ -19,7 +19,15 @@
 package com.github.myth.activemq.service;
 
 import com.github.myth.core.service.MythMqSendService;
+import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.command.ActiveMQTopic;
 import org.springframework.jms.core.JmsTemplate;
+
+import javax.jms.Destination;
+import java.util.Objects;
+
+import static com.github.myth.annotation.MessageTypeEnum.P2P;
+import static com.github.myth.annotation.MessageTypeEnum.TOPIC;
 
 /**
  * <p>Description: .</p>
@@ -29,7 +37,7 @@ import org.springframework.jms.core.JmsTemplate;
  * @date 2017/11/30 11:38
  * @since JDK 1.8
  */
-public class ActivemqSendService implements MythMqSendService {
+public class ActivemqSendServiceImpl implements MythMqSendService {
 
 
     private JmsTemplate jmsTemplate;
@@ -38,15 +46,23 @@ public class ActivemqSendService implements MythMqSendService {
         this.jmsTemplate = jmsTemplate;
     }
 
+
     /**
      * 发送消息
+     *
      * @param destination 队列
-     * @param message  MythTransaction实体对象转换成byte[]后的数据
+     * @param pattern     mq 模式
+     * @param message     MythTransaction实体对象转换成byte[]后的数据
      */
     @Override
-    public void sendMessage(String destination , byte[] message){
-        jmsTemplate.convertAndSend(destination,message);
+    public void sendMessage(String destination, Integer pattern, byte[] message) {
+        Destination queue = new ActiveMQQueue(destination);
+        if (Objects.equals(P2P.getCode(), pattern)) {
+            queue  = new ActiveMQQueue(destination);
+        } else if (Objects.equals(TOPIC.getCode(), pattern)) {
+            queue  = new ActiveMQTopic(destination);
+        }
+        jmsTemplate.convertAndSend(queue , message);
     }
-
 
 }

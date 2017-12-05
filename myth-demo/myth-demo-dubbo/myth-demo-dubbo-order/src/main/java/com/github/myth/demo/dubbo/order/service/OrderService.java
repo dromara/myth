@@ -57,24 +57,6 @@ public interface OrderService {
     String mockInventoryWithTryTimeout(Integer count, BigDecimal amount);
 
 
-    /**
-     * 模拟在订单支付操作中，库存在Confirm阶段中的异常
-     *
-     * @param count  购买数量
-     * @param amount 支付金额
-     * @return string
-     */
-    String mockInventoryWithConfirmException(Integer count, BigDecimal amount);
-
-
-    /**
-     * 模拟在订单支付操作中，库存在Confirm阶段中的timeout
-     *
-     * @param count  购买数量
-     * @param amount 支付金额
-     * @return string
-     */
-    String mockInventoryWithConfirmTimeout(Integer count, BigDecimal amount);
 
 
     /**

@@ -18,6 +18,7 @@
 
 package com.github.myth.demo.dubbo.account.service;
 
+import com.github.myth.annotation.Myth;
 import com.github.myth.demo.dubbo.account.api.dto.AccountDTO;
 import com.github.myth.demo.dubbo.account.api.entity.AccountDO;
 import com.github.myth.demo.dubbo.account.api.service.AccountService;
@@ -55,10 +56,10 @@ public class AccountServiceImpl implements AccountService {
      * @return true
      */
     @Override
+    @Myth(destination = "account")
     public boolean payment(AccountDTO accountDTO) {
         final AccountDO accountDO = accountMapper.findByUserId(accountDTO.getUserId());
         accountDO.setBalance(accountDO.getBalance().subtract(accountDTO.getAmount()));
-        accountDO.setFreezeAmount(accountDO.getFreezeAmount().add(accountDTO.getAmount()));
         accountDO.setUpdateTime(new Date());
         final int update = accountMapper.update(accountDO);
         if (update != 1) {
@@ -67,32 +68,4 @@ public class AccountServiceImpl implements AccountService {
         return Boolean.TRUE;
     }
 
-    public boolean confirm(AccountDTO accountDTO) {
-
-        LOGGER.debug("============执行确认付款接口===============");
-
-        final AccountDO accountDO = accountMapper.findByUserId(accountDTO.getUserId());
-        accountDO.setFreezeAmount(accountDO.getFreezeAmount().subtract(accountDTO.getAmount()));
-        accountDO.setUpdateTime(new Date());
-        final int rows = accountMapper.confirm(accountDO);
-        if(rows!=1){
-            throw  new RuntimeException("确认扣减账户异常！");
-        }
-        return Boolean.TRUE;
-    }
-
-
-    public boolean cancel(AccountDTO accountDTO) {
-
-        LOGGER.debug("============执行取消付款接口===============");
-        final AccountDO accountDO = accountMapper.findByUserId(accountDTO.getUserId());
-        accountDO.setBalance(accountDO.getBalance().add(accountDTO.getAmount()));
-        accountDO.setFreezeAmount(accountDO.getFreezeAmount().subtract(accountDTO.getAmount()));
-        accountDO.setUpdateTime(new Date());
-        final int rows = accountMapper.cancel(accountDO);
-        if(rows!=1){
-            throw  new RuntimeException("取消扣减账户异常！");
-        }
-        return Boolean.TRUE;
-    }
 }

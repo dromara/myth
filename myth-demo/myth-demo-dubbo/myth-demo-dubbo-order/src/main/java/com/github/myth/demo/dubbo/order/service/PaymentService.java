@@ -50,21 +50,6 @@ public interface PaymentService {
     String mockPaymentInventoryWithTryTimeout(Order order);
 
 
-    /**
-     * mock订单支付的时候库存确认异常
-     *
-     * @param order 订单实体
-     * @return String
-     */
-    String mockPaymentInventoryWithConfirmException(Order order);
 
-
-    /**
-     * mock订单支付的时候库存确认超时
-     *
-     * @param order 订单实体
-     * @return String
-     */
-    String mockPaymentInventoryWithConfirmTimeout(Order order);
 
 }

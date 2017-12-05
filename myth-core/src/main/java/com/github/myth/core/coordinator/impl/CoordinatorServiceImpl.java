@@ -33,6 +33,7 @@ import com.github.myth.common.exception.MythRuntimeException;
 import com.github.myth.common.serializer.ObjectSerializer;
 import com.github.myth.common.utils.LogUtil;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
+import com.github.myth.core.concurrent.threadpool.MythTransactionThreadFactory;
 import com.github.myth.core.concurrent.threadpool.MythTransactionThreadPool;
 import com.github.myth.core.coordinator.CoordinatorService;
 import com.github.myth.core.coordinator.command.CoordinatorAction;
@@ -41,17 +42,23 @@ import com.github.myth.core.service.ApplicationService;
 import com.github.myth.core.service.MythMqSendService;
 import com.github.myth.core.spi.CoordinatorRepository;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -75,18 +82,16 @@ public class CoordinatorServiceImpl implements CoordinatorService {
     private final ApplicationService applicationService;
 
 
+    private static volatile MythMqSendService mythMqSendService;
+
     private static final Lock LOCK = new ReentrantLock();
 
 
     private ObjectSerializer serializer;
 
-    private final MythMqSendService mythMqSendService;
-
     @Autowired
-    public CoordinatorServiceImpl(ApplicationService applicationService, MythMqSendService mythMqSendService) {
+    public CoordinatorServiceImpl(ApplicationService applicationService) {
         this.applicationService = applicationService;
-
-        this.mythMqSendService = mythMqSendService;
     }
 
 
@@ -105,13 +110,21 @@ public class CoordinatorServiceImpl implements CoordinatorService {
     @Override
     public void start(MythConfig mythConfig) throws MythException {
         this.mythConfig = mythConfig;
-        final String appName = applicationService.acquireName();
+
         coordinatorRepository = SpringBeanUtils.getInstance().getBean(CoordinatorRepository.class);
+
+        final String repositorySuffix = buildRepositorySuffix(mythConfig.getRepositorySuffix());
         //初始化spi 协调资源存储
-        coordinatorRepository.init(appName, mythConfig);
+        coordinatorRepository.init(repositorySuffix, mythConfig);
         //初始化 协调资源线程池
         initCoordinatorPool();
+
+        //如果需要自动恢复 开启线程 调度线程池，进行恢复
+        if (mythConfig.getNeedRecover()) {
+            scheduledAutoRecover();
+        }
     }
+
 
     /**
      * 保存本地事务信息
@@ -201,10 +214,11 @@ public class CoordinatorServiceImpl implements CoordinatorService {
     /**
      * 接收到mq消息处理
      *
-     * @param message 消息体
+     * @param message 实体对象转换成byte[]后的数据
+     * @return true 处理成功  false 处理失败
      */
     @Override
-    public void processMessage(byte[] message) {
+    public Boolean processMessage(byte[] message) {
         try {
             final MessageEntity entity =
                     serializer.deSerialize(message, MessageEntity.class);
@@ -234,10 +248,11 @@ public class CoordinatorServiceImpl implements CoordinatorService {
                     TransactionContextLocal.getInstance().set(context);
                     executeLocalTransaction(entity.getMythInvocation());
 
-                    //会进入ActorMythTransactionHandler  那里有保存
+                    //会进入LocalMythTransactionHandler  那里有保存
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                    return Boolean.FALSE;
                 } finally {
                     TransactionContextLocal.getInstance().remove();
                 }
@@ -246,12 +261,96 @@ public class CoordinatorServiceImpl implements CoordinatorService {
 
         } catch (Exception e) {
             e.printStackTrace();
+            return Boolean.FALSE;
         } finally {
             LOCK.unlock();
         }
+        return Boolean.TRUE;
 
     }
 
+
+    /**
+     * 发送消息
+     *
+     * @param mythTransaction 消息体
+     * @return true 处理成功  false 处理失败
+     */
+    @Override
+    public Boolean sendMessage(MythTransaction mythTransaction) {
+        final List<MythParticipant> mythParticipants = mythTransaction.getMythParticipants();
+            /*
+             * 这里的这个判断很重要，不为空，表示本地的方法执行成功，需要执行远端的rpc方法
+             * 为什么呢，因为我会在切面的finally里面发送消息，意思是切面无论如何都需要发送mq消息
+             * 那么考虑问题，如果本地执行成功，调用rpc的时候才需要发
+             * 如果本地异常，则不需要发送mq ，此时mythParticipants为空
+             */
+        if (CollectionUtils.isNotEmpty(mythParticipants)) {
+
+            for (MythParticipant mythParticipant : mythParticipants) {
+                MessageEntity messageEntity =
+                        new MessageEntity(mythParticipant.getTransId(),
+                                mythParticipant.getMythInvocation());
+                try {
+                    final byte[] message = serializer.serialize(messageEntity);
+                    getMythMqSendService().sendMessage(mythParticipant.getDestination(),
+                            mythParticipant.getPattern(),
+                            message);
+                } catch (MythException e) {
+                    e.printStackTrace();
+                    return Boolean.FALSE;
+                }
+            }
+        }
+        return Boolean.TRUE;
+    }
+
+
+    private void scheduledAutoRecover() {
+        new ScheduledThreadPoolExecutor(1,
+                MythTransactionThreadFactory.create("MythAutoRecoverService",
+                        true))
+                .scheduleWithFixedDelay(() -> {
+                    LogUtil.debug(LOGGER, "auto recover execute delayTime:{}",
+                            () -> mythConfig.getScheduledDelay());
+                    try {
+                        final List<MythTransaction> mythTransactionList =
+                                coordinatorRepository.listAllByDelay(acquireData());
+                        if (CollectionUtils.isNotEmpty(mythTransactionList)) {
+                            mythTransactionList
+                                    .forEach(mythTransaction -> {
+                                        final Boolean success = sendMessage(mythTransaction);
+                                        //发送成功 ，更改状态
+                                        if (success) {
+                                            coordinatorRepository.updateStatus(mythTransaction.getTransId(),
+                                                    MythStatusEnum.COMMIT.getCode());
+                                        }
+
+                                    });
+                        }
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }, 30, mythConfig.getScheduledDelay(), TimeUnit.SECONDS);
+
+    }
+
+    private Date acquireData() {
+        return new Date(LocalDateTime.now()
+                .atZone(ZoneId.systemDefault())
+                .toInstant().toEpochMilli() - (mythConfig.getRecoverDelayTime() * 1000));
+    }
+
+    private String buildRepositorySuffix(String repositorySuffix) {
+        if (StringUtils.isNoneBlank(repositorySuffix)) {
+            return repositorySuffix;
+        } else {
+            return applicationService.acquireName();
+        }
+
+    }
 
     @SuppressWarnings("unchecked")
     private void executeLocalTransaction(MythInvocation mythInvocation) throws Exception {
@@ -267,37 +366,6 @@ public class CoordinatorServiceImpl implements CoordinatorService {
         }
     }
 
-    /**
-     * 发送消息
-     *
-     * @param mythTransaction 消息体
-     */
-    @Override
-    public void sendMessage(MythTransaction mythTransaction) {
-        final List<MythParticipant> mythParticipants = mythTransaction.getMythParticipants();
-            /*
-             * 这里的这个判断很重要，不为空，表示本地的方法执行成功，需要执行远端的rpc方法
-             * 为什么呢，因为我会在切面的finally里面发送消息，意思是切面无论如何都需要发送mq消息
-             * 那么考虑问题，如果本地执行成功，调用rpc的时候才需要发
-             * 如果本地异常，则不需要发送mq ，此时mythParticipants为空
-             */
-        if (CollectionUtils.isNotEmpty(mythParticipants)) {
-            mythParticipants.forEach(mythParticipant -> {
-                MessageEntity messageEntity =
-                        new MessageEntity(mythParticipant.getTransId(),
-                                mythParticipant.getMythInvocation());
-                try {
-                    final byte[] message = serializer.serialize(messageEntity);
-                    mythMqSendService.sendMessage(mythParticipant.getDestination(), message);
-                } catch (MythException e) {
-                    e.printStackTrace();
-                }
-
-            });
-        }
-    }
-
-
     private void initCoordinatorPool() {
         synchronized (LOGGER) {
             QUEUE = new LinkedBlockingQueue<>(mythConfig.getCoordinatorQueueMax());
@@ -310,6 +378,17 @@ public class CoordinatorServiceImpl implements CoordinatorService {
             }
 
         }
+    }
+
+    private synchronized MythMqSendService getMythMqSendService() {
+        if (mythMqSendService == null) {
+            synchronized (CoordinatorServiceImpl.class) {
+                if (mythMqSendService == null) {
+                    mythMqSendService = SpringBeanUtils.getInstance().getBean(MythMqSendService.class);
+                }
+            }
+        }
+        return mythMqSendService;
     }
 
 

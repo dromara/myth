@@ -109,46 +109,6 @@ public class OrderServiceImpl implements OrderService {
         return "success";
     }
 
-    /**
-     * 模拟在订单支付操作中，库存在Confirm阶段中的异常
-     *
-     * @param count  购买数量
-     * @param amount 支付金额
-     * @return string
-     */
-    @Override
-    public String mockInventoryWithConfirmException(Integer count, BigDecimal amount) {
-        final Order order = buildOrder(count, amount);
-        final int rows = orderMapper.save(order);
-
-        if (rows > 0) {
-            paymentServiceImpl.mockPaymentInventoryWithConfirmException(order);
-        }
-
-
-        return "success";
-    }
-
-    /**
-     * 模拟在订单支付操作中，库存在Confirm阶段中的timeout
-     *
-     * @param count  购买数量
-     * @param amount 支付金额
-     * @return string
-     */
-    @Override
-    public String mockInventoryWithConfirmTimeout(Integer count, BigDecimal amount) {
-        final Order order = buildOrder(count, amount);
-        final int rows = orderMapper.save(order);
-
-        if (rows > 0) {
-            paymentServiceImpl.mockPaymentInventoryWithConfirmTimeout(order);
-        }
-
-
-        return "success";
-    }
-
 
     @Override
     public void updateOrderStatus(Order order) {

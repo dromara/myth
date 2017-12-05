@@ -30,6 +30,10 @@
     <artifactId>myth-demo-dubbo-account-api</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.myth</groupId>
+            <artifactId>myth-annotation</artifactId>
+        </dependency>
 
     </dependencies>
 

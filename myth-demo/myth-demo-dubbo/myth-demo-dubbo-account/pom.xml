@@ -41,6 +41,9 @@
             <artifactId>myth-dubbo</artifactId>
         </dependency>
 
+
+
+
         <!--spring boot的核心启动器-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -50,6 +53,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-activemq</artifactId>
         </dependency>
         <!--自动配置-->
         <dependency>

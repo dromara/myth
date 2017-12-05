@@ -47,6 +47,11 @@
             <artifactId>myth-dubbo</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.myth</groupId>
+            <artifactId>myth-activemq</artifactId>
+        </dependency>
+
 
         <!--spring boot的核心启动器-->
         <dependency>

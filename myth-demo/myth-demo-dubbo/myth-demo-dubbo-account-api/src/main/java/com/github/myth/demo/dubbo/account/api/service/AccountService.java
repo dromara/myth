@@ -19,6 +19,7 @@
 package com.github.myth.demo.dubbo.account.api.service;
 
 
+import com.github.myth.annotation.Myth;
 import com.github.myth.demo.dubbo.account.api.dto.AccountDTO;
 
 /**
@@ -33,5 +34,6 @@ public interface AccountService {
      * @param accountDTO 参数dto
      * @return true
      */
+    @Myth(destination = "account")
     boolean payment(AccountDTO accountDTO);
 }

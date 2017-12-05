@@ -44,6 +44,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -157,7 +158,7 @@ public class MongoCoordinatorRepository implements CoordinatorRepository {
         if (writeResult.getN() <= 0) {
             throw new MythRuntimeException("更新数据异常!");
         }
-        return  CommonConstant.SUCCESS;
+        return CommonConstant.SUCCESS;
     }
 
     /**
@@ -177,7 +178,7 @@ public class MongoCoordinatorRepository implements CoordinatorRepository {
         if (writeResult.getN() <= 0) {
             throw new MythRuntimeException("更新数据异常!");
         }
-        return  CommonConstant.SUCCESS;
+        return CommonConstant.SUCCESS;
     }
 
 
@@ -194,6 +195,25 @@ public class MongoCoordinatorRepository implements CoordinatorRepository {
         MongoAdapter cache = template.findOne(query, MongoAdapter.class, collectionName);
         return buildByCache(cache);
 
+    }
+
+    /**
+     * 获取延迟多长时间后的事务信息,只要为了防止并发的时候，刚新增的数据被执行
+     *
+     * @param date 延迟后的时间
+     * @return List<MythTransaction>
+     */
+    @Override
+    public List<MythTransaction> listAllByDelay(Date date) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("lastTime").lt(date))
+                .addCriteria(Criteria.where("status").is(2));
+        final List<MongoAdapter> mongoBeans =
+                template.find(query, MongoAdapter.class, collectionName);
+        if (CollectionUtils.isNotEmpty(mongoBeans)) {
+            return mongoBeans.stream().map(this::buildByCache).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
 

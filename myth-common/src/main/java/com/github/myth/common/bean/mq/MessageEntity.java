@@ -21,6 +21,7 @@ package com.github.myth.common.bean.mq;
 import com.github.myth.common.bean.entity.MythInvocation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * <p>Description: .</p>
@@ -32,6 +33,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class MessageEntity {
 
     /**

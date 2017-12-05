@@ -44,16 +44,16 @@ public class MythParticipant implements Serializable {
      */
     private String destination;
 
+
+    /**
+     * 消息模式
+     */
+    private Integer pattern;
+
     /**
      * 执行器
      */
     private MythInvocation mythInvocation;
-
-
-
-
-
-
 
 
 }

@@ -9,7 +9,12 @@ spring:
         url: jdbc:mysql://192.168.1.68:3306/stock?useUnicode=true&characterEncoding=utf8
         username: xiaoyu
         password: Wgj@555888
-
+    activemq:
+           broker-url: tcp://120.76.52.162:61616
+           user: happylife
+           password: happylifeplat01
+           packages:
+             trust-all: true
 
 mybatis:
   type-aliases-package: com.github.myth.demo.dubbo.inventory.api.entity

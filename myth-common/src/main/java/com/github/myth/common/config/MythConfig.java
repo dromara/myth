@@ -26,9 +26,11 @@ import lombok.Data;
 public class MythConfig {
 
     /**
-     * 应用名称
+     * 资源后缀  此参数请填写  关于是事务存储路径
+     * 1 如果是表存储 这个就是表名后缀，其他方式存储一样
+     * 2 如果此参数不填写，那么会默认获取应用的applicationName
      */
-    private String appName;
+    private String repositorySuffix;
 
 
     /**
@@ -47,28 +49,6 @@ public class MythConfig {
 
 
     /**
-     * 任务调度线程大小
-     */
-    private int scheduledThreadMax = Runtime.getRuntime().availableProcessors() << 1;
-
-    /**
-     * 调度时间周期 单位秒
-     */
-    private int scheduledDelay = 60;
-
-    /**
-     * 最大重试次数
-     */
-    private int retryMax = 3;
-
-
-    /**
-     * 事务恢复间隔时间 单位秒（注意 此时间表示本地事务创建的时间多少秒以后才会执行）
-     */
-    private int recoverDelayTime = 60;
-
-
-    /**
      * 线程池的拒绝策略 {@linkplain com.github.myth.common.enums.RejectedPolicyTypeEnum}
      */
     private String rejectPolicy = "Abort";
@@ -83,6 +63,34 @@ public class MythConfig {
      * 补偿存储类型 {@linkplain com.github.myth.common.enums.RepositorySupportEnum}
      */
     private String repositorySupport = "db";
+
+
+    /**
+     * 是否需要自动恢复
+     * 1 注意 当为事务发起方的时候（调用方/消费方），这里需要填true，
+     * 默认为false，为了节省资源，不开启线程池调度
+     */
+    private Boolean needRecover = false;
+
+    /**
+     * 任务调度线程大小
+     */
+    private int scheduledThreadMax = Runtime.getRuntime().availableProcessors() << 1;
+
+    /**
+     * 调度时间周期 单位秒
+     */
+    private int scheduledDelay = 60;
+
+    /**
+     * 最大重试次数
+     */
+    private int retryMax = 3;
+
+    /**
+     * 事务恢复间隔时间 单位秒（注意 此时间表示本地事务创建的时间多少秒以后才会执行）
+     */
+    private int recoverDelayTime = 60;
 
 
     /**

@@ -74,7 +74,7 @@ public class JdbcCoordinatorRepository implements CoordinatorRepository {
                 .append("insert into ")
                 .append(tableName)
                 .append("(trans_id,target_class,target_method,retried_count,create_time,last_time,version,status,invocation,role)")
-                .append(" values(?,?,?,?,?,?,?,?,?,?,?)");
+                .append(" values(?,?,?,?,?,?,?,?,?,?)");
         try {
 
             final byte[] serialize = serializer.serialize(mythTransaction.getMythParticipants());
@@ -197,6 +197,28 @@ public class JdbcCoordinatorRepository implements CoordinatorRepository {
         return null;
     }
 
+    /**
+     * 获取延迟多长时间后的事务信息,只要为了防止并发的时候，刚新增的数据被执行
+     *
+     * @param date 延迟后的时间
+     * @return List<MythTransaction>
+     */
+    @Override
+    public List<MythTransaction> listAllByDelay(Date date) {
+        String sb = "select * from " +
+                tableName +
+                " where last_time <?  and status = 2";
+
+        List<Map<String, Object>> list = executeQuery(sb, date);
+
+        if (CollectionUtils.isNotEmpty(list)) {
+            return list.stream().filter(Objects::nonNull)
+                    .map(this::buildByResultMap).collect(Collectors.toList());
+        }
+
+        return null;
+    }
+
 
     private MythTransaction buildByResultMap(Map<String, Object> map) {
         MythTransaction mythTransaction = new MythTransaction();
@@ -287,7 +309,7 @@ public class JdbcCoordinatorRepository implements CoordinatorRepository {
                 int columnCount = md.getColumnCount();
                 list = new ArrayList<>();
                 while (rs.next()) {
-                    Map<String, Object> rowData = new HashMap<>();
+                    Map<String, Object> rowData = new HashMap<>(16);
                     for (int i = 1; i <= columnCount; i++) {
                         rowData.put(md.getColumnName(i), rs.getObject(i));
                     }

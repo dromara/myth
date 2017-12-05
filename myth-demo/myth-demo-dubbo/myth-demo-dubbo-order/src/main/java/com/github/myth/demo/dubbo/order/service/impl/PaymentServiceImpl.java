@@ -19,6 +19,7 @@
 package com.github.myth.demo.dubbo.order.service.impl;
 
 
+import com.github.myth.annotation.Myth;
 import com.github.myth.demo.dubbo.account.api.dto.AccountDTO;
 import com.github.myth.demo.dubbo.account.api.service.AccountService;
 import com.github.myth.demo.dubbo.inventory.api.dto.InventoryDTO;
@@ -54,7 +55,9 @@ public class PaymentServiceImpl implements PaymentService {
     private static  final  String SUCCESS="success";
 
     @Autowired
-    public PaymentServiceImpl(OrderMapper orderMapper, AccountService accountService, InventoryService inventoryService) {
+    public PaymentServiceImpl(OrderMapper orderMapper,
+                              AccountService accountService,
+                              InventoryService inventoryService) {
         this.orderMapper = orderMapper;
         this.accountService = accountService;
         this.inventoryService = inventoryService;
@@ -62,8 +65,9 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     @Override
+    @Myth(destination = "")
     public void makePayment(Order order) {
-        order.setStatus(OrderStatusEnum.PAYING.getCode());
+        order.setStatus(OrderStatusEnum.PAY_SUCCESS.getCode());
         orderMapper.update(order);
         //扣除用户余额
         AccountDTO accountDTO = new AccountDTO();
@@ -93,7 +97,7 @@ public class PaymentServiceImpl implements PaymentService {
         InventoryDTO inventoryDTO = new InventoryDTO();
         inventoryDTO.setCount(order.getCount());
         inventoryDTO.setProductId(order.getProductId());
-        inventoryService.mockWithTryException(inventoryDTO);
+        inventoryService.mockWithException(inventoryDTO);
         return SUCCESS;
     }
 
@@ -112,56 +116,8 @@ public class PaymentServiceImpl implements PaymentService {
         InventoryDTO inventoryDTO = new InventoryDTO();
         inventoryDTO.setCount(order.getCount());
         inventoryDTO.setProductId(order.getProductId());
-        inventoryService.mockWithTryTimeout(inventoryDTO);
+        inventoryService.mockWithTimeout(inventoryDTO);
         return SUCCESS;
     }
 
-    @Override
-    public String mockPaymentInventoryWithConfirmException(Order order) {
-        order.setStatus(OrderStatusEnum.PAYING.getCode());
-        orderMapper.update(order);
-
-        //扣除用户余额
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setAmount(order.getTotalAmount());
-        accountDTO.setUserId(order.getUserId());
-        accountService.payment(accountDTO);
-
-
-        InventoryDTO inventoryDTO = new InventoryDTO();
-        inventoryDTO.setCount(order.getCount());
-        inventoryDTO.setProductId(order.getProductId());
-        inventoryService.mockWithConfirmException(inventoryDTO);
-        return SUCCESS;
-    }
-
-    @Override
-    public String mockPaymentInventoryWithConfirmTimeout(Order order) {
-        order.setStatus(OrderStatusEnum.PAYING.getCode());
-        orderMapper.update(order);
-
-        //扣除用户余额
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setAmount(order.getTotalAmount());
-        accountDTO.setUserId(order.getUserId());
-        accountService.payment(accountDTO);
-        inventoryService.mockWithConfirmTimeout(new InventoryDTO());
-        return SUCCESS;
-    }
-
-    public void confirmOrderStatus(Order order) {
-
-        order.setStatus(OrderStatusEnum.PAY_SUCCESS.getCode());
-        orderMapper.update(order);
-        LOGGER.info("=========进行订单confirm操作完成================");
-
-
-    }
-
-    public void cancelOrderStatus(Order order) {
-
-        order.setStatus(OrderStatusEnum.PAY_FAIL.getCode());
-        orderMapper.update(order);
-        LOGGER.info("=========进行订单cancel操作完成================");
-    }
 }

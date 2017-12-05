@@ -62,7 +62,7 @@ public class MythFeignHandler implements InvocationHandler {
 
                 final MythParticipant participant = buildParticipant(myth, method, args);
                 if (Objects.nonNull(participant)) {
-                    mythTransactionManager.enlistParticipant(participant);
+                    mythTransactionManager.registerParticipant(participant);
                 }
                 return this.handlers.get(method).invoke(args);
             } catch (Throwable throwable) {
@@ -75,26 +75,29 @@ public class MythFeignHandler implements InvocationHandler {
     }
 
 
-    private MythParticipant buildParticipant(Myth myth, Method method, Object[] args ) {
+    private MythParticipant buildParticipant(Myth myth, Method method, Object[] args) {
 
         final MythTransactionContext mythTransactionContext =
                 TransactionContextLocal.getInstance().get();
         MythParticipant participant = null;
         if (Objects.nonNull(mythTransactionContext)) {
 
-                final Class<?> declaringClass = method.getDeclaringClass();
+            final Class<?> declaringClass = method.getDeclaringClass();
 
-                MythInvocation mythInvocation = new MythInvocation(declaringClass,
-                        method.getName(),
-                        method.getParameterTypes(), args);
+            MythInvocation mythInvocation = new MythInvocation(declaringClass,
+                    method.getName(),
+                    method.getParameterTypes(), args);
 
-                //封装调用点
-                participant = new MythParticipant(
-                        mythTransactionContext.getTransId(),
-                        myth.destination(),
-                        mythInvocation);
+            final Integer pattern = myth.pattern().getCode();
 
-                return participant;
+            //封装调用点
+            participant = new MythParticipant(
+                    mythTransactionContext.getTransId(),
+                    myth.destination(),
+                    pattern,
+                    mythInvocation);
+
+            return participant;
         }
         return participant;
     }

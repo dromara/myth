@@ -23,6 +23,9 @@ import com.github.myth.common.config.MythConfig;
 import com.github.myth.common.exception.MythRuntimeException;
 import com.github.myth.common.serializer.ObjectSerializer;
 
+import java.util.Date;
+import java.util.List;
+
 
 /**
  * @author xiaoyu
@@ -53,7 +56,7 @@ public interface CoordinatorRepository {
      * @return rows 1 成功 0 失败 失败需要抛异常
      * @throws MythRuntimeException 异常
      */
-    int update(MythTransaction tccTransaction) throws  MythRuntimeException;
+    int update(MythTransaction tccTransaction) throws MythRuntimeException;
 
 
     /**
@@ -68,9 +71,10 @@ public interface CoordinatorRepository {
 
     /**
      * 更新补偿数据状态
-     * @param transId  事务id
+     *
+     * @param transId 事务id
      * @param status  状态
-     * @return  rows 1 成功
+     * @return rows 1 成功
      * @throws MythRuntimeException 异常
      */
     int updateStatus(String transId, Integer status) throws MythRuntimeException;
@@ -84,12 +88,19 @@ public interface CoordinatorRepository {
     MythTransaction findByTransId(String transId);
 
 
+    /**
+     * 获取延迟多长时间后的事务信息,只要为了防止并发的时候，刚新增的数据被执行
+     *
+     * @param date 延迟后的时间
+     * @return List<MythTransaction>
+     */
+    List<MythTransaction> listAllByDelay(Date date);
 
 
     /**
      * 初始化操作
      *
-     * @param modelName 模块名称
+     * @param modelName  模块名称
      * @param mythConfig 配置信息
      * @throws MythRuntimeException 自定义异常
      */

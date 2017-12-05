@@ -21,6 +21,8 @@ import com.github.myth.common.bean.adapter.CoordinatorRepositoryAdapter;
 import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.config.MythConfig;
 import com.github.myth.common.constant.CommonConstant;
+import com.github.myth.common.enums.MythRoleEnum;
+import com.github.myth.common.enums.MythStatusEnum;
 import com.github.myth.common.enums.RepositorySupportEnum;
 import com.github.myth.common.exception.MythException;
 import com.github.myth.common.exception.MythRuntimeException;
@@ -29,11 +31,14 @@ import com.github.myth.common.utils.FileUtils;
 import com.github.myth.common.utils.RepositoryConvertUtils;
 import com.github.myth.common.utils.RepositoryPathUtils;
 import com.github.myth.core.spi.CoordinatorRepository;
+import com.google.common.collect.Lists;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 /**
@@ -144,7 +149,7 @@ public class FileCoordinatorRepository implements CoordinatorRepository {
                 adapter.setStatus(status);
             }
             FileUtils.writeFile(fullFileName, serializer.serialize(adapter));
-            return  CommonConstant.SUCCESS;
+            return CommonConstant.SUCCESS;
         } catch (Exception e) {
             throw new MythRuntimeException("更新数据异常！");
         }
@@ -169,6 +174,39 @@ public class FileCoordinatorRepository implements CoordinatorRepository {
             return null;
         }
 
+    }
+
+    /**
+     * 获取延迟多长时间后的事务信息,只要为了防止并发的时候，刚新增的数据被执行
+     *
+     * @param date 延迟后的时间
+     * @return List<MythTransaction>
+     */
+    @Override
+    public List<MythTransaction> listAllByDelay(Date date) {
+        final List<MythTransaction> mythTransactionList = listAll();
+        return mythTransactionList.stream()
+                .filter(tccTransaction -> tccTransaction.getLastTime().compareTo(date) < 0)
+                .filter(mythTransaction -> mythTransaction.getStatus() == MythStatusEnum.BEGIN.getCode())
+                .collect(Collectors.toList());
+    }
+
+
+    private List<MythTransaction> listAll() {
+        List<MythTransaction> transactionRecoverList = Lists.newArrayList();
+        File path = new File(filePath);
+        File[] files = path.listFiles();
+        if (files != null && files.length > 0) {
+            for (File file : files) {
+                try {
+                    MythTransaction transaction = readTransaction(file);
+                    transactionRecoverList.add(transaction);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return transactionRecoverList;
     }
 
 

@@ -16,49 +16,62 @@
  *
  */
 
-package com.github.myth.demo.dubbo.inventory.api.service;
-
-
-import com.github.myth.annotation.Myth;
-import com.github.myth.demo.dubbo.inventory.api.dto.InventoryDTO;
+package com.github.myth.annotation;
 
 /**
+ *消息类型枚举
  * @author xiaoyu
  */
-public interface InventoryService {
+public enum MessageTypeEnum {
 
 
-    /**
-     * 扣减库存操作
-     * 这一个tcc接口
-     *
-     * @param inventoryDTO 库存DTO对象
-     * @return true
-     */
-    @Myth(destination = "inventory")
-    Boolean decrease(InventoryDTO inventoryDTO);
+    P2P(1, "点对点模式"),
 
 
-    /**
-     * mock扣减库存异常
-     *
-     * @param inventoryDTO dto对象
-     * @return String
-     */
-    @Myth(destination = "inventory")
-    String mockWithException(InventoryDTO inventoryDTO);
+    TOPIC(2, "TOPIC模式");
 
+    private Integer code;
+
+    private String desc;
+
+    MessageTypeEnum(Integer code, String desc) {
+        this.code = code;
+        this.desc = desc;
+    }
 
     /**
-     * mock扣减库存超时
+     * Gets code.
      *
-     * @param inventoryDTO dto对象
-     * @return String
+     * @return the code
      */
-    @Myth(destination = "inventory")
-    Boolean mockWithTimeout(InventoryDTO inventoryDTO);
+    public Integer getCode() {
+        return code;
+    }
 
+    /**
+     * Sets code.
+     *
+     * @param code the code
+     */
+    public void setCode(Integer code) {
+        this.code = code;
+    }
 
+    /**
+     * Gets desc.
+     *
+     * @return the desc
+     */
+    public String getDesc() {
+        return desc;
+    }
 
-
+    /**
+     * Sets desc.
+     *
+     * @param desc the desc
+     */
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
 }

@@ -24,16 +24,11 @@ import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.enums.CoordinatorActionEnum;
 import com.github.myth.common.enums.MythRoleEnum;
 import com.github.myth.common.enums.MythStatusEnum;
-import com.github.myth.common.exception.MythException;
-import com.github.myth.common.serializer.ObjectSerializer;
 import com.github.myth.common.utils.LogUtil;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.coordinator.CoordinatorService;
 import com.github.myth.core.coordinator.command.CoordinatorAction;
 import com.github.myth.core.coordinator.command.CoordinatorCommand;
-import com.github.myth.core.helper.SpringBeanUtils;
-import com.github.myth.core.service.MythMqSendService;
-import org.apache.commons.collections.CollectionUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
@@ -42,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -170,14 +164,14 @@ public class MythTransactionManager {
     }
 
 
-    void updateStatus(String transId, Integer status) {
+    public void updateStatus(String transId, Integer status) {
         coordinatorService.updateStatus(transId, status);
     }
 
-    public void enlistParticipant(MythParticipant participant) {
+    public void registerParticipant(MythParticipant participant) {
         final MythTransaction transaction = this.getCurrentTransaction();
         transaction.registerParticipant(participant);
-        coordinatorService.update(transaction);
+        coordinatorService.updateParticipant(transaction);
 
     }
 }

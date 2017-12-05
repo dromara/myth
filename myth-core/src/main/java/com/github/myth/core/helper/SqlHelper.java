@@ -45,8 +45,8 @@ public class SqlHelper {
                         .append("  `invocation` longblob,\n")
                         .append("  `role` int(2) NOT NULL,\n")
                         .append("  PRIMARY KEY (`trans_id`)\n")
+                        .append("  KEY `status_last_time` (`last_time`,`status`) USING BTREE \n")
                         .append(")");
-
                 break;
 
             }

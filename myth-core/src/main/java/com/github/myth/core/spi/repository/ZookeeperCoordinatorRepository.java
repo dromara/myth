@@ -22,6 +22,7 @@ import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.config.MythConfig;
 import com.github.myth.common.config.MythZookeeperConfig;
 import com.github.myth.common.constant.CommonConstant;
+import com.github.myth.common.enums.MythStatusEnum;
 import com.github.myth.common.enums.RepositorySupportEnum;
 import com.github.myth.common.exception.MythException;
 import com.github.myth.common.exception.MythRuntimeException;
@@ -195,6 +196,47 @@ public class ZookeeperCoordinatorRepository implements CoordinatorRepository {
         } catch (Exception e) {
             throw new MythRuntimeException(e);
         }
+    }
+
+    /**
+     * 获取延迟多长时间后的事务信息,只要为了防止并发的时候，刚新增的数据被执行
+     *
+     * @param date 延迟后的时间
+     * @return List<MythTransaction>
+     */
+    @Override
+    public List<MythTransaction> listAllByDelay(Date date) {
+        final List<MythTransaction> mythTransactionList = listAll();
+        return mythTransactionList.stream()
+                .filter(mythTransaction -> mythTransaction.getLastTime().compareTo(date) > 0)
+                .filter(mythTransaction -> mythTransaction.getStatus() == MythStatusEnum.BEGIN.getCode())
+                .collect(Collectors.toList());
+    }
+
+    private List<MythTransaction> listAll() {
+        List<MythTransaction> transactionRecovers = Lists.newArrayList();
+
+        List<String> zNodePaths;
+        try {
+            zNodePaths = zooKeeper.getChildren(rootPathPrefix, false);
+        } catch (Exception e) {
+            throw new MythRuntimeException(e);
+        }
+        if (CollectionUtils.isNotEmpty(zNodePaths)) {
+            transactionRecovers = zNodePaths.stream()
+                    .filter(StringUtils::isNoneBlank)
+                    .map(zNodePath -> {
+                        try {
+                            byte[] content = zooKeeper.getData(buildRootPath(zNodePath), false, new Stat());
+                            return RepositoryConvertUtils.transformBean(content, objectSerializer);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }).collect(Collectors.toList());
+        }
+
+        return transactionRecovers;
     }
 
 
