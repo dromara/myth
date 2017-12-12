@@ -50,7 +50,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.4.RELEASE</version>
+        <version>1.5.9.RELEASE</version>
     </parent>
 
 
@@ -72,6 +72,7 @@
         <spring.version>4.3.9.RELEASE</spring.version>
         <spring-cloud.version>Dalston.SR1</spring-cloud.version>
         <dubbo.version>2.5.3</dubbo.version>
+        <motan.version>1.0.0</motan.version>
         <mongo.driver.version>3.5.0</mongo.driver.version>
         <mysql-connector-java>5.1.40</mysql-connector-java>
         <commons-lang3.version>3.3.2</commons-lang3.version>
@@ -89,6 +90,11 @@
         <druid.version>1.0.29</druid.version>
         <springfox.version>2.6.1</springfox.version>
         <lombok.version>1.16.14</lombok.version>
+        <spring-rabbit.version>1.7.4.RELEASE</spring-rabbit.version>
+        <amqp-client.version>4.0.3</amqp-client.version>
+        <spring-amqp.version>1.7.4.RELEASE</spring-amqp.version>
+        <spring-kafka.version>1.1.2.RELEASE</spring-kafka.version>
+        <rocketmq.version>4.1.0-incubating</rocketmq.version>
     </properties>
 
 
@@ -131,7 +137,25 @@
 
             <dependency>
                 <groupId>com.github.myth</groupId>
-                <artifactId>myth-activemq</artifactId>
+                <artifactId>myth-jms</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-rabbitmq</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-kafka</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-rocketmq</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -171,6 +195,43 @@
             </dependency>
 
             <dependency>
+                <groupId>org.springframework.amqp</groupId>
+                <artifactId>spring-rabbit</artifactId>
+                <version>${spring-rabbit.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.amqp</groupId>
+                <artifactId>spring-amqp</artifactId>
+                <version>${spring-amqp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.rabbitmq</groupId>
+                <artifactId>amqp-client</artifactId>
+                <version>${amqp-client.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.kafka</groupId>
+                <artifactId>spring-kafka</artifactId>
+                <version>${spring-kafka.version}</version>
+            </dependency>
+
+
+            <!-- RocketMQ 客户端相关依赖 -->
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-client</artifactId>
+                <version>${rocketmq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-common</artifactId>
+                <version>${rocketmq.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-mongodb</artifactId>
                 <version>${spring.data.mongodb.version}</version>
@@ -190,6 +251,32 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+
+            <!-- motan config start-->
+            <dependency>
+                <groupId>com.weibo</groupId>
+                <artifactId>motan-core</artifactId>
+                <version>${motan.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.weibo</groupId>
+                <artifactId>motan-transport-netty</artifactId>
+                <version>${motan.version}</version>
+            </dependency>
+
+            <!-- only needed for spring-based features -->
+            <dependency>
+                <groupId>com.weibo</groupId>
+                <artifactId>motan-springsupport</artifactId>
+                <version>${motan.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.weibo</groupId>
+                <artifactId>motan-registry-zookeeper</artifactId>
+                <version>${motan.version}</version>
+            </dependency>
+            <!-- motan config end-->
 
             <dependency>
                 <groupId>io.springfox</groupId>

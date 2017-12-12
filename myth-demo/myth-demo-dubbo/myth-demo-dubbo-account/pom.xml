@@ -40,9 +40,22 @@
             <groupId>com.github.myth</groupId>
             <artifactId>myth-dubbo</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
 
-
-
+        <!-- RocketMQ 客户端相关依赖 -->
+        <!-- https://mvnrepository.com/artifact/org.apache.rocketmq/rocketmq-client -->
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.rocketmq/rocketmq-common -->
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-common</artifactId>
+        </dependency>
 
         <!--spring boot的核心启动器-->
         <dependency>
@@ -58,6 +71,17 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-activemq</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+            <version>4.3.0</version>
         </dependency>
         <!--自动配置-->
         <dependency>

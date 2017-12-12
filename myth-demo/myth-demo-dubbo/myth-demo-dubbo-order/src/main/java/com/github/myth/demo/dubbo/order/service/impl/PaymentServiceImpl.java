@@ -21,8 +21,10 @@ package com.github.myth.demo.dubbo.order.service.impl;
 
 import com.github.myth.annotation.Myth;
 import com.github.myth.demo.dubbo.account.api.dto.AccountDTO;
+import com.github.myth.demo.dubbo.account.api.entity.AccountDO;
 import com.github.myth.demo.dubbo.account.api.service.AccountService;
 import com.github.myth.demo.dubbo.inventory.api.dto.InventoryDTO;
+import com.github.myth.demo.dubbo.inventory.api.entity.Inventory;
 import com.github.myth.demo.dubbo.inventory.api.service.InventoryService;
 import com.github.myth.demo.dubbo.order.mapper.OrderMapper;
 import com.github.myth.demo.dubbo.order.entity.Order;
@@ -52,9 +54,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final InventoryService inventoryService;
 
-    private static  final  String SUCCESS="success";
+    private static final String SUCCESS = "success";
 
-    @Autowired
+    @Autowired(required = false)
     public PaymentServiceImpl(OrderMapper orderMapper,
                               AccountService accountService,
                               InventoryService inventoryService) {
@@ -67,6 +69,20 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Myth(destination = "")
     public void makePayment(Order order) {
+
+        //做库存和资金账户的检验工作 这里只是demo 。。。
+        final AccountDO accountDO = accountService.findByUserId(order.getUserId());
+        if (accountDO.getBalance().compareTo(order.getTotalAmount()) <= 0) {
+            return;
+        }
+
+        final Inventory inventory = inventoryService.findByProductId(order.getProductId());
+
+        if (inventory.getTotalInventory() < order.getCount()) {
+            return;
+        }
+
+
         order.setStatus(OrderStatusEnum.PAY_SUCCESS.getCode());
         orderMapper.update(order);
         //扣除用户余额

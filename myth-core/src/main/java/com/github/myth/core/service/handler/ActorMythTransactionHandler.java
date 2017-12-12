@@ -69,12 +69,15 @@ public class ActorMythTransactionHandler implements MythTransactionHandler {
             //发起调用 执行try方法
             final Object proceed = point.proceed();
 
-            //执行成功 记录日志信息，不成功就不记录，通过mq来执行
+            //执行成功 记录日志信息，通过mq来执行
 
-            mythTransactionManager.saveTransaction(point, mythTransactionContext);
+            mythTransactionManager.commitTransaction(point, mythTransactionContext);
 
             return proceed;
 
+        } catch (Throwable throwable) {
+            mythTransactionManager.failureTransaction(point, mythTransactionContext.getTransId(), throwable.getMessage());
+            throw throwable;
         } finally {
             LOCK.unlock();
             TransactionContextLocal.getInstance().remove();

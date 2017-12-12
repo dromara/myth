@@ -83,6 +83,11 @@ public class MythTransaction implements Serializable {
     private String targetMethod;
 
     /**
+     * 调用错误信息
+     */
+    private String errorMsg;
+
+    /**
      * 参与协调的方法集合
      */
     private List<MythParticipant> mythParticipants;

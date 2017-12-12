@@ -73,8 +73,8 @@ public class JdbcCoordinatorRepository implements CoordinatorRepository {
         StringBuilder sql = new StringBuilder()
                 .append("insert into ")
                 .append(tableName)
-                .append("(trans_id,target_class,target_method,retried_count,create_time,last_time,version,status,invocation,role)")
-                .append(" values(?,?,?,?,?,?,?,?,?,?)");
+                .append("(trans_id,target_class,target_method,retried_count,create_time,last_time,version,status,invocation,role,error_msg)")
+                .append(" values(?,?,?,?,?,?,?,?,?,?,?)");
         try {
 
             final byte[] serialize = serializer.serialize(mythTransaction.getMythParticipants());
@@ -88,7 +88,8 @@ public class JdbcCoordinatorRepository implements CoordinatorRepository {
                     mythTransaction.getVersion(),
                     mythTransaction.getStatus(),
                     serialize,
-                    mythTransaction.getRole());
+                    mythTransaction.getRole(),
+                    mythTransaction.getErrorMsg());
 
         } catch (MythException e) {
             e.printStackTrace();

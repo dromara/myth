@@ -95,6 +95,12 @@ public class CoordinatorRepositoryAdapter {
     private String targetMethod;
 
 
+    /**
+     * 错误信息
+     */
+    private String errorMsg;
+
+
 
 
 }

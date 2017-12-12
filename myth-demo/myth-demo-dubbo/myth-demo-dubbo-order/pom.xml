@@ -49,7 +49,34 @@
 
         <dependency>
             <groupId>com.github.myth</groupId>
-            <artifactId>myth-activemq</artifactId>
+            <artifactId>myth-jms</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.myth</groupId>
+            <artifactId>myth-rabbitmq</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+            <version>4.3.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.myth</groupId>
+            <artifactId>myth-kafka</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <version>1.2.0.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.myth</groupId>
+            <artifactId>myth-rocketmq</artifactId>
         </dependency>
 
 

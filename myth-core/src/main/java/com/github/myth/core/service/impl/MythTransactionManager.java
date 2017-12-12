@@ -114,8 +114,7 @@ public class MythTransactionManager {
     }
 
 
-    public MythTransaction saveTransaction(ProceedingJoinPoint point, MythTransactionContext mythTransactionContext) {
-        LogUtil.debug(LOGGER, () -> "开始执行 参与者分布式事务！start");
+    public MythTransaction commitTransaction(ProceedingJoinPoint point, MythTransactionContext mythTransactionContext) {
         MythTransaction mythTransaction = new MythTransaction(mythTransactionContext.getTransId());
 
         MethodSignature signature = (MethodSignature) point.getSignature();
@@ -138,6 +137,23 @@ public class MythTransactionManager {
 
         return mythTransaction;
 
+    }
+
+    public void failureTransaction(ProceedingJoinPoint point, String transId,String errorMessage) {
+        MythTransaction mythTransaction = new MythTransaction(transId);
+
+        MethodSignature signature = (MethodSignature) point.getSignature();
+        Method method = signature.getMethod();
+
+        Class<?> clazz = point.getTarget().getClass();
+
+        mythTransaction.setStatus(MythStatusEnum.FAILURE.getCode());
+        mythTransaction.setRole(MythRoleEnum.PROVIDER.getCode());
+        mythTransaction.setTargetClass(clazz.getName());
+        mythTransaction.setTargetMethod(method.getName());
+        mythTransaction.setErrorMsg(errorMessage);
+        //保存当前事务信息
+        coordinatorCommand.execute(new CoordinatorAction(CoordinatorActionEnum.SAVE, mythTransaction));
     }
 
 

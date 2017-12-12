@@ -220,8 +220,13 @@ public class CoordinatorServiceImpl implements CoordinatorService {
     @Override
     public Boolean processMessage(byte[] message) {
         try {
-            final MessageEntity entity =
-                    serializer.deSerialize(message, MessageEntity.class);
+            MessageEntity entity;
+            try {
+                entity = serializer.deSerialize(message, MessageEntity.class);
+            } catch (MythException e) {
+                e.printStackTrace();
+                return Boolean.FALSE;
+            }
             /*
              * 1 检查该事务有没被处理过，已经处理过的 则不处理
              * 2 发起发射调用，调用接口，进行处理
@@ -251,17 +256,13 @@ public class CoordinatorServiceImpl implements CoordinatorService {
                     //会进入LocalMythTransactionHandler  那里有保存
 
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    return Boolean.FALSE;
+                    throw new MythRuntimeException(e.getMessage());
                 } finally {
                     TransactionContextLocal.getInstance().remove();
                 }
             }
 
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Boolean.FALSE;
         } finally {
             LOCK.unlock();
         }
@@ -296,11 +297,14 @@ public class CoordinatorServiceImpl implements CoordinatorService {
                     getMythMqSendService().sendMessage(mythParticipant.getDestination(),
                             mythParticipant.getPattern(),
                             message);
-                } catch (MythException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     return Boolean.FALSE;
                 }
             }
+            //这里为什么要这么做呢？ 主要是为了防止在极端情况下，发起者执行过程中，突然自身down 机
+            //造成消息未发送，新增一个状态标记，如果出现这种情况，通过定时任务发送消息
+            this.updateStatus(mythTransaction.getTransId(), MythStatusEnum.COMMIT.getCode());
         }
         return Boolean.TRUE;
     }

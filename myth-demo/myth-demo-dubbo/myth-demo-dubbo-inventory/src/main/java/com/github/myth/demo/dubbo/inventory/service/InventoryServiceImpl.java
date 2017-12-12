@@ -59,7 +59,7 @@ public class InventoryServiceImpl implements InventoryService {
      * @return true
      */
     @Override
-    @Myth(destination = "account")
+    @Myth(destination = "inventory")
     public Boolean decrease(InventoryDTO inventoryDTO) {
         final Inventory entity = inventoryMapper.findByProductId(inventoryDTO.getProductId());
         entity.setTotalInventory(entity.getTotalInventory() - inventoryDTO.getCount());
@@ -94,6 +94,17 @@ public class InventoryServiceImpl implements InventoryService {
             throw new MythRuntimeException("库存不足");
         }
         return true;
+    }
+
+    /**
+     * 获取商品库存信息
+     *
+     * @param productId 商品id
+     * @return Inventory
+     */
+    @Override
+    public Inventory findByProductId(Integer productId) {
+        return inventoryMapper.findByProductId(productId);
     }
 
 

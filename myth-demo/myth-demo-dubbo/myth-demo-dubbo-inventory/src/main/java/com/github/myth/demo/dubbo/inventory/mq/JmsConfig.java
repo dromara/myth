@@ -18,6 +18,7 @@
 
 package com.github.myth.demo.dubbo.inventory.mq;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
@@ -32,6 +33,7 @@ import javax.jms.ConnectionFactory;
 public class JmsConfig {
 
     @Bean(name = "queueListenerContainerFactory")
+    @ConditionalOnProperty(prefix = "spring.activemq", name = "broker-url")
     public JmsListenerContainerFactory<?> jmsListenerContainerQueue(ConnectionFactory activeMQConnectionFactory) {
         DefaultJmsListenerContainerFactory bean = new DefaultJmsListenerContainerFactory();
         bean.setConnectionFactory(activeMQConnectionFactory);

@@ -87,6 +87,7 @@ public class MongoCoordinatorRepository implements CoordinatorRepository {
             mongoBean.setTargetMethod(mythTransaction.getTargetMethod());
             final byte[] cache = objectSerializer.serialize(mythTransaction.getMythParticipants());
             mongoBean.setContents(cache);
+            mongoBean.setErrorMsg(mythTransaction.getErrorMsg());
             template.save(mongoBean, collectionName);
             return CommonConstant.SUCCESS;
         } catch (MythException e) {

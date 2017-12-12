@@ -21,6 +21,7 @@ package com.github.myth.demo.dubbo.account.api.service;
 
 import com.github.myth.annotation.Myth;
 import com.github.myth.demo.dubbo.account.api.dto.AccountDTO;
+import com.github.myth.demo.dubbo.account.api.entity.AccountDO;
 
 /**
  * @author xiaoyu
@@ -36,4 +37,12 @@ public interface AccountService {
      */
     @Myth(destination = "account")
     boolean payment(AccountDTO accountDTO);
+
+
+    /**
+     * 获取用户资金信息
+     * @param userId 用户id
+     * @return AccountDO
+     */
+    AccountDO findByUserId(Integer userId);
 }

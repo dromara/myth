@@ -16,7 +16,7 @@
  *
  */
 
-package com.github.myth.activemq.service;
+package com.github.myth.jms.service;
 
 import com.github.myth.core.service.MythMqSendService;
 import org.apache.activemq.command.ActiveMQQueue;

@@ -21,6 +21,7 @@ package com.github.myth.demo.dubbo.inventory.api.service;
 
 import com.github.myth.annotation.Myth;
 import com.github.myth.demo.dubbo.inventory.api.dto.InventoryDTO;
+import com.github.myth.demo.dubbo.inventory.api.entity.Inventory;
 
 /**
  * @author xiaoyu
@@ -59,6 +60,11 @@ public interface InventoryService {
     Boolean mockWithTimeout(InventoryDTO inventoryDTO);
 
 
-
+    /**
+     * 获取商品库存信息
+     * @param productId 商品id
+     * @return Inventory
+     */
+    Inventory findByProductId(Integer productId);
 
 }

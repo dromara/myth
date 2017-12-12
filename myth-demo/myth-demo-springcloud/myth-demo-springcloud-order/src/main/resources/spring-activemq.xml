@@ -41,7 +41,7 @@
     </bean>
 
 
-    <bean id="activemqSendService" class="com.github.myth.activemq.service.ActivemqSendServiceImpl">
+    <bean id="activemqSendService" class="com.github.myth.jms.service.ActivemqSendServiceImpl">
         <property name="jmsTemplate" ref="jmsTemplate"/>
     </bean>
 
