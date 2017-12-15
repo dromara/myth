@@ -50,7 +50,6 @@ public class RocketmqConsumer {
         //设置批量消费，以提升消费吞吐量，默认是1
         consumer.setConsumeMessageBatchMaxSize(1);
 
-
         /**
          * 订阅指定topic下tags
          */

@@ -20,8 +20,10 @@ package com.github.myth.springcloud.interceptor;
 import com.github.myth.common.bean.context.MythTransactionContext;
 import com.github.myth.common.constant.CommonConstant;
 import com.github.myth.common.utils.GsonUtils;
+import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.interceptor.MythTransactionInterceptor;
 import com.github.myth.core.service.MythTransactionAspectService;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -52,9 +54,12 @@ public class SpringCloudMythTransactionInterceptor implements MythTransactionInt
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = requestAttributes == null ? null : ((ServletRequestAttributes) requestAttributes).getRequest();
         String context = request == null ? null : request.getHeader(CommonConstant.MYTH_TRANSACTION_CONTEXT);
-        mythTransactionContext =
-                GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
-
+        if (StringUtils.isNoneBlank()) {
+            mythTransactionContext =
+                    GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
+        } else {
+            mythTransactionContext = TransactionContextLocal.getInstance().get();
+        }
         return mythTransactionAspectService.invoke(mythTransactionContext, pjp);
     }
 

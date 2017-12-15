@@ -21,6 +21,7 @@ package com.github.myth.motan.interceptor;
 import com.github.myth.common.bean.context.MythTransactionContext;
 import com.github.myth.common.constant.CommonConstant;
 import com.github.myth.common.utils.GsonUtils;
+import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.interceptor.MythTransactionInterceptor;
 import com.github.myth.core.service.MythTransactionAspectService;
 import com.weibo.api.motan.rpc.RpcContext;
@@ -37,6 +38,8 @@ public class MotanMythTransactionInterceptor implements MythTransactionIntercept
 
     private final MythTransactionAspectService mythTransactionAspectService;
 
+    public static final String NULL = "null";
+
     @Autowired
     public MotanMythTransactionInterceptor(MythTransactionAspectService mythTransactionAspectService) {
         this.mythTransactionAspectService = mythTransactionAspectService;
@@ -45,11 +48,14 @@ public class MotanMythTransactionInterceptor implements MythTransactionIntercept
 
     @Override
     public Object interceptor(ProceedingJoinPoint pjp) throws Throwable {
-        final String context = String.valueOf(RpcContext.getContext().getAttribute(CommonConstant.MYTH_TRANSACTION_CONTEXT));
-        MythTransactionContext mythTransactionContext = null;
-        if (StringUtils.isNoneBlank(context)) {
+        final String context = RpcContext.getContext().getRequest().getAttachments()
+                .get(CommonConstant.MYTH_TRANSACTION_CONTEXT);
+        MythTransactionContext mythTransactionContext;
+        if (StringUtils.isNoneBlank(context) && !NULL.equals(context)) {
             mythTransactionContext =
                     GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
+        } else {
+            mythTransactionContext = TransactionContextLocal.getInstance().get();
         }
         return mythTransactionAspectService.invoke(mythTransactionContext, pjp);
     }

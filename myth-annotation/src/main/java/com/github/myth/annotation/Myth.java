@@ -39,6 +39,13 @@ public @interface Myth {
 
 
     /**
+     * 是否有事务 这里具体指的是发起方是否有进行数据库的操作（是否有事务操作）
+     * @return PropagationEnum
+     */
+    PropagationEnum propagation() default PropagationEnum.PROPAGATION_REQUIRED;
+
+
+    /**
      * mq 消息模式
      * @return MessageTypeEnum
      */

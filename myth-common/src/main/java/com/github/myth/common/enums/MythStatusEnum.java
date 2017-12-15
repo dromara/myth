@@ -46,7 +46,7 @@ public enum MythStatusEnum {
     /**
      * Running transaction status enum.
      */
-    RUNNING(3, "执行中"),
+    SEND_MSG(3, "可以发送消息"),
 
     /**
      * Failure transaction status enum.

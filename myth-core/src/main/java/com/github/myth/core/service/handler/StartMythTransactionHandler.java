@@ -18,6 +18,8 @@
 
 package com.github.myth.core.service.handler;
 
+import com.github.myth.annotation.Myth;
+import com.github.myth.annotation.PropagationEnum;
 import com.github.myth.common.bean.context.MythTransactionContext;
 import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.enums.MythStatusEnum;
@@ -25,9 +27,15 @@ import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.service.MythTransactionHandler;
 import com.github.myth.core.service.impl.MythTransactionManager;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import java.lang.reflect.Method;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -69,6 +77,7 @@ public class StartMythTransactionHandler implements MythTransactionHandler {
     public Object handler(ProceedingJoinPoint point, MythTransactionContext mythTransactionContext) throws Throwable {
 
         try {
+
             //主要防止并发问题，对事务日志的写造成压力，加了锁进行处理
             try {
                 LOCK.lock();
@@ -76,9 +85,8 @@ public class StartMythTransactionHandler implements MythTransactionHandler {
             } finally {
                 LOCK.unlock();
             }
-            //发起调用 执行try方法
 
-            return point.proceed();
+           return  point.proceed();
 
         } finally {
             //发送消息
@@ -87,4 +95,5 @@ public class StartMythTransactionHandler implements MythTransactionHandler {
             TransactionContextLocal.getInstance().remove();
         }
     }
+
 }

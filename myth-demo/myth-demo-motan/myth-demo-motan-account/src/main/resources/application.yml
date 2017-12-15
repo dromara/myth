@@ -1,0 +1,53 @@
+server:
+  port: 8085
+  contextPath: /
+  address: 0.0.0.0
+
+spring:
+    motan:
+        zookeeper: 192.168.1.148:2181
+    datasource:
+        driver-class-name:  com.mysql.jdbc.Driver
+        url: jdbc:mysql://192.168.1.68:3306/account?useUnicode=true&characterEncoding=utf8
+        username: xiaoyu
+        password: Wgj@555888
+    #activemq:
+    #   broker-url: tcp://120.76.52.162:61616
+    #   user: happylife
+    #   password: happylifeplat01
+    #   trust-all: true
+    #rabbitmq:
+    #    host: localhost
+    #    port: 5672
+    #    username: guest
+    #    password: guest
+    rocketmq:
+        namesrvAddr: 192.168.1.148:9876
+        consumerGroupName: account
+        instanceName: account
+    #kafka:
+      #  consumer:
+      #     bootstrap-servers: localhost:9092
+      #     group-id: test
+      #     auto-offset-reset: earliest
+      #     enable-auto-commit: true
+      #     auto-commit-interval: 100
+      #    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      #     value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+
+mybatis:
+  type-aliases-package: com.github.myth.demo.motan.account.api.entity
+  config-location: classpath:mybatis/mybatis-config.xml
+
+logging:
+    level:
+        root: error
+        org.springframework.web: info
+        org.apache.ibatis: info
+        com.github.myth.bonuspoint: info
+        com.github.myth.lottery: debug
+        com.github.myth: debug
+        io.netty: info
+
+    path: "./logs"
+

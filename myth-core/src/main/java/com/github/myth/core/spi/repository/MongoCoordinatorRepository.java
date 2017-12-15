@@ -23,6 +23,7 @@ import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.config.MythConfig;
 import com.github.myth.common.config.MythMongoConfig;
 import com.github.myth.common.constant.CommonConstant;
+import com.github.myth.common.enums.MythStatusEnum;
 import com.github.myth.common.enums.RepositorySupportEnum;
 import com.github.myth.common.exception.MythException;
 import com.github.myth.common.exception.MythRuntimeException;
@@ -208,7 +209,7 @@ public class MongoCoordinatorRepository implements CoordinatorRepository {
     public List<MythTransaction> listAllByDelay(Date date) {
         Query query = new Query();
         query.addCriteria(Criteria.where("lastTime").lt(date))
-                .addCriteria(Criteria.where("status").is(2));
+                .addCriteria(Criteria.where("status").is(MythStatusEnum.BEGIN.getCode()));
         final List<MongoAdapter> mongoBeans =
                 template.find(query, MongoAdapter.class, collectionName);
         if (CollectionUtils.isNotEmpty(mongoBeans)) {

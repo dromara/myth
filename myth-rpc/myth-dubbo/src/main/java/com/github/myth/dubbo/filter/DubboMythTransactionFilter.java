@@ -46,7 +46,7 @@ import java.util.Objects;
  * @author xiaoyu
  */
 @Activate(group = {Constants.SERVER_KEY, Constants.CONSUMER})
-public class MythTransactionFilter implements Filter {
+public class DubboMythTransactionFilter implements Filter {
 
     private MythTransactionManager mythTransactionManager;
 

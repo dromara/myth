@@ -134,6 +134,13 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-motan</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
 
             <dependency>
                 <groupId>com.github.myth</groupId>

@@ -46,6 +46,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.weibo</groupId>
+            <artifactId>motan-transport-netty</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.myth</groupId>
             <artifactId>myth-core</artifactId>
         </dependency>

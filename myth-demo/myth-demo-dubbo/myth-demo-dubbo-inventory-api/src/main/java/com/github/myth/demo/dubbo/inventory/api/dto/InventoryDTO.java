@@ -18,11 +18,14 @@
 
 package com.github.myth.demo.dubbo.inventory.api.dto;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
 /**
  * @author xiaoyu
  */
+@Data
 public class InventoryDTO implements Serializable {
 
     private static final long serialVersionUID = 8229355519336565493L;
@@ -37,27 +40,4 @@ public class InventoryDTO implements Serializable {
      */
     private Integer count;
 
-    public Integer getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Integer productId) {
-        this.productId = productId;
-    }
-
-    public Integer getCount() {
-        return count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
-    }
-
-    @Override
-    public String toString() {
-        return "InventoryDTO{" +
-                "productId=" + productId +
-                ", count=" + count +
-                '}';
-    }
 }

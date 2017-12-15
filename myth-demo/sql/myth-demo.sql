@@ -51,7 +51,7 @@ CREATE TABLE `inventory` (
 
 insert  into `inventory`(`id`,`product_id`,`total_inventory`,`lock_inventory`) values
 
-(1,1,10,0);
+(1,1,100,0);
 
 
 CREATE DATABASE /*!32312 IF NOT EXISTS*/`order` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;

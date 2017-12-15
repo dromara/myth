@@ -13,6 +13,7 @@
     <modules>
         <module>myth-demo-dubbo</module>
         <module>myth-demo-springcloud</module>
+        <module>myth-demo-motan</module>
     </modules>
     <packaging>pom</packaging>
 </project>

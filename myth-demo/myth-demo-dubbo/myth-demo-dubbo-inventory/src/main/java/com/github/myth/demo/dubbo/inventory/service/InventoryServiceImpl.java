@@ -45,7 +45,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     private final InventoryMapper inventoryMapper;
 
-    @Autowired
+    @Autowired(required = false)
     public InventoryServiceImpl(InventoryMapper inventoryMapper) {
         this.inventoryMapper = inventoryMapper;
     }
@@ -53,7 +53,6 @@ public class InventoryServiceImpl implements InventoryService {
 
     /**
      * 扣减库存操作
-     * 这一个tcc接口
      *
      * @param inventoryDTO 库存DTO对象
      * @return true
@@ -62,6 +61,9 @@ public class InventoryServiceImpl implements InventoryService {
     @Myth(destination = "inventory")
     public Boolean decrease(InventoryDTO inventoryDTO) {
         final Inventory entity = inventoryMapper.findByProductId(inventoryDTO.getProductId());
+        if (entity.getTotalInventory() < inventoryDTO.getCount()) {
+            throw new MythRuntimeException("dubbo  库存不足");
+        }
         entity.setTotalInventory(entity.getTotalInventory() - inventoryDTO.getCount());
         final int decrease = inventoryMapper.decrease(entity);
         if (decrease != 1) {
