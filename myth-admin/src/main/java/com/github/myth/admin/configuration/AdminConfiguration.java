@@ -76,14 +76,15 @@ public class AdminConfiguration {
         public ObjectSerializer objectSerializer() {
 
             final SerializeEnum serializeEnum =
-                    SerializeEnum.acquire(env.getProperty("recover.serializer.support"));
+                    SerializeEnum.acquire(env.getProperty("myth.serializer.support"));
             final ServiceLoader<ObjectSerializer> objectSerializers =
                     ServiceBootstrap.loadAll(ObjectSerializer.class);
 
             return StreamSupport.stream(objectSerializers.spliterator(), false)
                     .filter(objectSerializer ->
                             Objects.equals(objectSerializer.getScheme(),
-                                    serializeEnum.getSerialize())).findFirst().orElse(new KryoSerializer());
+                                    serializeEnum.getSerialize())).findFirst()
+                    .orElse(new KryoSerializer());
 
         }
 

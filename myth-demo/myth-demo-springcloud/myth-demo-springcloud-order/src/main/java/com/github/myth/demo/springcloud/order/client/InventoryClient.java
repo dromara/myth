@@ -18,11 +18,14 @@
 package com.github.myth.demo.springcloud.order.client;
 
 import com.github.myth.annotation.Myth;
+import com.github.myth.demo.springcloud.inventory.api.dto.InventoryDTO;
+import com.github.myth.demo.springcloud.inventory.api.entity.InventoryDO;
+import com.github.myth.demo.springcloud.inventory.api.service.InventoryService;
 import com.github.myth.demo.springcloud.order.configuration.MyConfiguration;
-import com.github.myth.demo.springcloud.order.dto.InventoryDTO;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @author xiaoyu
@@ -36,28 +39,18 @@ public interface InventoryClient {
      * @param inventoryDTO 实体对象
      * @return true 成功
      */
-    @Myth(destination = "account")
+    @Myth(destination = "inventory",target = InventoryService.class)
     @RequestMapping("/inventory-service/inventory/decrease")
     Boolean decrease(@RequestBody InventoryDTO inventoryDTO);
 
-    /**
-     * 模拟库存扣减异常
-     *
-     * @param inventoryDTO 实体对象
-     * @return true 成功
-     */
-    @Myth(destination = "account")
-    @RequestMapping("/inventory-service/inventory/mockWithTryException")
-    Boolean mockWithTryException(@RequestBody InventoryDTO inventoryDTO);
-
 
     /**
-     * 模拟库存扣减超时
+     * 获取商品库存
      *
-     * @param inventoryDTO 实体对象
-     * @return true 成功
+     * @param productId 商品id
+     * @return InventoryDO
      */
-    @Myth(destination = "account")
-    @RequestMapping("/inventory-service/inventory/mockWithTryTimeout")
-    Boolean mockWithTryTimeout(@RequestBody InventoryDTO inventoryDTO);
+    @RequestMapping("/inventory-service/inventory/findByProductId")
+    InventoryDO findByProductId(@RequestParam("productId") String productId);
+
 }

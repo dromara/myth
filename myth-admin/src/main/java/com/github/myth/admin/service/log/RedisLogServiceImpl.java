@@ -66,7 +66,9 @@ public class RedisLogServiceImpl implements LogService {
     private ObjectSerializer objectSerializer;
 
 
-    /** logger */
+    /**
+     * logger
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisLogServiceImpl.class);
 
     /**
@@ -97,34 +99,17 @@ public class RedisLogServiceImpl implements LogService {
         int totalCount;
 
         //如果只查 重试条件的
-        if (StringUtils.isBlank(query.getTransId()) && Objects.nonNull(query.getRetry())) {
-            keys = jedisClient.keys((redisKeyPrefix + "*").getBytes());
-            final List<LogVO> all = findAll(keys);
-            final List<LogVO> collect =
-                    all.stream()
-                            .filter(vo -> vo.getRetriedCount() < query.getRetry())
-                            .collect(Collectors.toList());
-            totalCount = collect.size();
-            voList = collect.stream().skip(start).limit(pageSize).collect(Collectors.toList());
-        } else if (StringUtils.isNoneBlank(query.getTransId()) && Objects.isNull(query.getRetry())) {
-            keys = Sets.newHashSet(String.join(":", redisKeyPrefix, query.getTransId()).getBytes());
-            totalCount = keys.size();
-            voList = findAll(keys);
-        } else if (StringUtils.isNoneBlank(query.getTransId()) && Objects.nonNull(query.getRetry())) {
-            keys =
-                    Sets.newHashSet(String.join(":", redisKeyPrefix, query.getTransId()).getBytes());
-            totalCount = keys.size();
-            voList = findAll(keys)
-                    .stream()
-                    .filter(vo -> vo.getRetriedCount() < query.getRetry())
-                    .collect(Collectors.toList());
-        } else {
+        if (StringUtils.isBlank(query.getTransId())) {
             keys = jedisClient.keys((redisKeyPrefix + "*").getBytes());
             if (keys.size() <= 0 || keys.size() < start) {
                 return commonPager;
             }
             totalCount = keys.size();
             voList = findByPage(keys, start, pageSize);
+        } else {
+            keys = Sets.newHashSet(String.join(":", redisKeyPrefix, query.getTransId()).getBytes());
+            totalCount = keys.size();
+            voList = findAll(keys);
         }
 
         if (keys.size() <= 0 || keys.size() < start) {
@@ -134,9 +119,6 @@ public class RedisLogServiceImpl implements LogService {
         commonPager.setDataList(voList);
         return commonPager;
     }
-
-
-
 
 
     private LogVO buildVOByKey(byte[] key) {
@@ -159,12 +141,14 @@ public class RedisLogServiceImpl implements LogService {
      */
     @Override
     public Boolean batchRemove(List<String> ids, String applicationName) {
+        LOGGER.debug("开始执行批量删除！");
         if (CollectionUtils.isEmpty(ids) || StringUtils.isBlank(applicationName)) {
             return Boolean.FALSE;
         }
         String keyPrefix = RepositoryPathUtils.buildRedisKeyPrefix(applicationName);
         final String[] keys = ids.stream()
-                .map(id -> RepositoryPathUtils.buildRedisKey(keyPrefix,id)).toArray(String[]::new);
+                .map(id ->
+                        RepositoryPathUtils.buildRedisKey(keyPrefix, id)).toArray(String[]::new);
 
         jedisClient.del(keys);
         return Boolean.TRUE;
@@ -184,9 +168,10 @@ public class RedisLogServiceImpl implements LogService {
             return Boolean.FALSE;
         }
         String keyPrefix = RepositoryPathUtils.buildRedisKeyPrefix(applicationName);
-        final String key = RepositoryPathUtils.buildRedisKey(keyPrefix,id);
+        final String key = RepositoryPathUtils.buildRedisKey(keyPrefix, id);
         final byte[] bytes = jedisClient.get(key.getBytes());
         try {
+            LOGGER.debug("redis 执行更新");
             final CoordinatorRepositoryAdapter adapter =
                     objectSerializer.deSerialize(bytes, CoordinatorRepositoryAdapter.class);
             adapter.setRetriedCount(retry);

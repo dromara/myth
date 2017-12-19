@@ -37,8 +37,6 @@ public class AccountDO implements Serializable {
 
     private BigDecimal balance;
 
-    private BigDecimal freezeAmount;
-
     private Date createTime;
 
     private Date updateTime;

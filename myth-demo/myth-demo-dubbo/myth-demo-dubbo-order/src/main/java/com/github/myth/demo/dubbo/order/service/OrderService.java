@@ -37,27 +37,6 @@ public interface OrderService {
     String orderPay(Integer count, BigDecimal amount);
 
 
-    /**
-     * 模拟在订单支付操作中，库存在try阶段中的库存异常
-     *
-     * @param count  购买数量
-     * @param amount 支付金额
-     * @return string
-     */
-    String mockInventoryWithTryException(Integer count, BigDecimal amount);
-
-
-    /**
-     * 模拟在订单支付操作中，库存在try阶段中的timeout
-     *
-     * @param count  购买数量
-     * @param amount 支付金额
-     * @return string
-     */
-    String mockInventoryWithTryTimeout(Integer count, BigDecimal amount);
-
-
-
 
     /**
      * 更新订单状态

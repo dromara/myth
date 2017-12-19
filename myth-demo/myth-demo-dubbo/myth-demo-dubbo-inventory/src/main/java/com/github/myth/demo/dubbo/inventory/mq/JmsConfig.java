@@ -28,6 +28,9 @@ import org.springframework.jms.config.JmsListenerContainerFactory;
 import javax.jms.ConnectionFactory;
 
 
+/**
+ * @author xiaoyu
+ */
 @Configuration
 @EnableJms
 public class JmsConfig {

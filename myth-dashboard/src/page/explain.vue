@@ -1,7 +1,7 @@
 <template>
     <div class="fillcontain">
         <head-top></head-top>
-        <p class="explain_text">二阶段提交分布式事务后台管理系统</p>
+        <p class="explain_text">Myth分布式事务后台管理系统</p>
         <p class="explain_text">Frontend by grubin1989</p>
         <p class="explain_text">Email:yu_zhaohua@yeah.net</p>
     </div>

@@ -72,31 +72,6 @@ public class InventoryServiceImpl implements InventoryService {
         return true;
     }
 
-    @Override
-    public String mockWithException(InventoryDTO inventoryDTO) {
-        //这里是模拟异常所以就直接抛出异常了
-        throw new MythRuntimeException("库存扣减异常！");
-
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Boolean mockWithTimeout(InventoryDTO inventoryDTO) {
-        try {
-            //模拟延迟 当前线程暂停10秒
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        final Inventory entity = inventoryMapper.findByProductId(inventoryDTO.getProductId());
-        entity.setTotalInventory(entity.getTotalInventory() - inventoryDTO.getCount());
-        entity.setLockInventory(entity.getLockInventory() + inventoryDTO.getCount());
-        final int decrease = inventoryMapper.decrease(entity);
-        if (decrease != 1) {
-            throw new MythRuntimeException("库存不足");
-        }
-        return true;
-    }
 
     /**
      * 获取商品库存信息
@@ -105,7 +80,7 @@ public class InventoryServiceImpl implements InventoryService {
      * @return Inventory
      */
     @Override
-    public Inventory findByProductId(Integer productId) {
+    public Inventory findByProductId(String productId) {
         return inventoryMapper.findByProductId(productId);
     }
 

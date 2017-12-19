@@ -19,10 +19,13 @@
 package com.github.myth.core.service.handler;
 
 import com.github.myth.common.bean.context.MythTransactionContext;
+import com.github.myth.common.utils.LogUtil;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.service.MythTransactionHandler;
 import com.github.myth.core.service.impl.MythTransactionManager;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,10 +44,17 @@ import java.util.concurrent.locks.ReentrantLock;
 @Component
 public class ActorMythTransactionHandler implements MythTransactionHandler {
 
+
+    /**
+     * logger
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActorMythTransactionHandler.class);
+
     private static final Lock LOCK = new ReentrantLock();
 
 
     private final MythTransactionManager mythTransactionManager;
+
 
     @Autowired
     public ActorMythTransactionHandler(MythTransactionManager mythTransactionManager) {
@@ -76,6 +86,7 @@ public class ActorMythTransactionHandler implements MythTransactionHandler {
             return proceed;
 
         } catch (Throwable throwable) {
+            LogUtil.error(LOGGER, "执行分布式事务接口失败,事务id：{}", mythTransactionContext::getTransId);
             mythTransactionManager.failureTransaction(point, mythTransactionContext.getTransId(), throwable.getMessage());
             throw throwable;
         } finally {

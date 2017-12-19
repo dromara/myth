@@ -82,7 +82,7 @@ public class MythFeignHandler implements InvocationHandler {
         MythParticipant participant = null;
         if (Objects.nonNull(mythTransactionContext)) {
 
-            final Class<?> declaringClass = method.getDeclaringClass();
+            final Class declaringClass = myth.target();
 
             MythInvocation mythInvocation = new MythInvocation(declaringClass,
                     method.getName(),

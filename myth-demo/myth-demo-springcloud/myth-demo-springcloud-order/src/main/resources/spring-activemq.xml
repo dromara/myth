@@ -2,27 +2,19 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:amq="http://activemq.apache.org/schema/core"
-       xmlns:jms="http://www.springframework.org/schema/jms"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xsi:schemaLocation="
-        http://www.springframework.org/schema/beans
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-        http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context-4.1.xsd
-        http://www.springframework.org/schema/mvc
-        http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
-        http://www.springframework.org/schema/jms
-        http://www.springframework.org/schema/jms/spring-jms-4.1.xsd
         http://activemq.apache.org/schema/core
         http://activemq.apache.org/schema/core/activemq-core-5.12.1.xsd"
 >
 
 
     <amq:connectionFactory id="amqConnectionFactory"
-                           brokerURL="tcp://192.168.148.128:61616"
-                           userName="admin"
-                           password="admin"/>
+                           brokerURL="tcp://120.76.52.162:61616"
+                           userName="happylife"
+                           password="happylifeplat01"
+                           redeliveryPolicy="activeMQRedeliveryPolicy"/>
+
 
     <!-- 配置JMS连接工长 -->
     <bean id="connectionFactory"
@@ -32,6 +24,20 @@
     </bean>
 
 
+
+    <bean id="activeMQRedeliveryPolicy" class="org.apache.activemq.RedeliveryPolicy">
+        <!--是否在每次尝试重新发送失败后,增长这个等待时间 -->
+        <property name="useExponentialBackOff" value="true"/>
+        <!--重发次数,默认为6次   这里设置为1次 -->
+        <property name="maximumRedeliveries" value="1"/>
+        <!--重发时间间隔,默认为1秒 -->
+        <property name="initialRedeliveryDelay" value="1000"/>
+        <!--第一次失败后重新发送之前等待500毫秒,第二次失败再等待500 * 2毫秒,这里的2就是value -->
+        <property name="backOffMultiplier" value="2"/>
+        <!--最大传送延迟，只在useExponentialBackOff为true时有效（V5.5），假设首次重连间隔为10ms，倍数为2，那么第
+            二次重连时间间隔为 20ms，第三次重连时间间隔为40ms，当重连时间间隔大的最大重连时间间隔时，以后每次重连时间间隔都为最大重连时间间隔。 -->
+        <property name="maximumRedeliveryDelay" value="1000"/>
+    </bean>
     <!-- 配置JMS模板（Queue），Spring提供的JMS工具类，它发送、接收消息。 -->
     <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
         <property name="connectionFactory" ref="connectionFactory"/>

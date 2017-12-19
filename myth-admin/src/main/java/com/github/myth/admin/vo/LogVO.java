@@ -66,10 +66,21 @@ public class LogVO implements Serializable {
      * 执行类名称
      */
     private String targetClass;
+
+
     /**
      * 执行方法
      */
     private String targetMethod;
+
+
+    /**
+     * 异常信息
+     */
+    private String errorMsg;
+
+
+
 
 
 

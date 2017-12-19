@@ -19,9 +19,14 @@
 package com.github.myth.demo.springcloud.order.service.impl;
 
 
+import com.github.myth.annotation.Myth;
+import com.github.myth.common.exception.MythRuntimeException;
+import com.github.myth.demo.springcloud.account.api.dto.AccountDTO;
+import com.github.myth.demo.springcloud.account.api.entity.AccountDO;
+import com.github.myth.demo.springcloud.inventory.api.dto.InventoryDTO;
+import com.github.myth.demo.springcloud.inventory.api.entity.InventoryDO;
 import com.github.myth.demo.springcloud.order.client.AccountClient;
-import com.github.myth.demo.springcloud.order.dto.AccountDTO;
-import com.github.myth.demo.springcloud.order.dto.InventoryDTO;
+
 import com.github.myth.demo.springcloud.order.entity.Order;
 import com.github.myth.demo.springcloud.order.enums.OrderStatusEnum;
 import com.github.myth.demo.springcloud.order.mapper.OrderMapper;
@@ -51,7 +56,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final InventoryClient inventoryClient;
 
-    @Autowired
+    @Autowired(required = false)
     public PaymentServiceImpl(OrderMapper orderMapper, AccountClient accountClient, InventoryClient inventoryClient) {
         this.orderMapper = orderMapper;
         this.accountClient = accountClient;
@@ -60,17 +65,34 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     @Override
+    @Myth(destination = "")
     public void makePayment(Order order) {
-        order.setStatus(OrderStatusEnum.PAYING.getCode());
+
+
+        //检查数据 这里只是demo 只是demo 只是demo
+
+        final AccountDO accountDO =
+                accountClient.findByUserId(order.getUserId());
+
+        if(accountDO.getBalance().compareTo(order.getTotalAmount())<= 0){
+            throw new MythRuntimeException("余额不足！");
+        }
+
+        final InventoryDO inventoryDO =
+                inventoryClient.findByProductId(order.getProductId());
+
+        if(inventoryDO.getTotalInventory() < order.getCount()){
+            throw new MythRuntimeException("库存不足！");
+        }
+
+        order.setStatus(OrderStatusEnum.PAY_SUCCESS.getCode());
         orderMapper.update(order);
         //扣除用户余额
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setAmount(order.getTotalAmount());
         accountDTO.setUserId(order.getUserId());
 
-        LOGGER.debug("===========执行Mythspringcloud扣减资金接口==========");
         accountClient.payment(accountDTO);
-
 
         //进入扣减库存操作
         InventoryDTO inventoryDTO = new InventoryDTO();
@@ -79,61 +101,4 @@ public class PaymentServiceImpl implements PaymentService {
         inventoryClient.decrease(inventoryDTO);
     }
 
-    @Override
-    public String mockPaymentInventoryWithTryException(Order order) {
-
-        LOGGER.debug("===========执行Myth springcloud  mockPaymentInventoryWithTryException 扣减资金接口==========");
-        order.setStatus(OrderStatusEnum.PAYING.getCode());
-        orderMapper.update(order);
-
-        //扣除用户余额
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setAmount(order.getTotalAmount());
-        accountDTO.setUserId(order.getUserId());
-        accountClient.payment(accountDTO);
-
-
-        InventoryDTO inventoryDTO = new InventoryDTO();
-        inventoryDTO.setCount(order.getCount());
-        inventoryDTO.setProductId(order.getProductId());
-        inventoryClient.mockWithTryException(inventoryDTO);
-        return "success";
-    }
-
-    @Override
-    public String mockPaymentInventoryWithTryTimeout(Order order) {
-        LOGGER.debug("===========执行springcloud myth  mockPaymentInventoryWithTryTimeout 扣减资金接口==========");
-        order.setStatus(OrderStatusEnum.PAYING.getCode());
-        orderMapper.update(order);
-
-        //扣除用户余额
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setAmount(order.getTotalAmount());
-        accountDTO.setUserId(order.getUserId());
-        accountClient.payment(accountDTO);
-
-
-        InventoryDTO inventoryDTO = new InventoryDTO();
-        inventoryDTO.setCount(order.getCount());
-        inventoryDTO.setProductId(order.getProductId());
-        inventoryClient.mockWithTryTimeout(inventoryDTO);
-        return "success";
-    }
-
-
-    public void confirmOrderStatus(Order order) {
-
-        order.setStatus(OrderStatusEnum.PAY_SUCCESS.getCode());
-        orderMapper.update(order);
-        LOGGER.info("=========进行订单confirm操作完成================");
-
-
-    }
-
-    public void cancelOrderStatus(Order order) {
-
-        order.setStatus(OrderStatusEnum.PAY_FAIL.getCode());
-        orderMapper.update(order);
-        LOGGER.info("=========进行订单cancel操作完成================");
-    }
 }

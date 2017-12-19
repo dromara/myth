@@ -34,7 +34,43 @@
         <module>myth-demo-springcloud-inventory</module>
         <module>myth-demo-springcloud-account</module>
         <module>myth-demo-springcloud-eureka</module>
+        <module>myth-demo-springcloud-account-api</module>
+        <module>myth-demo-springcloud-inventory-api</module>
     </modules>
 
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-demo-springcloud-order</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-demo-springcloud-inventory</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-demo-springcloud-inventory-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-demo-springcloud-account</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-demo-springcloud-account-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
 
 </project>

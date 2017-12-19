@@ -97,34 +97,15 @@ public class ZookeeperLogServiceImpl implements LogService {
         int totalCount;
 
         try {
-            //如果只查 重试条件的
-            if (StringUtils.isBlank(query.getTransId()) && Objects.nonNull(query.getRetry())) {
+            if (StringUtils.isBlank(query.getTransId())) {
                 zNodePaths = zooKeeper.getChildren(rootPath, false);
-                final List<LogVO> all = findAll(zNodePaths, rootPath);
-                final List<LogVO> collect =
-                        all.stream()
-                                .filter(vo -> vo.getRetriedCount() < query.getRetry())
-                                .collect(Collectors.toList());
-                totalCount = collect.size();
-                voList = collect.stream().skip(start).limit(pageSize).collect(Collectors.toList());
-
-            } else if (StringUtils.isNoneBlank(query.getTransId()) && Objects.isNull(query.getRetry())) {
+                totalCount = zNodePaths.size();
+                voList = findByPage(zNodePaths, rootPath, start, pageSize);
+            } else {
                 zNodePaths = Lists.newArrayList(query.getTransId());
                 totalCount = zNodePaths.size();
                 voList = findAll(zNodePaths, rootPath);
 
-            } else if (StringUtils.isNoneBlank(query.getTransId()) && Objects.nonNull(query.getRetry())) {
-                zNodePaths = Lists.newArrayList(query.getTransId());
-
-                voList = findAll(zNodePaths, rootPath)
-                        .stream()
-                        .filter(vo -> vo.getRetriedCount() < query.getRetry())
-                        .collect(Collectors.toList());
-                totalCount = zNodePaths.size();
-            } else {
-                zNodePaths = zooKeeper.getChildren(rootPath, false);
-                totalCount = zNodePaths.size();
-                voList = findByPage(zNodePaths, rootPath, start, pageSize);
             }
             voCommonPager.setPage(PageHelper.buildPage(query.getPageParameter(), totalCount));
             voCommonPager.setDataList(voList);
@@ -185,6 +166,8 @@ public class ZookeeperLogServiceImpl implements LogService {
         final String rootPathPrefix = RepositoryPathUtils.buildZookeeperPathPrefix(applicationName);
         final String path = RepositoryPathUtils.buildZookeeperRootPath(rootPathPrefix, id);
         try {
+
+            LOGGER.debug("zookeeper 更新重试次数");
             byte[] content = zooKeeper.getData(path,
                     false, new Stat());
             final CoordinatorRepositoryAdapter adapter = objectSerializer.deSerialize(content, CoordinatorRepositoryAdapter.class);

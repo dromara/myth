@@ -19,6 +19,7 @@ package com.github.myth.springcloud.interceptor;
 
 import com.github.myth.common.bean.context.MythTransactionContext;
 import com.github.myth.common.constant.CommonConstant;
+import com.github.myth.common.enums.MythRoleEnum;
 import com.github.myth.common.utils.GsonUtils;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.interceptor.MythTransactionInterceptor;
@@ -32,6 +33,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 /**
  * @author xiaoyu
@@ -49,16 +51,18 @@ public class SpringCloudMythTransactionInterceptor implements MythTransactionInt
 
     @Override
     public Object interceptor(ProceedingJoinPoint pjp) throws Throwable {
-        MythTransactionContext mythTransactionContext;
-        //如果不是本地反射调用补偿
-        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-        HttpServletRequest request = requestAttributes == null ? null : ((ServletRequestAttributes) requestAttributes).getRequest();
-        String context = request == null ? null : request.getHeader(CommonConstant.MYTH_TRANSACTION_CONTEXT);
-        if (StringUtils.isNoneBlank()) {
-            mythTransactionContext =
-                    GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
-        } else {
+        MythTransactionContext mythTransactionContext = TransactionContextLocal.getInstance().get();
+        if (Objects.nonNull(mythTransactionContext) &&
+                mythTransactionContext.getRole() == MythRoleEnum.LOCAL.getCode()) {
             mythTransactionContext = TransactionContextLocal.getInstance().get();
+        } else {
+            RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+            HttpServletRequest request = requestAttributes == null ? null : ((ServletRequestAttributes) requestAttributes).getRequest();
+            String context = request == null ? null : request.getHeader(CommonConstant.MYTH_TRANSACTION_CONTEXT);
+            if (StringUtils.isNoneBlank(context)) {
+                mythTransactionContext =
+                        GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
+            }
         }
         return mythTransactionAspectService.invoke(mythTransactionContext, pjp);
     }

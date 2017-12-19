@@ -18,7 +18,7 @@
 
 package com.github.myth.demo.springcloud.inventory.mapper;
 
-import com.github.myth.demo.springcloud.inventory.entity.Inventory;
+import com.github.myth.demo.springcloud.inventory.api.entity.InventoryDO;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -34,34 +34,10 @@ public interface InventoryMapper {
      * @param inventory 实体对象
      * @return rows
      */
-    @Update("update inventory set total_inventory =#{totalInventory}," +
-            " lock_inventory= #{lockInventory} " +
+    @Update("update inventory set total_inventory =#{totalInventory}" +
             " where product_id =#{productId}  and  total_inventory >0  ")
-    int decrease(Inventory inventory);
+    int decrease(InventoryDO inventory);
 
-
-    /**
-     * 库存扣减confirm
-     *
-     * @param inventory 实体对象
-     * @return rows
-     */
-    @Update("update inventory set " +
-            " lock_inventory= #{lockInventory} " +
-            " where product_id =#{productId}  and lock_inventory >0 ")
-    int confirm(Inventory inventory);
-
-
-    /**
-     * 库存扣减 cancel
-     *
-     * @param inventory 实体对象
-     * @return rows
-     */
-    @Update("update inventory set total_inventory =#{totalInventory}," +
-            " lock_inventory= #{lockInventory} " +
-            " where product_id =#{productId}  and lock_inventory >0 ")
-    int cancel(Inventory inventory);
 
 
     /**
@@ -71,5 +47,5 @@ public interface InventoryMapper {
      * @return Inventory
      */
     @Select("select * from inventory where product_id =#{productId}")
-    Inventory findByProductId(Integer productId);
+    InventoryDO findByProductId(String productId);
 }

@@ -30,7 +30,6 @@ import java.util.stream.Stream;
 /**
  * @author xiaoyu
  */
-@Spi(scope = Scope.SINGLETON)
 @SpiMeta(name = "motanMythTransactionFilter")
 @Activation(key = {MotanConstants.NODE_TYPE_REFERER})
 public class MotanMythTransactionFilter implements Filter {
@@ -74,7 +73,7 @@ public class MotanMythTransactionFilter implements Filter {
             final MythTransactionContext mythTransactionContext =
                     TransactionContextLocal.getInstance().get();
             if (Objects.nonNull(mythTransactionContext)) {
-                RpcContext.getContext().setRpcAttachment(CommonConstant.MYTH_TRANSACTION_CONTEXT,
+                request.setAttachment(CommonConstant.MYTH_TRANSACTION_CONTEXT,
                         GsonUtils.getInstance().toJson(mythTransactionContext));
             }
             final MythParticipant participant =

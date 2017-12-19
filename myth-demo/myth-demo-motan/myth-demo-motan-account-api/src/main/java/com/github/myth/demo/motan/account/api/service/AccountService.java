@@ -44,5 +44,5 @@ public interface AccountService {
      * @param userId 用户id
      * @return AccountDO
      */
-    AccountDO findByUserId(Integer userId);
+    AccountDO findByUserId(String userId);
 }

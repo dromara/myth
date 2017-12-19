@@ -98,42 +98,4 @@ public class PaymentServiceImpl implements PaymentService {
         LOGGER.debug("=============Myth分布式事务执行完成！=======");
     }
 
-    @Override
-    public String mockPaymentInventoryWithTryException(Order order) {
-        order.setStatus(OrderStatusEnum.PAYING.getCode());
-        orderMapper.update(order);
-
-        //扣除用户余额
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setAmount(order.getTotalAmount());
-        accountDTO.setUserId(order.getUserId());
-        accountService.payment(accountDTO);
-
-
-        InventoryDTO inventoryDTO = new InventoryDTO();
-        inventoryDTO.setCount(order.getCount());
-        inventoryDTO.setProductId(order.getProductId());
-        inventoryService.mockWithException(inventoryDTO);
-        return SUCCESS;
-    }
-
-    @Override
-    public String mockPaymentInventoryWithTryTimeout(Order order) {
-        order.setStatus(OrderStatusEnum.PAYING.getCode());
-        orderMapper.update(order);
-
-        //扣除用户余额
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setAmount(order.getTotalAmount());
-        accountDTO.setUserId(order.getUserId());
-        accountService.payment(accountDTO);
-
-        //进入扣减库存操作
-        InventoryDTO inventoryDTO = new InventoryDTO();
-        inventoryDTO.setCount(order.getCount());
-        inventoryDTO.setProductId(order.getProductId());
-        inventoryService.mockWithTimeout(inventoryDTO);
-        return SUCCESS;
-    }
-
 }

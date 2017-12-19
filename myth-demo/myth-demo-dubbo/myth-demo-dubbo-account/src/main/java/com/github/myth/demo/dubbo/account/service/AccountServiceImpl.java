@@ -44,7 +44,7 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountMapper accountMapper;
 
-    @Autowired
+    @Autowired(required = false)
     public AccountServiceImpl(AccountMapper accountMapper) {
         this.accountMapper = accountMapper;
     }
@@ -78,7 +78,7 @@ public class AccountServiceImpl implements AccountService {
      * @return AccountDO
      */
     @Override
-    public AccountDO findByUserId(Integer userId) {
+    public AccountDO findByUserId(String  userId) {
         return accountMapper.findByUserId(userId);
     }
 

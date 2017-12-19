@@ -225,7 +225,7 @@ public class CoordinatorServiceImpl implements CoordinatorService {
                 entity = serializer.deSerialize(message, MessageEntity.class);
             } catch (MythException e) {
                 e.printStackTrace();
-                return Boolean.FALSE;
+                throw new MythRuntimeException(e.getMessage());
             }
             /*
              * 1 检查该事务有没被处理过，已经处理过的 则不处理
@@ -256,6 +256,7 @@ public class CoordinatorServiceImpl implements CoordinatorService {
                     //会进入LocalMythTransactionHandler  那里有保存
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                     throw new MythRuntimeException(e.getMessage());
                 } finally {
                     TransactionContextLocal.getInstance().remove();
@@ -329,10 +330,8 @@ public class CoordinatorServiceImpl implements CoordinatorService {
                                             coordinatorRepository.updateStatus(mythTransaction.getTransId(),
                                                     MythStatusEnum.COMMIT.getCode());
                                         }
-
                                     });
                         }
-
 
                     } catch (Exception e) {
                         e.printStackTrace();

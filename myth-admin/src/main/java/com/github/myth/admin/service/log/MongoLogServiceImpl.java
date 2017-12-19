@@ -87,9 +87,6 @@ public class MongoLogServiceImpl implements LogService {
         if (StringUtils.isNoneBlank(query.getTransId())) {
             baseQuery.addCriteria(new Criteria("transId").is(query.getTransId()));
         }
-        if (Objects.nonNull(query.getRetry())) {
-            baseQuery.addCriteria(new Criteria("retriedCount").lt(query.getRetry()));
-        }
 
         final long totalCount = mongoTemplate.count(baseQuery, mongoTableName);
         if (totalCount <= 0) {

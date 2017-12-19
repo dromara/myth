@@ -18,11 +18,13 @@
 package com.github.myth.demo.springcloud.inventory.controller;
 
 
-import com.github.myth.demo.springcloud.inventory.dto.InventoryDTO;
-import com.github.myth.demo.springcloud.inventory.service.InventoryService;
+import com.github.myth.demo.springcloud.inventory.api.dto.InventoryDTO;
+import com.github.myth.demo.springcloud.inventory.api.entity.InventoryDO;
+import com.github.myth.demo.springcloud.inventory.api.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -45,15 +47,9 @@ public class InventoryController {
         return inventoryService.decrease(inventoryDTO);
     }
 
-
-    @RequestMapping("/mockWithTryException")
-    public Boolean mockWithTryException(@RequestBody InventoryDTO inventoryDTO) {
-        return inventoryService.mockWithTryException(inventoryDTO);
-    }
-
-    @RequestMapping("/mockWithTryTimeout")
-    public Boolean mockWithTryTimeout(@RequestBody InventoryDTO inventoryDTO) {
-        return inventoryService.mockWithTryTimeout(inventoryDTO);
+    @RequestMapping("/findByProductId")
+    public InventoryDO findByProductId(@RequestParam("productId") String productId) {
+        return inventoryService.findByProductId(productId);
     }
 
 

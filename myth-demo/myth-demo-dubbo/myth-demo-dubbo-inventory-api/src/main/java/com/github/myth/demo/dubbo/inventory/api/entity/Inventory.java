@@ -41,9 +41,5 @@ public class Inventory implements Serializable {
      */
     private Integer totalInventory;
 
-    /**
-     * 锁定库存
-     */
-    private Integer lockInventory;
 
 }

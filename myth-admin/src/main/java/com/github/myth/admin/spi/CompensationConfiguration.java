@@ -20,7 +20,7 @@ package com.github.myth.admin.spi;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.github.myth.admin.service.LogService;
-import com.github.myth.admin.service.log.FileServiceImpl;
+import com.github.myth.admin.service.log.FileLogServiceImpl;
 import com.github.myth.admin.service.log.JdbcLogServiceImpl;
 import com.github.myth.admin.service.log.MongoLogServiceImpl;
 import com.github.myth.admin.service.log.RedisLogServiceImpl;
@@ -36,6 +36,7 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -66,12 +67,12 @@ public class CompensationConfiguration {
      */
     @Configuration
     @Profile("db")
-    static class JdbcRecoverConfiguration {
+    static class JdbcConfiguration {
 
         private final Environment env;
 
         @Autowired
-        public JdbcRecoverConfiguration(Environment env) {
+        public JdbcConfiguration(Environment env) {
             this.env = env;
         }
 
@@ -96,11 +97,11 @@ public class CompensationConfiguration {
         }
 
         @Bean
-        @Qualifier("jdbcTransactionRecoverService")
-        public LogService jdbcTransactionRecoverService() {
-            JdbcLogServiceImpl jdbcTransactionRecoverService = new JdbcLogServiceImpl();
-            jdbcTransactionRecoverService.setDbType(env.getProperty("compensation.db.driver"));
-            return jdbcTransactionRecoverService;
+        @Qualifier("jdbcLogService")
+        public LogService jdbcLogService() {
+            JdbcLogServiceImpl jdbcLogService = new JdbcLogServiceImpl();
+            jdbcLogService.setDbType(env.getProperty("myth.db.driver"));
+            return jdbcLogService;
         }
 
 
@@ -109,18 +110,18 @@ public class CompensationConfiguration {
 
     @Configuration
     @Profile("redis")
-    static class RedisRecoverConfiguration {
+    static class RedisConfiguration {
 
         private final Environment env;
 
         @Autowired
-        public RedisRecoverConfiguration(Environment env) {
+        public RedisConfiguration(Environment env) {
             this.env = env;
         }
 
         @Bean
-        @Qualifier("redisTransactionRecoverService")
-        public LogService redisTransactionRecoverService() {
+        @Qualifier("redisLogService")
+        public LogService redisLogService() {
 
             JedisPool jedisPool;
             JedisPoolConfig config = new JedisPoolConfig();
@@ -156,24 +157,24 @@ public class CompensationConfiguration {
 
     @Configuration
     @Profile("file")
-    static class FileRecoverConfiguration {
+    static class FileLogConfiguration {
 
         @Bean
-        @Qualifier("fileTransactionRecoverService")
-        public LogService fileTransactionRecoverService() {
-            return new FileServiceImpl();
+        @Qualifier("fileLogService")
+        public LogService fileLogService() {
+            return new FileLogServiceImpl();
         }
 
     }
 
     @Configuration
     @Profile("zookeeper")
-    static class ZookeeperRecoverConfiguration {
+    static class ZookeeperConfiguration {
 
         private final Environment env;
 
         @Autowired
-        public ZookeeperRecoverConfiguration(Environment env) {
+        public ZookeeperConfiguration(Environment env) {
             this.env = env;
         }
 
@@ -181,8 +182,8 @@ public class CompensationConfiguration {
 
 
         @Bean
-        @Qualifier("zookeeperTransactionRecoverService")
-        public LogService zookeeperTransactionRecoverService() {
+        @Qualifier("zookeeperLogService")
+        public LogService zookeeperLogService() {
             ZooKeeper zooKeeper = null;
             try {
                 final String host = env.getProperty("myth.zookeeper.host");
@@ -205,18 +206,19 @@ public class CompensationConfiguration {
 
     @Configuration
     @Profile("mongo")
-    static class MongoRecoverConfiguration {
+    static class MongoConfiguration {
 
         private final Environment env;
 
         @Autowired
-        public MongoRecoverConfiguration(Environment env) {
+        public MongoConfiguration(Environment env) {
             this.env = env;
         }
 
         @Bean
-        @Qualifier("mongoTransactionRecoverService")
-        public LogService mongoTransactionRecoverService() {
+        @Qualifier("mongoLogService")
+        @ConditionalOnProperty(prefix = "myth.mongo", name = "userName")
+        public LogService mongoLogService() {
 
             MongoClientFactoryBean clientFactoryBean = new MongoClientFactoryBean();
             MongoCredential credential = MongoCredential.createScramSha1Credential(

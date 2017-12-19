@@ -73,7 +73,7 @@ public class JdbcLogServiceImpl implements LogService {
         StringBuilder sqlBuilder = new StringBuilder();
 
         sqlBuilder.append("select trans_id,target_class,target_method," +
-                " retried_count,create_time,last_time,version from ")
+                " retried_count,create_time,last_time,version,error_msg from ")
                 .append(tableName).append(" where 1= 1 ");
 
 
@@ -81,10 +81,6 @@ public class JdbcLogServiceImpl implements LogService {
             sqlBuilder.append(" and trans_id = ").append(query.getTransId());
         }
 
-        if (Objects.nonNull(query.getRetry())) {
-
-            sqlBuilder.append(" and retried_count < ").append(query.getRetry());
-        }
 
         final String sql = buildPageSql(sqlBuilder.toString(), pageParameter);
 
@@ -163,6 +159,7 @@ public class JdbcLogServiceImpl implements LogService {
         vo.setVersion((Integer) map.get("version"));
         vo.setTargetClass((String) map.get("target_class"));
         vo.setTargetMethod((String) map.get("target_method"));
+        vo.setErrorMsg((String) map.get("error_msg"));
         return vo;
     }
 
@@ -185,7 +182,7 @@ public class JdbcLogServiceImpl implements LogService {
             case "sqlserver":
                 return PageHelper.buildPageSqlForSqlserver(sql, pageParameter).toString();
             default:
-                return "";
+                return "mysql";
         }
 
     }

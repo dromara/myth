@@ -5,7 +5,7 @@ const adminSet = r => require.ensure([], () => r(require('../page/adminSet')), '
 const home = r => require.ensure([], () => r(require('../page/home')), 'home')
 const login = r => require.ensure([], () => r(require('../page/login')), 'login')
 const manage = r => require.ensure([], () => r(require('../page/manage')), 'manage')
-const transactionRecoveryInfo = r => require.ensure([], () => r(require('../page/transactionRecoveryInfo')), 'transactionRecoveryInfo')
+const transactionLog = r => require.ensure([], () => r(require('../page/transactionLog')), 'transactionLog')
 
 Vue.use(Router)
 
@@ -24,9 +24,9 @@ export default new Router({
                 component: home,
                 meta: [],
             }, {
-                path: '/transactionRecoveryInfo',
-                component: transactionRecoveryInfo,
-                meta: ['事务补偿管理', '事务补偿信息列表'],
+                path: '/transactionLog',
+                component: transactionLog,
+                meta: ['事务日志管理', '事务日志信息列表'],
             }, {
                 path: '/adminSet',
                 component: adminSet,

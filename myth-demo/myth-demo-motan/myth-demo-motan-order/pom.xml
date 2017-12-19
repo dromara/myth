@@ -167,7 +167,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
 
                 <configuration>
-                    <mainClass>com.github.myth.demo.motan.order.OrderApplication</mainClass>
+                    <mainClass>com.github.myth.demo.motan.order.MotanOrderApplication</mainClass>
                     <executable>true</executable>
                 </configuration>
             </plugin>

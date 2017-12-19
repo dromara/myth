@@ -19,15 +19,23 @@
 package com.github.myth.annotation;
 
 /**
- *消息类型枚举
+ * 消息类型枚举
+ *
  * @author xiaoyu
  */
+@SuppressWarnings("ALL")
 public enum MessageTypeEnum {
 
 
+    /**
+     * P 2 p message type enum.
+     */
     P2P(1, "点对点模式"),
 
 
+    /**
+     * Topic message type enum.
+     */
     TOPIC(2, "TOPIC模式");
 
     private Integer code;

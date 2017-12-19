@@ -53,12 +53,13 @@
 
    <!-- <import resource="spring-motan.xml"/>-->
 
+
     <!--
-       <property name="repositorySupport" value="db" />
-        <property name="tccDbConfig">
-            <bean class="com.happylifeplat.tcc.common.config.TccDbConfig">
+        <property name="repositorySupport" value="db"/>
+        <property name="mythDbConfig">
+            <bean class="com.github.myth.common.config.MythDbConfig">
                 <property name="url"
-                          value="jdbc:mysql://192.168.1.68:3306/stock?useUnicode=true&amp;characterEncoding=utf8"/>
+                          value="jdbc:mysql://192.168.1.68:3306/myth?useUnicode=true&amp;characterEncoding=utf8"/>
                 <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
                 <property name="password" value="Wgj@555888"/>
                 <property name="username" value="xiaoyu"/>
@@ -67,8 +68,8 @@
 
 
         <property name="repositorySupport" value="redis" />
-        <property name="tccRedisConfig">
-            <bean class="com.happylifeplat.tcc.common.config.TccRedisConfig">
+        <property name="mythRedisConfig">
+            <bean class="com.github.myth.common.config.MythRedisConfig">
                 <property name="hostName"
                           value="192.168.1.68"/>
                 <property name="port" value="6379"/>
@@ -77,8 +78,8 @@
         </property>
 
         <property name="repositorySupport" value="zookeeper"/>
-        <property name="tccZookeeperConfig">
-            <bean class="com.happylifeplat.tcc.common.config.TccZookeeperConfig">
+        <property name="mythZookeeperConfig">
+            <bean class="com.github.myth.common.config.MythZookeeperConfig">
                 <property name="host"  value="192.168.1.73:2181"/>
                 <property name="sessionTimeOut" value="100000"/>
                 <property name="rootPath" value="/tcc"/>
@@ -86,9 +87,9 @@
         </property>
 
 
-        <property name="repositorySupport" value="mongodb"/>
-        <property name="tccMongoConfig">
-            <bean class="com.happylifeplat.tcc.common.config.TccMongoConfig">
+      <property name="repositorySupport" value="mongodb"/>
+        <property name="mythMongoConfig">
+            <bean class="com.github.myth.common.config.MythMongoConfig">
                 <property name="mongoDbUrl"  value="192.168.1.68:27017"/>
                 <property name="mongoDbName" value="happylife"/>
                 <property name="mongoUserName" value="xiaoyu"/>
@@ -97,9 +98,9 @@
         </property>
 
 
-        <property name="repositorySupport" value="file"/>
-        <property name="tccFileConfig">
-            <bean class="com.happylifeplat.tcc.common.config.TccFileConfig">
+       <property name="repositorySupport" value="file"/>
+        <property name="mythFileConfig">
+            <bean class="com.github.myth.common.config.MythFileConfig">
                 <property name="path"  value="/inventory"/>
                 <property name="prefix" value="inventory"/>
             </bean>

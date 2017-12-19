@@ -24,11 +24,15 @@ import com.github.myth.common.utils.GsonUtils;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.interceptor.MythTransactionInterceptor;
 import com.github.myth.core.service.MythTransactionAspectService;
+import com.weibo.api.motan.rpc.Request;
 import com.weibo.api.motan.rpc.RpcContext;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author xiaoyu
@@ -38,8 +42,6 @@ public class MotanMythTransactionInterceptor implements MythTransactionIntercept
 
     private final MythTransactionAspectService mythTransactionAspectService;
 
-    public static final String NULL = "null";
-
     @Autowired
     public MotanMythTransactionInterceptor(MythTransactionAspectService mythTransactionAspectService) {
         this.mythTransactionAspectService = mythTransactionAspectService;
@@ -48,15 +50,20 @@ public class MotanMythTransactionInterceptor implements MythTransactionIntercept
 
     @Override
     public Object interceptor(ProceedingJoinPoint pjp) throws Throwable {
-        final String context = RpcContext.getContext().getRequest().getAttachments()
-                .get(CommonConstant.MYTH_TRANSACTION_CONTEXT);
-        MythTransactionContext mythTransactionContext;
-        if (StringUtils.isNoneBlank(context) && !NULL.equals(context)) {
-            mythTransactionContext =
-                    GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
+        MythTransactionContext mythTransactionContext = null;
+
+        final Request request = RpcContext.getContext().getRequest();
+        if (Objects.nonNull(request)) {
+            final Map<String, String> attachments = request.getAttachments();
+            if (attachments != null && !attachments.isEmpty()) {
+                String context = attachments.get(CommonConstant.MYTH_TRANSACTION_CONTEXT);
+                mythTransactionContext =
+                        GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
+            }
         } else {
             mythTransactionContext = TransactionContextLocal.getInstance().get();
         }
+
         return mythTransactionAspectService.invoke(mythTransactionContext, pjp);
     }
 }

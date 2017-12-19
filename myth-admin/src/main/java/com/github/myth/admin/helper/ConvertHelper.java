@@ -42,6 +42,7 @@ public class ConvertHelper {
         vo.setVersion(adapter.getVersion());
         vo.setTargetClass(adapter.getTargetClass());
         vo.setTargetMethod(adapter.getTargetMethod());
+        vo.setErrorMsg(adapter.getErrorMsg());
         return vo;
 
     }

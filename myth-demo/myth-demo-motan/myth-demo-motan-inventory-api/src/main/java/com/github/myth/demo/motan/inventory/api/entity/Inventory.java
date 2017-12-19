@@ -18,11 +18,14 @@
 
 package com.github.myth.demo.motan.inventory.api.entity;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
 /**
  * @author xiaoyu
  */
+@Data
 public class Inventory implements Serializable {
 
     private static final long serialVersionUID = 6957734749389133832L;
@@ -31,47 +34,11 @@ public class Inventory implements Serializable {
     /**
      * 商品id
      */
-    private Integer productId;
+    private String productId;
 
     /**
      * 总库存
      */
     private Integer totalInventory;
 
-    /**
-     * 锁定库存
-     */
-    private Integer lockInventory;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Integer productId) {
-        this.productId = productId;
-    }
-
-    public Integer getTotalInventory() {
-        return totalInventory;
-    }
-
-    public void setTotalInventory(Integer totalInventory) {
-        this.totalInventory = totalInventory;
-    }
-
-    public Integer getLockInventory() {
-        return lockInventory;
-    }
-
-    public void setLockInventory(Integer lockInventory) {
-        this.lockInventory = lockInventory;
-    }
 }

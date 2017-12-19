@@ -2,7 +2,7 @@
     <div>
         <head-top></head-top>
         <div style="margin-top:20%;margin-left: 20%; alignment: center">
-            <h1 style="color: darkmagenta; font-size: 3rem">欢迎使用分布式事务后台管理系统!</h1>
+            <h1 style="color: darkmagenta; font-size: 3rem">欢迎使用Myth分布式事务后台管理系统!</h1>
         </div>
         <div style="clear: both"></div>
     </div>

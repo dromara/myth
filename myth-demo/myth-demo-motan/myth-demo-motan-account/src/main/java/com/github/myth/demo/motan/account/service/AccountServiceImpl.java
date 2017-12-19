@@ -82,10 +82,8 @@ public class AccountServiceImpl implements AccountService {
      * @return AccountDO
      */
     @Override
-    public AccountDO findByUserId(Integer userId) {
-        final AccountDO byUserId = accountMapper.findByUserId(userId);
-        LOGGER.debug(byUserId.toString());
-        return byUserId;
+    public AccountDO findByUserId(String userId) {
+        return  accountMapper.findByUserId(userId);
     }
 
 }

@@ -72,16 +72,6 @@ public class PaymentServiceImpl implements PaymentService {
     public void makePayment(Order order) {
 
         //做库存和资金账户的检验工作 这里只是demo 。。。
-     /*   final AccountDO accountDO = accountService.findByUserId(order.getUserId());
-        if (accountDO.getBalance().compareTo(order.getTotalAmount()) <= 0) {
-            return;
-        }
-
-        final Inventory inventory = inventoryService.findByProductId(order.getProductId());
-
-        if (inventory.getTotalInventory() < order.getCount()) {
-            return;
-        }*/
 
         LOGGER.debug("===check data over===");
 
@@ -100,45 +90,5 @@ public class PaymentServiceImpl implements PaymentService {
         LOGGER.debug("=============Myth分布式事务执行完成！=======");
     }
 
-    @Override
-    public String mockPaymentInventoryWithTryException(Order order) {
-        LOGGER.debug("===mockPaymentInventoryWithTryException===");
-        order.setStatus(OrderStatusEnum.PAYING.getCode());
-        orderMapper.update(order);
-
-        //扣除用户余额
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setAmount(order.getTotalAmount());
-        accountDTO.setUserId(order.getUserId());
-        accountService.payment(accountDTO);
-
-
-        InventoryDTO inventoryDTO = new InventoryDTO();
-        inventoryDTO.setCount(order.getCount());
-        inventoryDTO.setProductId(order.getProductId());
-        inventoryService.mockWithException(inventoryDTO);
-        return SUCCESS;
-    }
-
-    @Override
-    public String mockPaymentInventoryWithTryTimeout(Order order) {
-
-        LOGGER.debug("=== mockPaymentInventoryWithTryTimeout===");
-        order.setStatus(OrderStatusEnum.PAYING.getCode());
-        orderMapper.update(order);
-
-        //扣除用户余额
-        AccountDTO accountDTO = new AccountDTO();
-        accountDTO.setAmount(order.getTotalAmount());
-        accountDTO.setUserId(order.getUserId());
-        accountService.payment(accountDTO);
-
-        //进入扣减库存操作
-        InventoryDTO inventoryDTO = new InventoryDTO();
-        inventoryDTO.setCount(order.getCount());
-        inventoryDTO.setProductId(order.getProductId());
-        inventoryService.mockWithTimeout(inventoryDTO);
-        return SUCCESS;
-    }
 
 }

@@ -53,32 +53,4 @@ public class OrderController {
 
     }
 
-    @PostMapping(value = "/mockInventoryWithTryException")
-    @ApiOperation(value = "模拟下单付款操作在try阶段异常，此时账户系统和订单状态会回滚，达到数据的一致性（注意:这里模拟的是系统异常，或者rpc异常）")
-    public String mockInventoryWithTryException(@RequestParam(value = "count") Integer count,
-                                                @RequestParam(value = "amount") BigDecimal amount) {
-        return orderService.mockInventoryWithTryException(count, amount);
-    }
-
-    @PostMapping(value = "/mockInventoryWithTryTimeout")
-    @ApiOperation(value = "模拟下单付款操作在try阶段超时异常，此时账户系统和订单状态会回滚，达到数据的一致性（异常指的是超时异常）")
-    public String mockInventoryWithTryTimeout(@RequestParam(value = "count") Integer count,
-                                              @RequestParam(value = "amount") BigDecimal amount) {
-        return orderService.mockInventoryWithTryTimeout(count, amount);
-    }
-
-
-    /*@PostMapping(value = "/mockInventoryWithConfirmException")
-    @ApiOperation(value = "模拟下单付款操作在Confirm阶段异常，此时所有的系统调用都会执行cancel方法，达到数据的一致性（注意:这里模拟的是系统异常，或者rpc异常）")
-    public String mockInventoryWithConfirmException(@RequestParam(value = "count") Integer count,
-                                                @RequestParam(value = "amount") BigDecimal amount) {
-        return orderService.mockInventoryWithConfirmException(count,amount);
-    }
-
-    @PostMapping(value = "/mockInventoryWithConfirmTimeout")
-    @ApiOperation(value = "模拟下单付款操作在Confirm阶段异常，此时所有的系统调用都会执行cancel方法，达到数据的一致性（异常指的是超时异常）")
-    public String mockInventoryWithConfirmTimeout(@RequestParam(value = "count") Integer count,
-                                              @RequestParam(value = "amount") BigDecimal amount) {
-        return orderService.mockInventoryWithConfirmTimeout(count,amount);
-    }*/
 }

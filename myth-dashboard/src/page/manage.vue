@@ -5,8 +5,8 @@
 				<el-menu :default-active="defaultActive" style="min-height: 100%;" theme="dark" router>
 					<el-menu-item index="manage"><i class="el-icon-menu"></i>首页</el-menu-item>
 					<el-submenu index="2">
-						<template slot="title"><i class="el-icon-plus"></i>事务补偿管理</template>
-						<el-menu-item index="transactionRecoveryInfo">事务补偿信息列表</el-menu-item>
+						<template slot="title"><i class="el-icon-plus"></i>事务日志管理</template>
+						<el-menu-item index="transactionLog">事务日志信息列表</el-menu-item>
 					</el-submenu>
 					<el-submenu index="3">
 						<template slot="title"><i class="el-icon-setting"></i>设置</template>

@@ -45,7 +45,7 @@ import java.util.List;
  * @since JDK 1.8
  */
 @RestController
-@RequestMapping("/compensate")
+@RequestMapping("/log")
 public class TransactionLogController {
 
 
@@ -53,7 +53,7 @@ public class TransactionLogController {
 
     private final ApplicationNameService applicationNameService;
 
-    @Value("${compensation.retry.max}")
+    @Value("${myth.retry.max}")
     private Integer recoverRetryMax;
 
     @Autowired
@@ -83,9 +83,6 @@ public class TransactionLogController {
     @PostMapping(value = "/update")
     @Permission
     public AjaxResponse update(@RequestBody TransactionLogDTO transactionLogDTO) {
-        if (recoverRetryMax < transactionLogDTO.getRetry()) {
-            return AjaxResponse.error("重试次数超过最大设置，请您重新设置！");
-        }
         final Boolean success = logService.updateRetry(transactionLogDTO.getId(),
                 transactionLogDTO.getRetry(), transactionLogDTO.getApplicationName());
         return AjaxResponse.success(success);

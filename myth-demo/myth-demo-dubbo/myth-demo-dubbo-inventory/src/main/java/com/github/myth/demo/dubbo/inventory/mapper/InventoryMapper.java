@@ -47,5 +47,5 @@ public interface InventoryMapper {
      * @return Inventory
      */
     @Select("select * from inventory where product_id =#{productId}")
-    Inventory findByProductId(Integer productId);
+    Inventory findByProductId(String productId);
 }

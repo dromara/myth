@@ -7,7 +7,7 @@ server:
 spring:
     datasource:
         driver-class-name:  com.mysql.jdbc.Driver
-        url: jdbc:mysql://192.168.1.68:3306/order?useUnicode=true&characterEncoding=utf8
+        url: jdbc:mysql://192.168.1.68:3306/myth_order?useUnicode=true&characterEncoding=utf8
         username: xiaoyu
         password: Wgj@555888
         initialSize: 20
@@ -38,8 +38,14 @@ eureka:
 
 
 logging:
-            level:
-                root: info
-                com.happylifeplat.tcc : debug
-            path: "./logs"
+    level:
+        root: error
+        org.springframework.web: info
+        org.apache.ibatis: info
+        com.github.myth.bonuspoint: info
+        com.github.myth.lottery: debug
+        com.github.myth: debug
+
+
+    path: "./logs"
 

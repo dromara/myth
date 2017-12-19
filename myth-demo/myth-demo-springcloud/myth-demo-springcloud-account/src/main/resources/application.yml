@@ -7,7 +7,7 @@ server:
 spring:
     datasource:
         driver-class-name:  com.mysql.jdbc.Driver
-        url: jdbc:mysql://192.168.1.68:3306/account?useUnicode=true&characterEncoding=utf8
+        url: jdbc:mysql://192.168.1.68:3306/myth_account?useUnicode=true&characterEncoding=utf8
         username: xiaoyu
         password: Wgj@555888
         initialSize: 20
@@ -26,9 +26,32 @@ spring:
         connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
     application:
       name: account-service
+   #activemq:
+        #   broker-url: tcp://120.76.52.162:61616
+        #   user: happylife
+        #   password: happylifeplat01
+        #   trust-all: true
+   #rabbitmq:
+        #    host: localhost
+        #    port: 5672
+        #    username: guest
+        #    password: guest
+    rocketmq:
+          namesrvAddr: 192.168.1.148:9876
+          consumerGroupName: account
+          instanceName: account
+   #kafka:
+          #  consumer:
+          #     bootstrap-servers: localhost:9092
+          #     group-id: test
+          #     auto-offset-reset: earliest
+          #     enable-auto-commit: true
+          #     auto-commit-interval: 100
+          #    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+          #     value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
 
 mybatis:
-  type-aliases-package: com.github.myth.demo.springcloud.account.entity
+  type-aliases-package: com.github.myth.demo.springcloud.account.api.entity
   config-location: classpath:mybatis/mybatis-config.xml
 #${random.int[9000,9999]}
 eureka:
@@ -40,8 +63,13 @@ account-service :
    ribbon.NFLoadBalancerRuleClassName : com.netflix.loadbalancer.RandomRule
 
 logging:
-            level:
-                root: info
-                com.happylifeplat.tcc : debug
-            path: "./logs"
+    level:
+        root: error
+        org.springframework.web: info
+        org.apache.ibatis: info
+        com.github.myth.bonuspoint: info
+        com.github.myth.lottery: debug
+        com.github.myth: debug
+
+    path: "./logs"
 

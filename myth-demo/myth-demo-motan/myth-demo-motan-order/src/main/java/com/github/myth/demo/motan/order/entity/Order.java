@@ -31,6 +31,8 @@ import java.util.Date;
 public class Order implements Serializable {
 
     private static final long serialVersionUID = -8551347266419380333L;
+
+
     private Integer id;
 
     /**
@@ -52,7 +54,7 @@ public class Order implements Serializable {
     /**
      * 商品id
      */
-    private Integer productId;
+    private String productId;
 
     /**
      * 付款金额
@@ -67,7 +69,7 @@ public class Order implements Serializable {
     /**
      * 购买人
      */
-    private Integer userId;
+    private String userId;
 
 
 }

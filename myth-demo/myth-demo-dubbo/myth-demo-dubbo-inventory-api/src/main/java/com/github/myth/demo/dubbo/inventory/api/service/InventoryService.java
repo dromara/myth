@@ -40,31 +40,12 @@ public interface InventoryService {
     Boolean decrease(InventoryDTO inventoryDTO);
 
 
-    /**
-     * mock扣减库存异常
-     *
-     * @param inventoryDTO dto对象
-     * @return String
-     */
-    @Myth(destination = "inventory")
-    String mockWithException(InventoryDTO inventoryDTO);
-
-
-    /**
-     * mock扣减库存超时
-     *
-     * @param inventoryDTO dto对象
-     * @return String
-     */
-    @Myth(destination = "inventory")
-    Boolean mockWithTimeout(InventoryDTO inventoryDTO);
-
 
     /**
      * 获取商品库存信息
      * @param productId 商品id
      * @return Inventory
      */
-    Inventory findByProductId(Integer productId);
+    Inventory findByProductId(String productId);
 
 }

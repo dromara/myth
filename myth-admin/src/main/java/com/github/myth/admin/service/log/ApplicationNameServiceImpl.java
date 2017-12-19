@@ -37,7 +37,7 @@ import java.util.List;
 public class ApplicationNameServiceImpl implements ApplicationNameService {
 
 
-    @Value("${tcc.application.list}")
+    @Value("${myth.repository.suffix.list}")
     private String appNameList;
 
     /**
