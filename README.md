@@ -35,7 +35,7 @@ myth
 # Quick trial
 
 * #### Clone & Build
-   ````
+   ```
    > git clone https://github.com/yu199195/myth.git
 
    > cd myth
@@ -72,30 +72,23 @@ myth
 * #### 关于jar包版本问题 ，现在因为没有传到中央仓库，如果引用的话，请自行设置相应的版本。
 
 
-*  ## [Dubbo User Gruid](https://github.com/yu199195/myth/wiki/Dubbo-User-Guide)
+*  ## [Dubbo User Guide](https://github.com/yu199195/myth/wiki/Dubbo-User-Guide)
 
-*  ## [Motan User Gruid](https://github.com/yu199195/myth/wiki/Motan-User-Guide)
+*  ## [Motan User Guide](https://github.com/yu199195/myth/wiki/Motan-User-Guide)
 
-*  ## [SpringCloud User Gruid](https://github.com/yu199195/myth/wiki/SpringCloud-User-Guide)
-
-
-
-# Design
-## 未完待续
-
-# STP
-## 未完待续
+*  ## [SpringCloud User Guide](https://github.com/yu199195/myth/wiki/SpringCloud-User-Guide)
 
 # FAQ
 
-*  ### 为什么我下载的代码后，用idea打开没有相应的get set 方法呢？
+* ### 为什么我下载的代码后，用idea打开没有相应的get set 方法呢？
    ##### 答：因为框架使用了Lombok包，它是在编译的时期，自动生成get set方法，并不影响运行，如果觉得提示错误难受，请自行下载lombok包插件，[lombok官网](http://projectlombok.org/)
 
-*  ### 为什么我运行demo工程，找不到applicationContent.xml呢？
-      ##### 答：请设置项目的资源文件夹。
+* ### 为什么我运行demo工程，找不到applicationContent.xml呢？
+  ##### 答：请设置项目的资源文件夹。
 
 # Support
-  ##### 如有任何问题欢迎加入QQ群：162614487 进行讨论
+
+  ### 如有任何问题欢迎加入QQ群：162614487 进行讨论
 
 
 # Contribution
