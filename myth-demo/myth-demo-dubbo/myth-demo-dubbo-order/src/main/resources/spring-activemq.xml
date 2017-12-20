@@ -24,7 +24,6 @@
     </bean>
 
 
-
     <bean id="activeMQRedeliveryPolicy" class="org.apache.activemq.RedeliveryPolicy">
         <!--是否在每次尝试重新发送失败后,增长这个等待时间 -->
         <property name="useExponentialBackOff" value="true"/>

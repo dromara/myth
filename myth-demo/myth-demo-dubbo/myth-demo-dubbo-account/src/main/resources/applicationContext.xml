@@ -49,8 +49,6 @@
                 <property name="username" value="xiaoyu"/>
             </bean>
         </property>
-
-
     </bean>
 
     <import resource="spring-dubbo.xml"/>
