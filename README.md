@@ -34,44 +34,42 @@ myth
 
 # Quick trial
 
-  * #### Clone & Build
+* #### Clone & Build
    ````
    > git clone https://github.com/yu199195/myth.git
 
    > cd myth
 
    > mvn -DskipTests clean install -U
-
    ```
 
-*   #### execute this sql       
+* #### execute this sql       
  https://github.com/yu199195/myth/tree/master/myth-demo/sql/myth-mysql-demo.sql
 
 * #### Find the RPC framework that works for you
  https://github.com/yu199195/myth/tree/master/myth-demo
 
 
-*  ####  [Dubbo Quick Trial](https://github.com/yu199195/myth/wiki/Dubbo-Quick-Trial)
+* ####  [Dubbo Quick Trial](https://github.com/yu199195/myth/wiki/Dubbo-Quick-Trial)
 
-*  ####  [springcloud Quick Trial](https://github.com/yu199195/myth/wiki/SpringCloud--Quick-Trial)
+* ####  [springcloud Quick Trial](https://github.com/yu199195/myth/wiki/SpringCloud--Quick-Trial)
 
-*  ####  [Motan Quick Trial](https://github.com/yu199195/myth/wiki/Motan-Quick-Trial)
-
+* ####  [Motan Quick Trial](https://github.com/yu199195/myth/wiki/Motan-Quick-Trial)
 
 # Configuration
 
-*  ####  [配置详解](https://github.com/yu199195/myth/wiki/Configuration)
+* ####  [配置详解](https://github.com/yu199195/myth/wiki/Configuration)
 
 # User Guide
 
-* ### 关于jar包引用问题，现在jar包还未上传到maven的中央仓库，所以使用者需要自行获取代码，然后打包上传到自己maven私服
+* #### 关于jar包引用问题，现在jar包还未上传到maven的中央仓库，所以使用者需要自行获取代码，然后打包上传到自己maven私服
 
    ```
    > git clone https://github.com/yu199195/myth.git
 
    > mvn -DskipTests clean deploy -U
    ```
-* ### 关于jar包版本问题 ，现在因为没有传到中央仓库，如果引用的话，请自行设置相应的版本。
+* #### 关于jar包版本问题 ，现在因为没有传到中央仓库，如果引用的话，请自行设置相应的版本。
 
 
 *  ## [Dubbo User Gruid](https://github.com/yu199195/myth/wiki/Dubbo-User-Guide)
@@ -91,7 +89,7 @@ myth
 # FAQ
 
 *  ### 为什么我下载的代码后，用idea打开没有相应的get set 方法呢？
-   ##### 答：因为框架使用了lombok包，它是在编译的时期，自动生成get set方法，并不影响运行，如果觉得提示错误难受，请自行下载lombok包插件，[lombok官网](http://projectlombok.org/)
+   ##### 答：因为框架使用了Lombok包，它是在编译的时期，自动生成get set方法，并不影响运行，如果觉得提示错误难受，请自行下载lombok包插件，[lombok官网](http://projectlombok.org/)
 
 *  ### 为什么我运行demo工程，找不到applicationContent.xml呢？
       ##### 答：请设置项目的资源文件夹。
