@@ -13,7 +13,7 @@
                            brokerURL="tcp://120.76.52.162:61616"
                            userName="happylife"
                            password="happylifeplat01"
-                           redeliveryPolicy="activeMQRedeliveryPolicy"/>
+                           />
 
 
     <!-- 配置JMS连接工长 -->
