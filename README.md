@@ -1,23 +1,23 @@
 myth  
 ================
 
-####  采用消息队列解决分布式事务的开源框架, 基于java语言来开发（JDK1.8），支持dubbo，springcloud,motan等rpc框架进行分布式事务。
+#####  采用消息队列解决分布式事务的开源框架, 基于java语言来开发（JDK1.8），支持dubbo，springcloud,motan等rpc框架进行分布式事务。
 
 #  Features
 
-  * #### rpc框架支持 : dubbo,motan,springcloud。
+  * ##### rpc框架支持 : dubbo,motan,springcloud。
 
-  * #### 消息中间件支持 : jms(activimq),amqp(rabbitmq),kafka,roceketmq。
+  * ##### 消息中间件支持 : jms(activimq),amqp(rabbitmq),kafka,roceketmq。
 
-  * #### 本地事务存储支持 : redis,mogondb,zookeeper,file,mysql。
+  * ##### 本地事务存储支持 : redis,mogondb,zookeeper,file,mysql。
 
-  * #### 事务日志序列化支持 ：java，hessian，kryo，protostuff。
+  * ##### 事务日志序列化支持 ：java，hessian，kryo，protostuff。
 
-  * #### 采用Aspect AOP 切面思想与Spring无缝集成，天然支持集群,高可用,高并发。
+  * ##### 采用Aspect AOP 切面思想与Spring无缝集成，天然支持集群,高可用,高并发。
 
-  * ####  配置简单，集成简单，源码简洁，稳定性高，已在生产环境使用。
+  * #####  配置简单，集成简单，源码简洁，稳定性高，已在生产环境使用。
 
-  * #### 内置经典的分布式事务场景demo工程，并有swagger-ui可视化界面可以快速体验。
+  * ##### 内置经典的分布式事务场景demo工程，并有swagger-ui可视化界面可以快速体验。
 
 # Prerequisite
 
@@ -32,7 +32,7 @@ myth
   *   #### Message Oriented Middleware
 
 
-# Quick trial
+# Quick Start
 
 * #### Clone & Build
    ```
@@ -50,11 +50,11 @@ myth
  https://github.com/yu199195/myth/tree/master/myth-demo
 
 
-* ## [Dubbo Quick Trial](https://github.com/yu199195/myth/wiki/Dubbo-Quick-Trial)
+* ## [Dubbo Quick Start](https://github.com/yu199195/myth/wiki/Dubbo-Quick-Start)
 
-* ##  [springcloud Quick Trial](https://github.com/yu199195/myth/wiki/SpringCloud--Quick-Trial)
+* ##  [springcloud Quick Start](https://github.com/yu199195/myth/wiki/SpringCloud--Quick-Start)
 
-* ##  [Motan Quick Trial](https://github.com/yu199195/myth/wiki/Motan-Quick-Trial)
+* ##  [Motan Quick Start](https://github.com/yu199195/myth/wiki/Motan-Quick-Start)
 
 # Configuration
 
