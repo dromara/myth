@@ -52,7 +52,7 @@ myth
 
 * ## [Dubbo Quick Start](https://github.com/yu199195/myth/wiki/Dubbo-Quick-Start)
 
-* ##  [springcloud Quick Start](https://github.com/yu199195/myth/wiki/SpringCloud--Quick-Start)
+* ##  [SpringCloud Quick Start](https://github.com/yu199195/myth/wiki/SpringCloud--Quick-Start)
 
 * ##  [Motan Quick Start](https://github.com/yu199195/myth/wiki/Motan-Quick-Start)
 
