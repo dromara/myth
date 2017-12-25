@@ -32,20 +32,24 @@ import java.nio.channels.FileChannel;
  */
 public class FileUtils {
 
-    public static void writeFile(String fullFileName, byte[] contents){
+    public static void writeFile(String fullFileName, byte[] contents) throws Exception {
+        RandomAccessFile raf = new RandomAccessFile(fullFileName, "rw");
+        FileChannel channel = raf.getChannel();
         try {
-            RandomAccessFile raf = new RandomAccessFile(fullFileName, "rw");
-            try (FileChannel channel = raf.getChannel()) {
-                ByteBuffer buffer = ByteBuffer.allocate(contents.length);
-                buffer.put(contents);
-                buffer.flip();
-                while (buffer.hasRemaining()) {
-                    channel.write(buffer);
-                }
-                channel.force(true);
+            ByteBuffer buffer = ByteBuffer.allocate(contents.length);
+            buffer.clear();
+            buffer.put(contents);
+            buffer.flip();
+            while (buffer.hasRemaining()) {
+                channel.write(buffer);
             }
+            channel.force(true);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw e;
+        } finally {
+            if (channel != null) {
+                channel.close();
+            }
         }
     }
 }
