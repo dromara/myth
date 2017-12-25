@@ -41,16 +41,18 @@
         <license>
             <name>Apache License, Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
         </license>
     </licenses>
     <scm>
-        <url>https://github.com/yu199195/happylifeplat-myth.git</url>
+        <url>https://github.com/yu199195/myth.git</url>
     </scm>
 
+
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.9.RELEASE</version>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
     </parent>
 
 
@@ -165,6 +167,16 @@
                 <artifactId>myth-rocketmq</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <dependency>
+                <!-- Import dependency management from Spring Boot -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>1.5.9.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
 
             <dependency>
                 <groupId>org.projectlombok</groupId>
