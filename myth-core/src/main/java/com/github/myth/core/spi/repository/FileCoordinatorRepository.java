@@ -21,23 +21,25 @@ import com.github.myth.common.bean.adapter.CoordinatorRepositoryAdapter;
 import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.config.MythConfig;
 import com.github.myth.common.constant.CommonConstant;
-import com.github.myth.common.enums.MythRoleEnum;
 import com.github.myth.common.enums.MythStatusEnum;
 import com.github.myth.common.enums.RepositorySupportEnum;
-import com.github.myth.common.exception.MythException;
 import com.github.myth.common.exception.MythRuntimeException;
 import com.github.myth.common.serializer.ObjectSerializer;
 import com.github.myth.common.utils.FileUtils;
 import com.github.myth.common.utils.RepositoryConvertUtils;
 import com.github.myth.common.utils.RepositoryPathUtils;
+import com.github.myth.core.exception.RepositoryException;
 import com.github.myth.core.spi.CoordinatorRepository;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 
@@ -46,61 +48,61 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("unchecked")
 public class FileCoordinatorRepository implements CoordinatorRepository {
-
+    private Logger logger = LoggerFactory.getLogger(FileCoordinatorRepository.class);
 
     private String filePath;
-
-    private volatile static boolean initialized;
-
-
     private ObjectSerializer serializer;
+    private AtomicBoolean initialized = new AtomicBoolean(false);
 
     @Override
     public void setSerializer(ObjectSerializer serializer) {
         this.serializer = serializer;
     }
 
+
     /**
-     * 创建本地事务对象
+     * Create a transaction record
      *
-     * @param mythTransaction 事务对象
-     * @return rows 1
+     * @param transaction
+     * @return Influence row number
      */
     @Override
-    public int create(MythTransaction mythTransaction) {
-        writeFile(mythTransaction);
+    public int create(MythTransaction transaction) {
+        writeFile(transaction);
+        logger.debug("success to create transaction:{}.", transaction);
         return CommonConstant.SUCCESS;
     }
 
+
     /**
-     * 删除对象
+     * Remove a transaction record
      *
-     * @param id 事务对象id
-     * @return rows
+     * @param id Transaction id
+     * @return Influence row number
      */
     @Override
     public int remove(String id) {
         String fullFileName = RepositoryPathUtils.getFullFileName(filePath, id);
         File file = new File(fullFileName);
-        if (file.exists()) {
-            file.delete();
-        }
-        return CommonConstant.SUCCESS;
+        int rows = file.exists() && file.delete() ? 1 : 0;
+        logger.debug("remove the transaction of id:{}, influence row is:{}.", id, rows);
+        return rows;
     }
+
 
     /**
      * 更新数据
      *
-     * @param mythTransaction 事务对象
+     * @param transaction 事务对象
      * @return rows 1 成功 0 失败 失败需要抛异常
      */
     @Override
-    public int update(MythTransaction mythTransaction) throws MythRuntimeException {
-        mythTransaction.setLastTime(new Date());
-        mythTransaction.setVersion(mythTransaction.getVersion() + 1);
-        mythTransaction.setRetriedCount(mythTransaction.getRetriedCount() + 1);
+    public int update(MythTransaction transaction) throws MythRuntimeException {
+        transaction.setLastTime(new Date());
+        transaction.setVersion(transaction.getVersion() + 1);
+        transaction.setRetriedCount(transaction.getRetriedCount() + 1);
         try {
-            writeFile(mythTransaction);
+            writeFile(transaction);
         } catch (Exception e) {
             throw new MythRuntimeException("更新数据异常！");
         }
@@ -231,20 +233,6 @@ public class FileCoordinatorRepository implements CoordinatorRepository {
         return RepositorySupportEnum.FILE.getSupport();
     }
 
-    private void writeFile(MythTransaction mythTransaction) {
-        makeDirIfNecessory();
-
-        String fileName = RepositoryPathUtils.getFullFileName(filePath, mythTransaction.getTransId());
-
-        try {
-            FileUtils.writeFile(fileName, RepositoryConvertUtils.convert(mythTransaction, serializer));
-        } catch (MythException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
     private MythTransaction readTransaction(File file) throws Exception {
         try (FileInputStream fis = new FileInputStream(file)) {
             byte[] content = new byte[(int) file.length()];
@@ -260,28 +248,56 @@ public class FileCoordinatorRepository implements CoordinatorRepository {
             fis.read(content);
             return serializer.deSerialize(content, CoordinatorRepositoryAdapter.class);
         }
-
     }
 
-    private void makeDirIfNecessory() {
-        if (!initialized) {
-            synchronized (FileCoordinatorRepository.class) {
-                if (!initialized) {
-                    File rootPathFile = new File(filePath);
-                    if (!rootPathFile.exists()) {
 
-                        boolean result = rootPathFile.mkdir();
+    /**
+     * load transaction data to local storage
+     *
+     * @param transaction
+     */
+    private void writeFile(MythTransaction transaction) {
+        for (; ; ) {
+            if (makeDirIfNecessary()) {
+                break;
+            }
+        }
+        try {
+            String fileName = RepositoryPathUtils.getFullFileName(filePath, transaction.getTransId());
+            FileUtils.writeFile(fileName, RepositoryConvertUtils.convert(transaction, serializer));
+        } catch (Exception e) {
+            throw new RepositoryException("fail to write transaction to local storage", e, this);
+        }
+    }
 
-                        if (!result) {
-                            throw new MythRuntimeException("cannot create root path, the path to create is:" + filePath);
-                        }
 
-                        initialized = true;
-                    } else if (!rootPathFile.isDirectory()) {
-                        throw new MythRuntimeException("rootPath is not directory");
-                    }
+    /**
+     * If root directory not exist, make root directory
+     *
+     * @return The result of make root directory
+     * @throws RepositoryException When the root directory failure is created,
+     *                             it will be thrown the {@link com.github.myth.core.exception.RepositoryException}
+     */
+    private boolean makeDirIfNecessary() throws RepositoryException {
+        if (!initialized.getAndSet(true)) {
+            File rootDir = new File(filePath);
+            boolean isExist = rootDir.exists();
+            if (!isExist) {
+                if (rootDir.mkdir()) {
+                    logger.info("success to make root directory, path:{}.", filePath);
+                    return true;
+                } else {
+                    throw new RepositoryException(String.format("fail to make root directory, path:%s.", filePath), this);
+                }
+            } else {
+                if (rootDir.isDirectory()) {
+                    logger.info("the root directory is already exist, path:{}.", filePath);
+                    return true;
+                } else {
+                    throw new RepositoryException(String.format("the root path is not a directory, please check again, path:%s.", filePath), this);
                 }
             }
         }
+        return false;
     }
 }
