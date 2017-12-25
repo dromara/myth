@@ -5,7 +5,7 @@ myth
 
 #  Features
 
-  * ##### rpc框架支持 : dubbo,motan,springcloud。
+  * ##### RPC框架支持 : dubbo,motan,springcloud。
 
   * ##### 消息中间件支持 : jms(activimq),amqp(rabbitmq),kafka,roceketmq。
 
