@@ -56,7 +56,7 @@ public class LocalMythTransactionHandler implements MythTransactionHandler {
 
             final Object proceed = point.proceed();
 
-            mythTransactionManager.commitTransaction(point, mythTransactionContext);
+            mythTransactionManager.commitLocalTransaction(point, mythTransactionContext.getTransId());
 
             return proceed;
 

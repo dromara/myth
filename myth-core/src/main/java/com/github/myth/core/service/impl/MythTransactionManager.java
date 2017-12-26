@@ -29,6 +29,7 @@ import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.coordinator.CoordinatorService;
 import com.github.myth.core.coordinator.command.CoordinatorAction;
 import com.github.myth.core.coordinator.command.CoordinatorCommand;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
@@ -62,9 +63,6 @@ public class MythTransactionManager {
 
 
     private final CoordinatorCommand coordinatorCommand;
-
-
-
 
 
     @Autowired
@@ -114,19 +112,9 @@ public class MythTransactionManager {
     }
 
 
-    public MythTransaction commitTransaction(ProceedingJoinPoint point, MythTransactionContext mythTransactionContext) {
-        MythTransaction mythTransaction = new MythTransaction(mythTransactionContext.getTransId());
-
-        MethodSignature signature = (MethodSignature) point.getSignature();
-        Method method = signature.getMethod();
-
-        Class<?> clazz = point.getTarget().getClass();
-
-        mythTransaction.setStatus(MythStatusEnum.COMMIT.getCode());
-        mythTransaction.setRole(MythRoleEnum.PROVIDER.getCode());
-        mythTransaction.setTargetClass(clazz.getName());
-        mythTransaction.setTargetMethod(method.getName());
-
+    public MythTransaction actorTransaction(ProceedingJoinPoint point, MythTransactionContext mythTransactionContext) {
+        MythTransaction mythTransaction =
+                buildProviderTransaction(point, mythTransactionContext.getTransId(), MythStatusEnum.BEGIN.getCode());
         //保存当前事务信息
         coordinatorCommand.execute(new CoordinatorAction(CoordinatorActionEnum.SAVE, mythTransaction));
 
@@ -139,22 +127,26 @@ public class MythTransactionManager {
 
     }
 
-    public void failureTransaction(ProceedingJoinPoint point, String transId,String errorMessage) {
-        MythTransaction mythTransaction = new MythTransaction(transId);
 
-        MethodSignature signature = (MethodSignature) point.getSignature();
-        Method method = signature.getMethod();
+    public void commitLocalTransaction(ProceedingJoinPoint point, String transId) {
 
-        Class<?> clazz = point.getTarget().getClass();
+        MythTransaction mythTransaction;
+        if (StringUtils.isNoneBlank(transId)) {
+            mythTransaction = coordinatorService.findByTransId(transId);
+            if (Objects.nonNull(mythTransaction)) {
+                updateStatus(transId, MythStatusEnum.COMMIT.getCode());
+            } else {
+                mythTransaction = buildProviderTransaction(point, transId, MythStatusEnum.COMMIT.getCode());
+                //保存当前事务信息
+                coordinatorCommand.execute(new CoordinatorAction(CoordinatorActionEnum.SAVE, mythTransaction));
 
-        mythTransaction.setStatus(MythStatusEnum.FAILURE.getCode());
-        mythTransaction.setRole(MythRoleEnum.PROVIDER.getCode());
-        mythTransaction.setTargetClass(clazz.getName());
-        mythTransaction.setTargetMethod(method.getName());
-        mythTransaction.setErrorMsg(errorMessage);
-        //保存当前事务信息
-        coordinatorCommand.execute(new CoordinatorAction(CoordinatorActionEnum.SAVE, mythTransaction));
+            }
+        }
+
     }
+
+
+
 
 
     public void sendMessage() {
@@ -189,5 +181,20 @@ public class MythTransactionManager {
         transaction.registerParticipant(participant);
         coordinatorService.updateParticipant(transaction);
 
+    }
+
+    private MythTransaction buildProviderTransaction(ProceedingJoinPoint point, String transId, Integer status) {
+        MythTransaction mythTransaction = new MythTransaction(transId);
+
+        MethodSignature signature = (MethodSignature) point.getSignature();
+        Method method = signature.getMethod();
+
+        Class<?> clazz = point.getTarget().getClass();
+
+        mythTransaction.setStatus(status);
+        mythTransaction.setRole(MythRoleEnum.PROVIDER.getCode());
+        mythTransaction.setTargetClass(clazz.getName());
+        mythTransaction.setTargetMethod(method.getName());
+        return mythTransaction;
     }
 }

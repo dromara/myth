@@ -235,10 +235,11 @@ public class CoordinatorServiceImpl implements CoordinatorService {
             LOCK.lock();
 
             final String transId = entity.getTransId();
-            final MythTransaction byTransId = findByTransId(transId);
+            final MythTransaction mythTransaction = findByTransId(transId);
 
-            //如果是空或者还是未提交状态
-            if (Objects.isNull(byTransId) || byTransId.getStatus() != MythStatusEnum.COMMIT.getCode()) {
+            //如果是空或者是失败的
+            if (Objects.isNull(mythTransaction)
+                    || mythTransaction.getStatus() == MythStatusEnum.FAILURE.getCode()) {
                 try {
 
                     //设置事务上下文，这个类会传递给远端

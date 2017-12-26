@@ -19,6 +19,8 @@
 package com.github.myth.core.service.handler;
 
 import com.github.myth.common.bean.context.MythTransactionContext;
+import com.github.myth.common.bean.entity.MythTransaction;
+import com.github.myth.common.enums.MythStatusEnum;
 import com.github.myth.common.utils.LogUtil;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.service.MythTransactionHandler;
@@ -76,18 +78,24 @@ public class ActorMythTransactionHandler implements MythTransactionHandler {
         try {
             //处理并发问题
             LOCK.lock();
+            //先保存事务日志
+            mythTransactionManager.actorTransaction(point, mythTransactionContext);
+
             //发起调用 执行try方法
+
             final Object proceed = point.proceed();
 
-            //执行成功 记录日志信息，通过mq来执行
+            //执行成功 更新状态为commit
 
-            mythTransactionManager.commitTransaction(point, mythTransactionContext);
+            mythTransactionManager.updateStatus(mythTransactionContext.getTransId(),
+                    MythStatusEnum.COMMIT.getCode());
 
             return proceed;
 
         } catch (Throwable throwable) {
             LogUtil.error(LOGGER, "执行分布式事务接口失败,事务id：{}", mythTransactionContext::getTransId);
-            mythTransactionManager.failureTransaction(point, mythTransactionContext.getTransId(), throwable.getMessage());
+            mythTransactionManager.updateStatus(mythTransactionContext.getTransId(),
+                    MythStatusEnum.FAILURE.getCode());
             throw throwable;
         } finally {
             LOCK.unlock();
