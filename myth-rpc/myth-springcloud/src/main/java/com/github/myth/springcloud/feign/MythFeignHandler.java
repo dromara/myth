@@ -67,7 +67,7 @@ public class MythFeignHandler implements InvocationHandler {
                 return this.handlers.get(method).invoke(args);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
-                throw throwable;
+                return new Object();
             }
 
 
@@ -79,7 +79,7 @@ public class MythFeignHandler implements InvocationHandler {
 
         final MythTransactionContext mythTransactionContext =
                 TransactionContextLocal.getInstance().get();
-        MythParticipant participant = null;
+        MythParticipant participant;
         if (Objects.nonNull(mythTransactionContext)) {
 
             final Class declaringClass = myth.target();
@@ -99,7 +99,7 @@ public class MythFeignHandler implements InvocationHandler {
 
             return participant;
         }
-        return participant;
+        return null;
     }
 
 
