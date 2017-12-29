@@ -148,7 +148,7 @@ public class FileLogServiceImpl implements LogService {
             adapter.setRetriedCount(retry);
             try {
                 FileUtils.writeFile(fullFileName, objectSerializer.serialize(adapter));
-            } catch (MythException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             }
