@@ -88,8 +88,8 @@ myth
 
 # Support
 
-  ### 如有任何问题欢迎加入QQ群：162614487 进行讨论 
-  ![](https://yu199195.github.io/images/weixin.jpg)
+ * ###  如有任何问题欢迎加入QQ群进行讨论
+   ![](https://yu199195.github.io/images/qq.png)
 
 
 # Contribution
