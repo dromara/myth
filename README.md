@@ -19,6 +19,11 @@ myth
 
   * ##### 内置经典的分布式事务场景demo工程，并有swagger-ui可视化界面可以快速体验。
 
+
+#  源码解析
+
+  * ## https://www.jianshu.com/p/22db5c17e424
+
 # Prerequisite
 
   *   #### JDK 1.8+
