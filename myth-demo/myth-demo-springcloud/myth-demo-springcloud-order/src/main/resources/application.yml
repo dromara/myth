@@ -49,3 +49,12 @@ logging:
 
     path: "./logs"
 
+inventory-service:
+  ribbon:
+   MaxAutoRetries: 0
+   MaxAutoRetriesNextServer: 0
+
+account-service:
+  ribbon:
+   MaxAutoRetries: 0
+   MaxAutoRetriesNextServer: 0
