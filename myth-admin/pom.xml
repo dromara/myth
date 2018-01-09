@@ -34,6 +34,12 @@
         <dependency>
             <groupId>com.github.myth</groupId>
             <artifactId>myth-common</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mongodb</groupId>
+                    <artifactId>mongo-java-driver</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!--spring boot的核心启动器-->
@@ -68,11 +74,11 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
-      <!--  <dependency>
+   <!--     <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>-->
-
+        </dependency>
+-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
@@ -100,10 +106,10 @@
             <artifactId>spring-data-mongodb</artifactId>
         </dependency>
 
-        <dependency>
+    <!--    <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongo-java-driver</artifactId>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
