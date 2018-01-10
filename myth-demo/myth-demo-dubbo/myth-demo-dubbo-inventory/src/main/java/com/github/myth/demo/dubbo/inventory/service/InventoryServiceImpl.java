@@ -59,6 +59,7 @@ public class InventoryServiceImpl implements InventoryService {
      */
     @Override
     @Myth(destination = "inventory")
+    @Transactional(rollbackFor = Exception.class)
     public Boolean decrease(InventoryDTO inventoryDTO) {
         final Inventory entity = inventoryMapper.findByProductId(inventoryDTO.getProductId());
         if (entity.getTotalInventory() < inventoryDTO.getCount()) {

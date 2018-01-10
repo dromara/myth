@@ -53,7 +53,7 @@ public class RepositoryConvertUtils {
         adapter.setTargetMethod(mythTransaction.getTargetMethod());
 
         adapter.setRole(mythTransaction.getRole());
-
+        adapter.setErrorMsg(mythTransaction.getErrorMsg());
         adapter.setVersion(mythTransaction.getVersion());
         adapter.setContents(objectSerializer.serialize(mythTransaction.getMythParticipants()));
         return objectSerializer.serialize(adapter);

@@ -127,19 +127,40 @@ public class RedisCoordinatorRepository implements CoordinatorRepository {
     }
 
     /**
-     * 更新 List<Participant>  只更新这一个字段数据
+     * 更新事务失败日志
      *
-     * @param tccTransaction 实体对象
+     * @param mythTransaction 实体对象
+     * @return rows 1 成功
+     * @throws MythRuntimeException 异常信息
      */
     @Override
-    public int updateParticipant(MythTransaction tccTransaction) throws MythRuntimeException {
+    public int updateFailTransaction(MythTransaction mythTransaction) throws MythRuntimeException {
+        try {
+            final String redisKey =
+                    RepositoryPathUtils.buildRedisKey(keyPrefix, mythTransaction.getTransId());
+            mythTransaction.setLastTime(new Date());
+            jedisClient.set(redisKey,
+                    RepositoryConvertUtils.convert(mythTransaction, objectSerializer));
+            return CommonConstant.SUCCESS;
+        } catch (Exception e) {
+            throw new MythRuntimeException(e);
+        }
+    }
+
+    /**
+     * 更新 List<Participant>  只更新这一个字段数据
+     *
+     * @param mythTransaction 实体对象
+     */
+    @Override
+    public int updateParticipant(MythTransaction mythTransaction) throws MythRuntimeException {
         final String redisKey =
-                RepositoryPathUtils.buildRedisKey(keyPrefix, tccTransaction.getTransId());
+                RepositoryPathUtils.buildRedisKey(keyPrefix, mythTransaction.getTransId());
 
         byte[] contents = jedisClient.get(redisKey.getBytes());
         try {
             CoordinatorRepositoryAdapter adapter = objectSerializer.deSerialize(contents, CoordinatorRepositoryAdapter.class);
-            adapter.setContents(objectSerializer.serialize(tccTransaction.getMythParticipants()));
+            adapter.setContents(objectSerializer.serialize(mythTransaction.getMythParticipants()));
             jedisClient.set(redisKey, objectSerializer.serialize(adapter));
             return CommonConstant.SUCCESS;
         } catch (MythException e) {

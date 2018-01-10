@@ -86,8 +86,14 @@ public class StartMythTransactionHandler implements MythTransactionHandler {
                 LOCK.unlock();
             }
 
-           return  point.proceed();
+            return point.proceed();
 
+        } catch (Throwable throwable) {
+
+            //更新失败的日志信息
+            mythTransactionManager.failTransaction(throwable.getMessage());
+
+            throw throwable;
         } finally {
             //发送消息
             mythTransactionManager.sendMessage();

@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
@@ -60,6 +61,7 @@ public class InventoryServiceImpl implements InventoryService {
      */
     @Override
     @Myth(destination = "inventory")
+    @Transactional(rollbackFor = Exception.class)
     public Boolean decrease(InventoryDTO inventoryDTO) {
         LOGGER.info("==========springcloud调用扣减库存decrease===========");
         final InventoryDO entity = inventoryMapper.findByProductId(inventoryDTO.getProductId());
@@ -74,6 +76,7 @@ public class InventoryServiceImpl implements InventoryService {
         if (decrease != 1) {
             throw new MythRuntimeException("spring cloud inventory-service 库存不足!");
         }
+
         return true;
     }
 

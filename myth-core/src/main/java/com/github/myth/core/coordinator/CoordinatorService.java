@@ -76,6 +76,15 @@ public interface CoordinatorService {
 
 
     /**
+     * 更新事务失败日志
+     * @param mythTransaction 实体对象
+     * @return rows 1 成功
+     * @throws MythRuntimeException
+     */
+    int updateFailTransaction(MythTransaction mythTransaction) throws  MythRuntimeException;
+
+
+    /**
      * 更新 List<MythParticipant>  只更新这一个字段数据
      *
      * @param mythTransaction 实体对象

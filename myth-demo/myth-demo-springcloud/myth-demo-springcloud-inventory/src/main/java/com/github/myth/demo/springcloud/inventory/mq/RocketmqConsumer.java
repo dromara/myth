@@ -73,8 +73,7 @@ public class RocketmqConsumer {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                //重复消费3次
-                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+                return ConsumeConcurrentlyStatus.RECONSUME_LATER;
             }
 
             //如果没有return success，consumer会重复消费此信息，直到success。

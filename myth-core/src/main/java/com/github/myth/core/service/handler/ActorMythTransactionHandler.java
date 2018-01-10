@@ -94,8 +94,7 @@ public class ActorMythTransactionHandler implements MythTransactionHandler {
 
         } catch (Throwable throwable) {
             LogUtil.error(LOGGER, "执行分布式事务接口失败,事务id：{}", mythTransactionContext::getTransId);
-            mythTransactionManager.updateStatus(mythTransactionContext.getTransId(),
-                    MythStatusEnum.FAILURE.getCode());
+            mythTransactionManager.failTransaction(throwable.getMessage());
             throw throwable;
         } finally {
             LOCK.unlock();

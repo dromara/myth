@@ -140,6 +140,26 @@ public class JdbcCoordinatorRepository implements CoordinatorRepository {
     }
 
     /**
+     * 更新事务失败日志
+     *
+     * @param mythTransaction 实体对象
+     * @return rows 1 成功
+     * @throws MythRuntimeException 异常信息
+     */
+    @Override
+    public int updateFailTransaction(MythTransaction mythTransaction) throws MythRuntimeException {
+
+        String sql = "update " + tableName +
+                " set  status=? ,error_msg=? ,retried_count =?,last_time = ?   where trans_id = ?  ";
+        mythTransaction.setLastTime(new Date());
+        return executeUpdate(sql, mythTransaction.getStatus(), mythTransaction.getErrorMsg(),
+                mythTransaction.getRetriedCount(),
+                mythTransaction.getLastTime(),
+                mythTransaction.getTransId());
+
+    }
+
+    /**
      * 更新 List<Participant>  只更新这一个字段数据
      *
      * @param mythTransaction 实体对象
@@ -281,7 +301,7 @@ public class JdbcCoordinatorRepository implements CoordinatorRepository {
 
     private int executeUpdate(String sql, Object... params) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql);) {
+             PreparedStatement ps = connection.prepareStatement(sql)) {
             if (params != null) {
                 for (int i = 0; i < params.length; i++) {
                     ps.setObject((i + 1), params[i]);
@@ -298,7 +318,7 @@ public class JdbcCoordinatorRepository implements CoordinatorRepository {
 
         List<Map<String, Object>> list = null;
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement ps = connection.prepareStatement(sql);) {
+             PreparedStatement ps = connection.prepareStatement(sql)) {
 
             if (params != null) {
                 for (int i = 0; i < params.length; i++) {

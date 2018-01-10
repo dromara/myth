@@ -112,11 +112,24 @@ public class MythTransactionManager {
     }
 
 
+    public void failTransaction(String errorMsg) {
+        MythTransaction mythTransaction = getCurrentTransaction();
+        if (Objects.nonNull(mythTransaction)) {
+            mythTransaction.setStatus(MythStatusEnum.FAILURE.getCode());
+            mythTransaction.setErrorMsg(errorMsg);
+            coordinatorService.updateFailTransaction(mythTransaction);
+        }
+    }
+
+
     public MythTransaction actorTransaction(ProceedingJoinPoint point, MythTransactionContext mythTransactionContext) {
         MythTransaction mythTransaction =
                 buildProviderTransaction(point, mythTransactionContext.getTransId(), MythStatusEnum.BEGIN.getCode());
         //保存当前事务信息
         coordinatorCommand.execute(new CoordinatorAction(CoordinatorActionEnum.SAVE, mythTransaction));
+
+        //当前事务保存到ThreadLocal
+        CURRENT.set(mythTransaction);
 
         //设置提供者角色
         mythTransactionContext.setRole(MythRoleEnum.PROVIDER.getCode());
@@ -146,9 +159,6 @@ public class MythTransactionManager {
     }
 
 
-
-
-
     public void sendMessage() {
         MythTransaction mythTransaction = getCurrentTransaction();
         if (Objects.nonNull(mythTransaction)) {
@@ -167,7 +177,7 @@ public class MythTransactionManager {
     }
 
 
-    public MythTransaction getCurrentTransaction() {
+    private MythTransaction getCurrentTransaction() {
         return CURRENT.get();
     }
 

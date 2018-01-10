@@ -110,6 +110,28 @@ public class FileCoordinatorRepository implements CoordinatorRepository {
     }
 
     /**
+     * 更新事务失败日志
+     *
+     * @param mythTransaction 实体对象
+     * @return rows 1 成功
+     * @throws MythRuntimeException 异常信息
+     */
+    @Override
+    public int updateFailTransaction(MythTransaction mythTransaction) throws MythRuntimeException {
+        try {
+
+            final String fullFileName =
+                    RepositoryPathUtils.getFullFileName(filePath, mythTransaction.getTransId());
+            mythTransaction.setLastTime(new Date());
+            FileUtils.writeFile(fullFileName, RepositoryConvertUtils.convert(mythTransaction, serializer));
+
+            return CommonConstant.SUCCESS;
+        } catch (Exception e) {
+            throw new MythRuntimeException("更新数据异常！");
+        }
+    }
+
+    /**
      * 更新 List<Participant>  只更新这一个字段数据
      *
      * @param mythTransaction 实体对象

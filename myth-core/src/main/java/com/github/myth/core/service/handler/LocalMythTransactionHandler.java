@@ -19,11 +19,8 @@
 package com.github.myth.core.service.handler;
 
 import com.github.myth.common.bean.context.MythTransactionContext;
-import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.service.MythTransactionHandler;
-import com.github.myth.core.service.impl.MythTransactionManager;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,15 +28,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LocalMythTransactionHandler implements MythTransactionHandler {
-
-
-
-    private final MythTransactionManager mythTransactionManager;
-
-    @Autowired
-    public LocalMythTransactionHandler(MythTransactionManager mythTransactionManager) {
-        this.mythTransactionManager = mythTransactionManager;
-    }
 
 
     /**
@@ -52,18 +40,8 @@ public class LocalMythTransactionHandler implements MythTransactionHandler {
      */
     @Override
     public Object handler(ProceedingJoinPoint point, MythTransactionContext mythTransactionContext) throws Throwable {
-        try {
 
-            final Object proceed = point.proceed();
+        return point.proceed();
 
-            mythTransactionManager.commitLocalTransaction(point, mythTransactionContext.getTransId());
-
-            return proceed;
-
-        } finally {
-
-            TransactionContextLocal.getInstance().remove();
-
-        }
     }
 }

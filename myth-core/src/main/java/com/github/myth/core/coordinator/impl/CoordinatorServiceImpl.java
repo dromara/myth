@@ -19,6 +19,7 @@
 package com.github.myth.core.coordinator.impl;
 
 
+import com.github.myth.annotation.Myth;
 import com.github.myth.common.bean.context.MythTransactionContext;
 import com.github.myth.common.bean.entity.MythInvocation;
 import com.github.myth.common.bean.entity.MythParticipant;
@@ -170,6 +171,18 @@ public class CoordinatorServiceImpl implements CoordinatorService {
     }
 
     /**
+     * 更新事务失败日志
+     *
+     * @param mythTransaction 实体对象
+     * @return rows 1 成功
+     * @throws MythRuntimeException
+     */
+    @Override
+    public int updateFailTransaction(MythTransaction mythTransaction) throws MythRuntimeException {
+        return coordinatorRepository.updateFailTransaction(mythTransaction);
+    }
+
+    /**
      * 更新 List<MythParticipant>  只更新这一个字段数据
      *
      * @param mythTransaction 实体对象
@@ -237,39 +250,72 @@ public class CoordinatorServiceImpl implements CoordinatorService {
             final String transId = entity.getTransId();
             final MythTransaction mythTransaction = findByTransId(transId);
 
-            //如果是空或者是失败的
-            if (Objects.isNull(mythTransaction)
-                    || mythTransaction.getStatus() == MythStatusEnum.FAILURE.getCode()) {
+            //第一次调用 也就是服务down机，或者没有调用到的时候， 通过mq执行
+            if (Objects.isNull(mythTransaction)) {
                 try {
-
-                    //设置事务上下文，这个类会传递给远端
-                    MythTransactionContext context = new MythTransactionContext();
-
-                    //设置事务id
-                    context.setTransId(transId);
-
-                    //设置为发起者角色
-                    context.setRole(MythRoleEnum.LOCAL.getCode());
-
-                    TransactionContextLocal.getInstance().set(context);
-                    executeLocalTransaction(entity.getMythInvocation());
-
-                    //会进入LocalMythTransactionHandler  那里有保存
-
+                    handler(entity);
+                    //执行成功 保存成功的日志
+                    final MythTransaction log = buildTransactionLog(transId, "",
+                            MythStatusEnum.COMMIT.getCode(),
+                            entity.getMythInvocation().getTargetClass().getName(),
+                            entity.getMythInvocation().getMethodName());
+                    submit(new CoordinatorAction(CoordinatorActionEnum.SAVE, log));
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    throw new MythRuntimeException(e.getMessage());
+                    //执行失败保存失败的日志
+                    final MythTransaction log = buildTransactionLog(transId, e.getMessage(),
+                            MythStatusEnum.FAILURE.getCode(),
+                            entity.getMythInvocation().getTargetClass().getName(),
+                            entity.getMythInvocation().getMethodName());
+                    submit(new CoordinatorAction(CoordinatorActionEnum.SAVE, log));
+                    throw new MythRuntimeException(e);
                 } finally {
                     TransactionContextLocal.getInstance().remove();
                 }
-            }
 
+            } else {
+                //如果是执行失败的话
+                if (mythTransaction.getStatus() == MythStatusEnum.FAILURE.getCode()) {
+                    //如果超过了最大重试次数 则不执行
+                    if (mythTransaction.getRetriedCount() >= mythConfig.getRetryMax()) {
+                        LogUtil.error(LOGGER, () -> "此事务已经超过了最大重试次数:" + mythConfig.getRetryMax()
+                                + " ,执行接口为:" + entity.getMythInvocation().getTargetClass() + " ,方法为:" +
+                                entity.getMythInvocation().getMethodName() + ",事务id为：" + entity.getTransId());
+                        return Boolean.FALSE;
+                    }
+                    try {
+                        handler(entity);
+                        //执行成功 更新日志为成功
+                        updateStatus(entity.getTransId(), MythStatusEnum.COMMIT.getCode());
+
+                    } catch (Throwable e) {
+                        //执行失败，设置失败原因和重试次数
+                        mythTransaction.setErrorMsg(e.getCause().getMessage());
+                        mythTransaction.setRetriedCount(mythTransaction.getRetriedCount() + 1);
+                        updateFailTransaction(mythTransaction);
+                        throw new MythRuntimeException(e);
+                    } finally {
+                        TransactionContextLocal.getInstance().remove();
+                    }
+                }
+            }
 
         } finally {
             LOCK.unlock();
         }
         return Boolean.TRUE;
 
+    }
+
+
+    private MythTransaction buildTransactionLog(String transId, String errorMsg, Integer status, String targetClass, String targetMethod) {
+        MythTransaction logTransaction = new MythTransaction(transId);
+        logTransaction.setRetriedCount(1);
+        logTransaction.setStatus(status);
+        logTransaction.setErrorMsg(errorMsg);
+        logTransaction.setRole(MythRoleEnum.PROVIDER.getCode());
+        logTransaction.setTargetClass(targetClass);
+        logTransaction.setTargetMethod(targetMethod);
+        return logTransaction;
     }
 
 
@@ -339,6 +385,21 @@ public class CoordinatorServiceImpl implements CoordinatorService {
                     }
                 }, 30, mythConfig.getScheduledDelay(), TimeUnit.SECONDS);
 
+    }
+
+
+    private void handler(MessageEntity entity) throws Exception {
+        //设置事务上下文，这个类会传递给远端
+        MythTransactionContext context = new MythTransactionContext();
+        //设置事务id
+        context.setTransId(entity.getTransId());
+
+        //设置为发起者角色
+        context.setRole(MythRoleEnum.LOCAL.getCode());
+
+        TransactionContextLocal.getInstance().set(context);
+
+        executeLocalTransaction(entity.getMythInvocation());
     }
 
     private Date acquireData() {

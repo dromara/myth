@@ -60,6 +60,15 @@ public interface CoordinatorRepository {
 
 
     /**
+     * 更新事务失败日志
+     * @param mythTransaction 实体对象
+     * @return rows 1 成功
+     * @throws MythRuntimeException 异常信息
+     */
+    int updateFailTransaction(MythTransaction mythTransaction) throws  MythRuntimeException;
+
+
+    /**
      * 更新 List<Participant>  只更新这一个字段数据
      *
      * @param tccTransaction 实体对象

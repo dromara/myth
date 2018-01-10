@@ -142,6 +142,31 @@ public class MongoCoordinatorRepository implements CoordinatorRepository {
     }
 
     /**
+     * 更新事务失败日志
+     *
+     * @param mythTransaction 实体对象
+     * @return rows 1 成功
+     * @throws MythRuntimeException 异常信息
+     */
+    @Override
+    public int updateFailTransaction(MythTransaction mythTransaction) throws MythRuntimeException {
+        Query query = new Query();
+        query.addCriteria(new Criteria("transId").is(mythTransaction.getTransId()));
+        Update update = new Update();
+
+        update.set("status", mythTransaction.getStatus());
+        update.set("errorMsg", mythTransaction.getErrorMsg());
+        update.set("lastTime", new Date());
+        update.set("retriedCount", mythTransaction.getRetriedCount());
+
+        final WriteResult writeResult = template.updateFirst(query, update, MongoAdapter.class, collectionName);
+        if (writeResult.getN() <= 0) {
+            throw new MythRuntimeException("更新数据异常!");
+        }
+        return CommonConstant.SUCCESS;
+    }
+
+    /**
      * 更新 List<Participant>  只更新这一个字段数据
      *
      * @param mythTransaction 实体对象

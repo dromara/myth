@@ -38,7 +38,7 @@ spring:
     #    username: guest
     #    password: guest
     rocketmq:
-        namesrvAddr: 192.168.1.148:9876
+        namesrvAddr: localhost:9876
         consumerGroupName: inventory
         instanceName: inventory
    #kafka:

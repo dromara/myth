@@ -34,8 +34,7 @@ public class FileUtils {
 
     public static void writeFile(String fullFileName, byte[] contents) throws Exception {
         RandomAccessFile raf = new RandomAccessFile(fullFileName, "rw");
-        FileChannel channel = raf.getChannel();
-        try {
+        try (FileChannel channel = raf.getChannel()){
             ByteBuffer buffer = ByteBuffer.allocate(contents.length);
             buffer.clear();
             buffer.put(contents);
@@ -46,10 +45,6 @@ public class FileUtils {
             channel.force(true);
         } catch (Exception e) {
             throw e;
-        } finally {
-            if (channel != null) {
-                channel.close();
-            }
         }
     }
 }
