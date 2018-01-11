@@ -1,6 +1,7 @@
 package com.github.myth.demo.dubbo.inventory.mq;
 
-import com.github.myth.core.service.MythMqReceiveService;
+import java.util.List;
+
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
@@ -13,7 +14,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import java.util.List;
+import com.github.myth.common.config.MythConfig;
+import com.github.myth.core.service.MythMqReceiveService;
 
 /**
  * <p>Description: .</p>
@@ -35,6 +37,9 @@ public class RocketmqConsumer {
 
     @Autowired
     private MythMqReceiveService mythMqReceiveService;
+    
+    @Autowired
+    private MythConfig mythConfig;
 
     @Bean
     public DefaultMQPushConsumer pushConsumer() throws MQClientException {
@@ -49,7 +54,8 @@ public class RocketmqConsumer {
         consumer.setInstanceName(env.getProperty("spring.rocketmq.instanceName"));
         //设置批量消费，以提升消费吞吐量，默认是1
         consumer.setConsumeMessageBatchMaxSize(2);
-
+        //RECONSUME_LATER的重试次数，RocketMQ默认是16次
+        consumer.setMaxReconsumeTimes(mythConfig.getRetryMax());
 
         /**
          * 订阅指定topic下tags
