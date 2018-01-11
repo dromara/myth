@@ -67,7 +67,7 @@ public class MythFeignHandler implements InvocationHandler {
                 return this.handlers.get(method).invoke(args);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
-                return new Object();
+                return null;
             }
 
 
