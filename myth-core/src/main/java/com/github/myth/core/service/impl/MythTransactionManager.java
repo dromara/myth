@@ -141,21 +141,11 @@ public class MythTransactionManager {
     }
 
 
-    public void commitLocalTransaction(ProceedingJoinPoint point, String transId) {
-
-        MythTransaction mythTransaction;
-        if (StringUtils.isNoneBlank(transId)) {
-            mythTransaction = coordinatorService.findByTransId(transId);
-            if (Objects.nonNull(mythTransaction)) {
-                updateStatus(transId, MythStatusEnum.COMMIT.getCode());
-            } else {
-                mythTransaction = buildProviderTransaction(point, transId, MythStatusEnum.COMMIT.getCode());
-                //保存当前事务信息
-                coordinatorCommand.execute(new CoordinatorAction(CoordinatorActionEnum.SAVE, mythTransaction));
-
-            }
-        }
-
+    public void commitStatus(String tarnsId){
+        MythTransaction mythTransaction = new MythTransaction(tarnsId);
+        mythTransaction.setStatus(MythStatusEnum.COMMIT.getCode());
+        //保存当前事务信息
+        coordinatorCommand.execute(new CoordinatorAction(CoordinatorActionEnum.UPDATE_STATUS, mythTransaction));
     }
 
 

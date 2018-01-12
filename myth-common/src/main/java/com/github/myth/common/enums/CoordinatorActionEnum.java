@@ -47,7 +47,13 @@ public enum CoordinatorActionEnum {
     /**
      * Compensation coordinator action enum.
      */
-    COMPENSATION(4, "补偿");
+    COMPENSATION(4, "补偿"),
+
+    /**
+     * Update status coordinator action enum.
+     */
+    UPDATE_STATUS(5,"更新状态");
+
 
     private int code;
 

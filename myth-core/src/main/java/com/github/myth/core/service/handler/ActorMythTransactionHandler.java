@@ -86,9 +86,7 @@ public class ActorMythTransactionHandler implements MythTransactionHandler {
             final Object proceed = point.proceed();
 
             //执行成功 更新状态为commit
-
-            mythTransactionManager.updateStatus(mythTransactionContext.getTransId(),
-                    MythStatusEnum.COMMIT.getCode());
+            mythTransactionManager.commitStatus(mythTransactionContext.getTransId());
 
             return proceed;
 

@@ -479,6 +479,9 @@ public class CoordinatorServiceImpl implements CoordinatorService {
                             remove(coordinatorAction.getMythTransaction().getTransId());
                         } else if (CoordinatorActionEnum.UPDATE.getCode() == code) {
                             update(coordinatorAction.getMythTransaction());
+                        } else if (CoordinatorActionEnum.UPDATE_STATUS.getCode() == code) {
+                            updateStatus(coordinatorAction.getMythTransaction().getTransId(),
+                                    coordinatorAction.getMythTransaction().getStatus());
                         }
                     }
                 } catch (Exception e) {

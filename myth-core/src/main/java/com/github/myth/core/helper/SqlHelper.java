@@ -44,7 +44,7 @@ public class SqlHelper {
                         .append("  `status` int(2) NOT NULL,\n")
                         .append("  `invocation` longblob,\n")
                         .append("  `role` int(2) NOT NULL,\n")
-                        .append("  `error_msg` varchar(1000) ,\n")
+                        .append("  `error_msg` text ,\n")
                         .append("   PRIMARY KEY (`trans_id`),\n")
                         .append("   KEY  `status_last_time` (`last_time`,`status`) USING BTREE \n")
                         .append(")");
@@ -66,7 +66,7 @@ public class SqlHelper {
                         .append("  `status` int(2) NOT NULL,\n")
                         .append("  `invocation` BLOB ,\n")
                         .append("  `role` int(2) NOT NULL,\n")
-                        .append("  `error_msg` varchar(1000) ,\n")
+                        .append("  `error_msg` CLOB  ,\n")
                         .append("  PRIMARY KEY (`trans_id`)\n")
                         .append(")");
                 break;
@@ -86,7 +86,7 @@ public class SqlHelper {
                         .append("  `status` int(2) NOT NULL,\n")
                         .append("  `invocation` varbinary ,\n")
                         .append("  `role` int(2) NOT NULL,\n")
-                        .append("  `error_msg` varchar(1000) ,\n")
+                        .append("  `error_msg` varchar(8000) ,\n")
                         .append("  PRIMARY KEY (`trans_id`)\n")
                         .append(")");
                 break;
