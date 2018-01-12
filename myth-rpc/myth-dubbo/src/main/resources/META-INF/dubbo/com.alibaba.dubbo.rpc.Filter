@@ -1,2 +1,1 @@
-
 MythTransactionFilter=com.github.myth.dubbo.filter.DubboMythTransactionFilter

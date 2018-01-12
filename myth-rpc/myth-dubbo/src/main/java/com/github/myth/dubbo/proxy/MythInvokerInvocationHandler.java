@@ -1,0 +1,121 @@
+package com.github.myth.dubbo.proxy;
+
+import com.alibaba.dubbo.rpc.Invoker;
+import com.alibaba.dubbo.rpc.proxy.InvokerInvocationHandler;
+import com.github.myth.annotation.Myth;
+import com.github.myth.common.bean.context.MythTransactionContext;
+import com.github.myth.common.bean.entity.MythInvocation;
+import com.github.myth.common.bean.entity.MythParticipant;
+import com.github.myth.common.exception.MythRuntimeException;
+import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
+import com.github.myth.core.helper.SpringBeanUtils;
+import com.github.myth.core.service.impl.MythTransactionManager;
+
+import java.lang.reflect.Method;
+import java.util.Objects;
+
+
+/**
+ * @author xiaoyu
+ */
+public class MythInvokerInvocationHandler extends InvokerInvocationHandler {
+
+    private Object target;
+
+    private static final int ZERO = 0;
+
+    public MythInvokerInvocationHandler(Invoker<?> handler) {
+        super(handler);
+    }
+
+    public <T> MythInvokerInvocationHandler(T target, Invoker<T> invoker) {
+        super(invoker);
+        this.target = target;
+
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+
+        final Myth myth = method.getAnnotation(Myth.class);
+        final Class<?>[] arguments = method.getParameterTypes();
+        final Class clazz = method.getDeclaringClass();
+
+        if (Objects.nonNull(myth)) {
+            final MythTransactionContext mythTransactionContext =
+                    TransactionContextLocal.getInstance().get();
+            try {
+                final MythParticipant participant =
+                        buildParticipant(mythTransactionContext, myth,
+                                method, clazz, args, arguments);
+                if (Objects.nonNull(participant)) {
+                    final MythTransactionManager mythTransactionManager =
+                            SpringBeanUtils.getInstance().getBean(MythTransactionManager.class);
+                    mythTransactionManager.registerParticipant(participant);
+                }
+
+                return super.invoke(target, method, args);
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+                return getDefaultValue(method.getReturnType());
+            }
+
+        } else {
+            return super.invoke(target, method, args);
+        }
+
+
+    }
+
+    private Object getDefaultValue(Class type) {
+        if (boolean.class.equals(type)) {
+            return Boolean.FALSE;
+        } else if (byte.class.equals(type)) {
+            return ZERO;
+        } else if (short.class.equals(type)) {
+            return ZERO;
+        } else if (int.class.equals(type)) {
+            return ZERO;
+        } else if (long.class.equals(type)) {
+            return ZERO;
+        } else if (float.class.equals(type)) {
+            return ZERO;
+        } else if (double.class.equals(type)) {
+            return ZERO;
+        }
+        return null;
+    }
+
+
+    private MythParticipant buildParticipant(MythTransactionContext mythTransactionContext,
+                                             Myth myth, Method method,
+                                             Class clazz, Object[] arguments,
+                                             Class... args)
+            throws MythRuntimeException {
+
+        if (Objects.nonNull(mythTransactionContext)) {
+
+            MythInvocation mythInvocation = new MythInvocation(clazz,
+                    method.getName(),
+                    args, arguments);
+
+            final String destination = myth.destination();
+
+            final Integer pattern = myth.pattern().getCode();
+
+
+            //封装调用点
+            return new MythParticipant(
+                    mythTransactionContext.getTransId(),
+                    destination,
+                    pattern,
+                    mythInvocation);
+
+        }
+
+        return null;
+
+
+    }
+
+}

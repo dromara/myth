@@ -30,14 +30,16 @@
 
     <dubbo:registry protocol="zookeeper" address="localhost:2181"/>
 
-    <dubbo:protocol accesslog="true" name="dubbo" port="20886"/>
+    <dubbo:protocol accesslog="true" name="dubbo" port="20886" />
+
+    <dubbo:consumer proxy="mythJdkProxy"/>
 
     <dubbo:reference timeout="10000"
                      interface="com.github.myth.demo.dubbo.inventory.api.service.InventoryService"
                      id="inventoryService"
-                     retries="0" check="false"/>
+                     retries="0" check="false" proxy="mythJdkProxy"/>
     <dubbo:reference timeout="10000"
                      interface="com.github.myth.demo.dubbo.account.api.service.AccountService"
                      id="accountService"
-                     retries="0" check="false"/>
+                     retries="0" check="false" proxy="mythJdkProxy"/>
 </beans>

@@ -82,7 +82,6 @@ public class PaymentServiceImpl implements PaymentService {
             return;
         }
 
-
         order.setStatus(OrderStatusEnum.PAY_SUCCESS.getCode());
         orderMapper.update(order);
         //扣除用户余额

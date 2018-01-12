@@ -48,11 +48,6 @@ import java.util.Objects;
 @Activate(group = {Constants.SERVER_KEY, Constants.CONSUMER})
 public class DubboMythTransactionFilter implements Filter {
 
-    private MythTransactionManager mythTransactionManager;
-
-    public void setMythTransactionManager(MythTransactionManager mythTransactionManager) {
-        this.mythTransactionManager = mythTransactionManager;
-    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -81,12 +76,7 @@ public class DubboMythTransactionFilter implements Filter {
                             .setAttachment(CommonConstant.MYTH_TRANSACTION_CONTEXT,
                                     GsonUtils.getInstance().toJson(mythTransactionContext));
                 }
-                final MythParticipant participant =
-                        buildParticipant(mythTransactionContext, myth,
-                                method, clazz, arguments, args);
-                if (Objects.nonNull(participant)) {
-                    mythTransactionManager.registerParticipant(participant);
-                }
+
                 return invoker.invoke(invocation);
 
             } catch (RpcException e) {
@@ -99,33 +89,4 @@ public class DubboMythTransactionFilter implements Filter {
 
     }
 
-    private MythParticipant buildParticipant(MythTransactionContext mythTransactionContext,
-                                             Myth myth, Method method,
-                                             Class clazz, Object[] arguments, Class... args)
-            throws MythRuntimeException {
-
-        if (Objects.nonNull(mythTransactionContext)) {
-
-            MythInvocation mythInvocation = new MythInvocation(clazz,
-                    method.getName(),
-                    args, arguments);
-
-            final String destination = myth.destination();
-
-            final Integer pattern = myth.pattern().getCode();
-
-
-            //封装调用点
-            return new MythParticipant(
-                    mythTransactionContext.getTransId(),
-                    destination,
-                    pattern,
-                    mythInvocation);
-
-        }
-
-        return null;
-
-
-    }
 }
