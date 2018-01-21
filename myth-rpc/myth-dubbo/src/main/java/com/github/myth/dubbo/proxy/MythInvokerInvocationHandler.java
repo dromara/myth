@@ -7,6 +7,7 @@ import com.github.myth.common.bean.context.MythTransactionContext;
 import com.github.myth.common.bean.entity.MythInvocation;
 import com.github.myth.common.bean.entity.MythParticipant;
 import com.github.myth.common.exception.MythRuntimeException;
+import com.github.myth.common.utils.DefaultValueUtils;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.helper.SpringBeanUtils;
 import com.github.myth.core.service.impl.MythTransactionManager;
@@ -21,8 +22,6 @@ import java.util.Objects;
 public class MythInvokerInvocationHandler extends InvokerInvocationHandler {
 
     private Object target;
-
-    private static final int ZERO = 0;
 
     public MythInvokerInvocationHandler(Invoker<?> handler) {
         super(handler);
@@ -56,8 +55,9 @@ public class MythInvokerInvocationHandler extends InvokerInvocationHandler {
 
                 return super.invoke(target, method, args);
             } catch (Throwable throwable) {
+                //todo 需要记录下错误日志
                 throwable.printStackTrace();
-                return getDefaultValue(method.getReturnType());
+                return DefaultValueUtils.getDefaultValue(method.getReturnType());
             }
 
         } else {
@@ -67,24 +67,7 @@ public class MythInvokerInvocationHandler extends InvokerInvocationHandler {
 
     }
 
-    private Object getDefaultValue(Class type) {
-        if (boolean.class.equals(type)) {
-            return Boolean.FALSE;
-        } else if (byte.class.equals(type)) {
-            return ZERO;
-        } else if (short.class.equals(type)) {
-            return ZERO;
-        } else if (int.class.equals(type)) {
-            return ZERO;
-        } else if (long.class.equals(type)) {
-            return ZERO;
-        } else if (float.class.equals(type)) {
-            return ZERO;
-        } else if (double.class.equals(type)) {
-            return ZERO;
-        }
-        return null;
-    }
+
 
 
     private MythParticipant buildParticipant(MythTransactionContext mythTransactionContext,

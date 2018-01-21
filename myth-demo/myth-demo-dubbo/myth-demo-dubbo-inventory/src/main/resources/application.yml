@@ -6,9 +6,9 @@ server:
 spring:
     datasource:
         driver-class-name:  com.mysql.jdbc.Driver
-        url: jdbc:mysql://192.168.1.68:3306/myth_stock?useUnicode=true&characterEncoding=utf8
-        username: xiaoyu
-        password: Wgj@555888
+        url: jdbc:mysql://localhost:3306/myth_stock?useUnicode=true&characterEncoding=utf8
+        username: root
+        password: 123456
    #activemq:
     #   broker-url: tcp://120.76.52.162:61616
     #   user: happylife

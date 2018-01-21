@@ -68,24 +68,17 @@ public class DubboMythTransactionFilter implements Filter {
         }
 
         if (Objects.nonNull(myth)) {
-            try {
-                final MythTransactionContext mythTransactionContext =
-                        TransactionContextLocal.getInstance().get();
-                if (Objects.nonNull(mythTransactionContext)) {
-                    RpcContext.getContext()
-                            .setAttachment(CommonConstant.MYTH_TRANSACTION_CONTEXT,
-                                    GsonUtils.getInstance().toJson(mythTransactionContext));
-                }
-
-                return invoker.invoke(invocation);
-
-            } catch (RpcException e) {
-                e.printStackTrace();
-                return new RpcResult();
+            final MythTransactionContext mythTransactionContext =
+                    TransactionContextLocal.getInstance().get();
+            if (Objects.nonNull(mythTransactionContext)) {
+                RpcContext.getContext()
+                        .setAttachment(CommonConstant.MYTH_TRANSACTION_CONTEXT,
+                                GsonUtils.getInstance().toJson(mythTransactionContext));
             }
-        } else {
-            return invoker.invoke(invocation);
+
         }
+
+        return invoker.invoke(invocation);
 
     }
 
