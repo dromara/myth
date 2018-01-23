@@ -103,6 +103,6 @@ myth
    
    
  * ###  微信公众号
-   ![](https://yu199195.github.io/images/public.png)
+   ![](https://yu199195.github.io/images/public.jpg)
 
 # Contribution
