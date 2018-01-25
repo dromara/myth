@@ -23,6 +23,13 @@ myth
 #  源码解析
 
   * ## https://juejin.im/post/5a5c63986fb9a01cb64ec517 
+  
+#  视频详解
+
+  * ## 环境搭建以及运行 : http://www.iqiyi.com/w_19rw5zuigl.html
+  * ## 原理讲解（1）：http://www.iqiyi.com/w_19rw5ztpkh.html
+  * ## 原理讲解（2）：http://www.iqiyi.com/w_19rw5zslm1.html
+  
 
 
 # Prerequisite
