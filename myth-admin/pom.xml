@@ -180,7 +180,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
 
                 <configuration>
-                    <mainClass>AdminApplication</mainClass>
+                    <mainClass>com.github.myth.admin.MythAdminApplication</mainClass>
                     <executable>true</executable>
                 </configuration>
             </plugin>
