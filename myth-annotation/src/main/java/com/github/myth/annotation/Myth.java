@@ -33,9 +33,15 @@ public @interface Myth {
 
     /**
      * The destination name for this listener, resolved through the container-wide
+     * 消息队列的唯一标识(在rocketmq或者aliyunmq中是topic)
      */
     String destination();
 
+    /**
+     * rocketmq特有的tag区分方式,tags的值需要完全满足rocketmq规则
+     * @return
+     */
+    String tags() default "";
 
     /**
      * 目标接口类

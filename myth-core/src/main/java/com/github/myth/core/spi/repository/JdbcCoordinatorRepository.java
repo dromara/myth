@@ -22,6 +22,7 @@ import com.github.myth.common.bean.entity.MythParticipant;
 import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.config.MythConfig;
 import com.github.myth.common.config.MythDbConfig;
+import com.github.myth.common.enums.MythStatusEnum;
 import com.github.myth.common.enums.RepositorySupportEnum;
 import com.github.myth.common.exception.MythException;
 import com.github.myth.common.exception.MythRuntimeException;
@@ -228,7 +229,7 @@ public class JdbcCoordinatorRepository implements CoordinatorRepository {
     public List<MythTransaction> listAllByDelay(Date date) {
         String sb = "select * from " +
                 tableName +
-                " where last_time <?  and status = 2";
+                " where last_time <?  and status = " + MythStatusEnum.BEGIN.getCode();
 
         List<Map<String, Object>> list = executeQuery(sb, date);
 

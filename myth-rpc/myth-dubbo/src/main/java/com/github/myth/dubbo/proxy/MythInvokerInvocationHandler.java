@@ -82,7 +82,14 @@ public class MythInvokerInvocationHandler extends InvokerInvocationHandler {
                     method.getName(),
                     args, arguments);
 
-            final String destination = myth.destination();
+
+            //有tags的消息队列的特殊处理
+            final String destination;
+            if( Objects.nonNull(myth.tags()) && myth.tags().length() > 0 ){
+                destination = myth.destination()+","+myth.tags();
+            }else{
+                destination = myth.destination();
+            }
 
             final Integer pattern = myth.pattern().getCode();
 

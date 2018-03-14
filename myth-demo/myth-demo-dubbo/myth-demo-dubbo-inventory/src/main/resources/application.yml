@@ -19,10 +19,17 @@ spring:
     #    port: 5672
     #    username: guest
     #    password: guest
-    rocketmq:
-        namesrvAddr: localhost:9876
-        consumerGroupName: inventory
-        instanceName: inventory
+    aliyunmq:
+            broker-url: http://onsaddr-internet.aliyun.com/rocketmq/nsaddr4client-internet
+            accessKey: LTAI44DGK0oAutoj
+            secretKey: RBXTnPSVxHYfrn2IFFoVtgExZdw1M2
+            topic: ORDER_FLOW_BQ
+            consumerId: CID_ORDER_FLOW_BQ
+#    rocketmq:
+#            namesrvAddr: localhost:9876
+#            consumerGroupName: CID_ORDER_FLOW_BQ_INVENTORY
+#            instanceName: ORDER_FLOW_BQ_CONSUMER
+#            topic: ORDER_FLOW_BQ
    #kafka:
       #  consumer:
       #     bootstrap-servers: localhost:9092

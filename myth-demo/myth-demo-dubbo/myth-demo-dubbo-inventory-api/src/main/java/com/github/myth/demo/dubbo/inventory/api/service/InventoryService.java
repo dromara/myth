@@ -36,7 +36,7 @@ public interface InventoryService {
      * @param inventoryDTO 库存DTO对象
      * @return true
      */
-    @Myth(destination = "inventory")
+    @Myth(destination = "ORDER_FLOW_BQ",tags = "inventory")
     Boolean decrease(InventoryDTO inventoryDTO);
 
 
