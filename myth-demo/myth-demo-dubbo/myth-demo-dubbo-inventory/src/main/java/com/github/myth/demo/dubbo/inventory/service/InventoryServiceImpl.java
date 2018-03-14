@@ -58,7 +58,7 @@ public class InventoryServiceImpl implements InventoryService {
      * @return true
      */
     @Override
-    @Myth(destination = "inventory")
+    @Myth(destination = "ORDER_FLOW_BQ",tags = "inventory")
     @Transactional(rollbackFor = Exception.class)
     public Boolean decrease(InventoryDTO inventoryDTO) {
         final Inventory entity = inventoryMapper.findByProductId(inventoryDTO.getProductId());

@@ -42,7 +42,7 @@ public class MythParticipant implements Serializable {
 
 
     /**
-     * 队列
+     * 队列(TOPIC,如果是rocketmq或者aliyunmq,这里包含TOPIC和TAG),用,区分
      */
     private String destination;
 

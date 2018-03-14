@@ -57,7 +57,7 @@ public class AccountServiceImpl implements AccountService {
      * @return true
      */
     @Override
-    @Myth(destination = "account")
+    @Myth(destination = "ORDER_FLOW_BQ",tags = "account")
     @Transactional(rollbackFor = Exception.class)
     public boolean payment(AccountDTO accountDTO) {
         final AccountDO accountDO = accountMapper.findByUserId(accountDTO.getUserId());
