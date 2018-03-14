@@ -35,7 +35,7 @@ public interface AccountService {
      * @param accountDTO 参数dto
      * @return true
      */
-    @Myth(destination = "account")
+    @Myth(destination = "ORDER_FLOW_BQ",tags = "account")
     boolean payment(AccountDTO accountDTO);
 
 

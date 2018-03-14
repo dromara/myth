@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <!-- 普通消息生产者 -->
+    <bean id="producer" class="com.aliyun.openservices.ons.api.bean.ProducerBean" init-method="start" destroy-method="shutdown">
+        <!-- Spring 接入方式支持 Java SDK 支持的所有配置项 -->
+        <property name="properties" > <!--生产者配置信息-->
+            <props>
+                <prop key="ProducerId">PID_ORDER_FLOW_BQ</prop> <!--请替换 XXX-->
+                <prop key="AccessKey">LTAI44DGK0oAutoj</prop>
+                <prop key="SecretKey">RBXTnPSVxHYfrn2IFFoVtgExZdw1M2</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="aliyunmqSendService" class="com.github.myth.aliyunmq.service.AliyunmqSendServiceImpl">
+        <property name="producer" ref="producer"/>
+    </bean>
+
+</beans>

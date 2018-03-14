@@ -56,7 +56,8 @@
         </property>
     </bean>
     <import resource="spring-dubbo.xml"/>
-    <import resource="spring-rocketmq.xml"/>
+    <import resource="spring-aliyunmq.xml"/>
+    <!--<import resource="spring-rocketmq.xml"/>-->
 <!--    <import resource="spring-rabbitmq.xml"/>-->
 <!--    <import resource="spring-kafka.xml"/>-->
 <!--
@@ -66,14 +67,14 @@
     <!--
        <property name="repositorySupport" value="db"/>
        <property name="mythDbConfig">
-           <bean class="com.github.myth.common.config.MythDbConfig">
-               <property name="url"
-                         value="jdbc:mysql://192.168.1.68:3306/myth?useUnicode=true&amp;characterEncoding=utf8"/>
-               <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-               <property name="password" value="Wgj@555888"/>
-               <property name="username" value="xiaoyu"/>
-           </bean>
-       </property>
+            <bean class="com.github.myth.common.config.MythDbConfig">
+                <property name="url"
+                          value="jdbc:mysql://localhost:3306/myth?useUnicode=true&amp;characterEncoding=utf8"/>
+                <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+                <property name="username" value="root"/>
+                <property name="password" value="123456"/>
+            </bean>
+        </property>
 
 
        <property name="repositorySupport" value="redis" />
@@ -89,7 +90,7 @@
        <property name="repositorySupport" value="zookeeper"/>
        <property name="mythZookeeperConfig">
            <bean class="com.github.myth.common.config.MythZookeeperConfig">
-               <property name="host"  value="192.168.1.73:2181"/>
+               <property name="host"  value="127.0.0.1:2181"/>
                <property name="sessionTimeOut" value="100000"/>
                <property name="rootPath" value="/tcc"/>
            </bean>
