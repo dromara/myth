@@ -55,6 +55,10 @@
             <artifactId>spring-jdbc</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>

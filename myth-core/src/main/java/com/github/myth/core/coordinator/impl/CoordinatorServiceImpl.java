@@ -19,7 +19,6 @@
 package com.github.myth.core.coordinator.impl;
 
 
-import com.github.myth.annotation.Myth;
 import com.github.myth.common.bean.context.MythTransactionContext;
 import com.github.myth.common.bean.entity.MythInvocation;
 import com.github.myth.common.bean.entity.MythParticipant;
@@ -109,7 +108,7 @@ public class CoordinatorServiceImpl implements CoordinatorService {
      * @throws MythException 异常
      */
     @Override
-    public void start(MythConfig mythConfig) throws MythException {
+    public void start(MythConfig mythConfig) {
         this.mythConfig = mythConfig;
 
         coordinatorRepository = SpringBeanUtils.getInstance().getBean(CoordinatorRepository.class);
@@ -117,13 +116,8 @@ public class CoordinatorServiceImpl implements CoordinatorService {
         final String repositorySuffix = buildRepositorySuffix(mythConfig.getRepositorySuffix());
         //初始化spi 协调资源存储
         coordinatorRepository.init(repositorySuffix, mythConfig);
-        //初始化 协调资源线程池
-        initCoordinatorPool();
 
-        //如果需要自动恢复 开启线程 调度线程池，进行恢复
-        if (mythConfig.getNeedRecover()) {
-            scheduledAutoRecover();
-        }
+
     }
 
 
@@ -145,6 +139,17 @@ public class CoordinatorServiceImpl implements CoordinatorService {
     @Override
     public MythTransaction findByTransId(String transId) {
         return coordinatorRepository.findByTransId(transId);
+    }
+
+    /**
+     * 获取延迟多长时间后的事务信息,只要为了防止并发的时候，刚新增的数据被执行
+     *
+     * @param date 延迟后的时间
+     * @return List<MythTransaction>
+     */
+    @Override
+    public List<MythTransaction> listAllByDelay(Date date) {
+        return coordinatorRepository.listAllByDelay(date);
     }
 
     /**
@@ -209,22 +214,6 @@ public class CoordinatorServiceImpl implements CoordinatorService {
     }
 
     /**
-     * 提交补偿操作
-     *
-     * @param coordinatorAction 执行动作
-     */
-    @Override
-    public Boolean submit(CoordinatorAction coordinatorAction) {
-        try {
-            QUEUE.put(coordinatorAction);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            return Boolean.FALSE;
-        }
-        return Boolean.TRUE;
-    }
-
-    /**
      * 接收到mq消息处理
      *
      * @param message 实体对象转换成byte[]后的数据
@@ -259,14 +248,14 @@ public class CoordinatorServiceImpl implements CoordinatorService {
                             MythStatusEnum.COMMIT.getCode(),
                             entity.getMythInvocation().getTargetClass().getName(),
                             entity.getMythInvocation().getMethodName());
-                    submit(new CoordinatorAction(CoordinatorActionEnum.SAVE, log));
+                    //submit(new CoordinatorAction(CoordinatorActionEnum.SAVE, log));
                 } catch (Exception e) {
                     //执行失败保存失败的日志
                     final MythTransaction log = buildTransactionLog(transId, e.getMessage(),
                             MythStatusEnum.FAILURE.getCode(),
                             entity.getMythInvocation().getTargetClass().getName(),
                             entity.getMythInvocation().getMethodName());
-                    submit(new CoordinatorAction(CoordinatorActionEnum.SAVE, log));
+                    //submit(new CoordinatorAction(CoordinatorActionEnum.SAVE, log));
                     throw new MythRuntimeException(e);
                 } finally {
                     TransactionContextLocal.getInstance().remove();
@@ -319,74 +308,6 @@ public class CoordinatorServiceImpl implements CoordinatorService {
     }
 
 
-    /**
-     * 发送消息
-     *
-     * @param mythTransaction 消息体
-     * @return true 处理成功  false 处理失败
-     */
-    @Override
-    public Boolean sendMessage(MythTransaction mythTransaction) {
-        final List<MythParticipant> mythParticipants = mythTransaction.getMythParticipants();
-            /*
-             * 这里的这个判断很重要，不为空，表示本地的方法执行成功，需要执行远端的rpc方法
-             * 为什么呢，因为我会在切面的finally里面发送消息，意思是切面无论如何都需要发送mq消息
-             * 那么考虑问题，如果本地执行成功，调用rpc的时候才需要发
-             * 如果本地异常，则不需要发送mq ，此时mythParticipants为空
-             */
-        if (CollectionUtils.isNotEmpty(mythParticipants)) {
-
-            for (MythParticipant mythParticipant : mythParticipants) {
-                MessageEntity messageEntity =
-                        new MessageEntity(mythParticipant.getTransId(),
-                                mythParticipant.getMythInvocation());
-                try {
-                    final byte[] message = serializer.serialize(messageEntity);
-                    getMythMqSendService().sendMessage(mythParticipant.getDestination(),
-                            mythParticipant.getPattern(),
-                            message);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return Boolean.FALSE;
-                }
-            }
-            //这里为什么要这么做呢？ 主要是为了防止在极端情况下，发起者执行过程中，突然自身down 机
-            //造成消息未发送，新增一个状态标记，如果出现这种情况，通过定时任务发送消息
-            this.updateStatus(mythTransaction.getTransId(), MythStatusEnum.COMMIT.getCode());
-        }
-        return Boolean.TRUE;
-    }
-
-
-    private void scheduledAutoRecover() {
-        new ScheduledThreadPoolExecutor(1,
-                MythTransactionThreadFactory.create("MythAutoRecoverService",
-                        true))
-                .scheduleWithFixedDelay(() -> {
-                    LogUtil.debug(LOGGER, "auto recover execute delayTime:{}",
-                            () -> mythConfig.getScheduledDelay());
-                    try {
-                        final List<MythTransaction> mythTransactionList =
-                                coordinatorRepository.listAllByDelay(acquireData());
-                        if (CollectionUtils.isNotEmpty(mythTransactionList)) {
-                            mythTransactionList
-                                    .forEach(mythTransaction -> {
-                                        final Boolean success = sendMessage(mythTransaction);
-                                        //发送成功 ，更改状态
-                                        if (success) {
-                                            coordinatorRepository.updateStatus(mythTransaction.getTransId(),
-                                                    MythStatusEnum.COMMIT.getCode());
-                                        }
-                                    });
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }, 30, mythConfig.getScheduledDelay(), TimeUnit.SECONDS);
-
-    }
-
 
     private void handler(MessageEntity entity) throws Exception {
         //设置事务上下文，这个类会传递给远端
@@ -400,12 +321,6 @@ public class CoordinatorServiceImpl implements CoordinatorService {
         TransactionContextLocal.getInstance().set(context);
 
         executeLocalTransaction(entity.getMythInvocation());
-    }
-
-    private Date acquireData() {
-        return new Date(LocalDateTime.now()
-                .atZone(ZoneId.systemDefault())
-                .toInstant().toEpochMilli() - (mythConfig.getRecoverDelayTime() * 1000));
     }
 
     private String buildRepositorySuffix(String repositorySuffix) {
@@ -431,67 +346,6 @@ public class CoordinatorServiceImpl implements CoordinatorService {
         }
     }
 
-    private void initCoordinatorPool() {
-        synchronized (LOGGER) {
-            QUEUE = new LinkedBlockingQueue<>(mythConfig.getCoordinatorQueueMax());
-            final int coordinatorThreadMax = mythConfig.getCoordinatorThreadMax();
-            final MythTransactionThreadPool threadPool = SpringBeanUtils.getInstance().getBean(MythTransactionThreadPool.class);
-            final ExecutorService executorService = threadPool.newCustomFixedThreadPool(coordinatorThreadMax);
-            LogUtil.info(LOGGER, "启动协调资源操作线程数量为:{}", () -> coordinatorThreadMax);
-            for (int i = 0; i < coordinatorThreadMax; i++) {
-                executorService.execute(new Worker());
-            }
-
-        }
-    }
-
-    private synchronized MythMqSendService getMythMqSendService() {
-        if (mythMqSendService == null) {
-            synchronized (CoordinatorServiceImpl.class) {
-                if (mythMqSendService == null) {
-                    mythMqSendService = SpringBeanUtils.getInstance().getBean(MythMqSendService.class);
-                }
-            }
-        }
-        return mythMqSendService;
-    }
-
-
-    /**
-     * 线程执行器
-     */
-    class Worker implements Runnable {
-
-        @Override
-        public void run() {
-            execute();
-        }
-
-        private void execute() {
-            while (true) {
-                try {
-                    final CoordinatorAction coordinatorAction = QUEUE.take();
-                    if (coordinatorAction != null) {
-                        final int code = coordinatorAction.getAction().getCode();
-                        if (CoordinatorActionEnum.SAVE.getCode() == code) {
-                            save(coordinatorAction.getMythTransaction());
-                        } else if (CoordinatorActionEnum.DELETE.getCode() == code) {
-                            remove(coordinatorAction.getMythTransaction().getTransId());
-                        } else if (CoordinatorActionEnum.UPDATE.getCode() == code) {
-                            update(coordinatorAction.getMythTransaction());
-                        } else if (CoordinatorActionEnum.UPDATE_STATUS.getCode() == code) {
-                            updateStatus(coordinatorAction.getMythTransaction().getTransId(),
-                                    coordinatorAction.getMythTransaction().getStatus());
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    LogUtil.error(LOGGER, "执行协调命令失败：{}", e::getMessage);
-                }
-            }
-
-        }
-    }
 
 
 }

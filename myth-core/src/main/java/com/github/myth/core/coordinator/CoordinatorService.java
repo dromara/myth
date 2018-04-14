@@ -26,6 +26,9 @@ import com.github.myth.common.exception.MythRuntimeException;
 import com.github.myth.common.serializer.ObjectSerializer;
 import com.github.myth.core.coordinator.command.CoordinatorAction;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * @author xiaoyu
  */
@@ -54,6 +57,15 @@ public interface CoordinatorService {
      * @return MythTransaction
      */
     MythTransaction findByTransId(String transId);
+
+
+    /**
+     * 获取延迟多长时间后的事务信息,只要为了防止并发的时候，刚新增的数据被执行
+     *
+     * @param date 延迟后的时间
+     * @return List<MythTransaction>
+     */
+    List<MythTransaction> listAllByDelay(Date date);
 
 
     /**
@@ -104,13 +116,6 @@ public interface CoordinatorService {
      */
     int updateStatus(String transId, Integer status) throws MythRuntimeException;
 
-    /**
-     * 提交补偿操作
-     *
-     * @param coordinatorAction 执行动作
-     * @return true 成功
-     */
-    Boolean submit(CoordinatorAction coordinatorAction);
 
 
     /**
@@ -129,11 +134,6 @@ public interface CoordinatorService {
     Boolean processMessage(byte[] message);
 
 
-    /**
-     * 发送消息
-     * @param mythTransaction 消息体
-     * @return true 处理成功  false 处理失败
-     */
-    Boolean sendMessage(MythTransaction mythTransaction);
+
 
 }

@@ -16,7 +16,7 @@
  *
  */
 
-package com.github.myth.core.service.mq;
+package com.github.myth.core.service.mq.receive;
 
 import com.github.myth.common.serializer.ObjectSerializer;
 import com.github.myth.core.coordinator.CoordinatorService;

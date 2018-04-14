@@ -92,6 +92,11 @@ public class MythConfig {
      */
     private int recoverDelayTime = 60;
 
+    /**
+     * disruptor  bufferSize
+     */
+    private int bufferSize = 1024;
+
 
     /**
      * db配置
