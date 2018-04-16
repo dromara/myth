@@ -24,7 +24,6 @@ import com.github.myth.common.config.MythConfig;
 import com.github.myth.common.exception.MythException;
 import com.github.myth.common.exception.MythRuntimeException;
 import com.github.myth.common.serializer.ObjectSerializer;
-import com.github.myth.core.coordinator.command.CoordinatorAction;
 
 import java.util.Date;
 import java.util.List;
@@ -93,7 +92,7 @@ public interface CoordinatorService {
      * @return rows 1 成功
      * @throws MythRuntimeException
      */
-    int updateFailTransaction(MythTransaction mythTransaction) throws  MythRuntimeException;
+    void updateFailTransaction(MythTransaction mythTransaction) throws  MythRuntimeException;
 
 
     /**
@@ -117,21 +116,12 @@ public interface CoordinatorService {
     int updateStatus(String transId, Integer status) throws MythRuntimeException;
 
 
-
     /**
      * 设置序列化方式
      * @param serializer 序列化方式
      */
     void setSerializer(ObjectSerializer serializer);
 
-
-
-    /**
-     * 接收到mq消息处理
-     * @param message 消息体
-     * @return true 处理成功  false 处理失败
-     */
-    Boolean processMessage(byte[] message);
 
 
 

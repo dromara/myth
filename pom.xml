@@ -167,6 +167,25 @@
                 <version>${project.version}</version>
             </dependency>
 
+
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-spring-boot-starter-dubbo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-spring-boot-starter-springcloud</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-spring-boot-starter-motan</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.lmax</groupId>
                 <artifactId>disruptor</artifactId>

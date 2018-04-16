@@ -12,4 +12,11 @@
     <artifactId>myth-spring-boot-starter-dubbo</artifactId>
 
 
+    <dependencies>
+        <dependency>
+            <groupId>com.github.myth</groupId>
+            <artifactId>myth-dubbo</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

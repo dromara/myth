@@ -6,7 +6,6 @@ import com.github.myth.common.bean.mq.MessageEntity;
 import com.github.myth.common.enums.EventTypeEnum;
 import com.github.myth.common.enums.MythStatusEnum;
 import com.github.myth.common.serializer.ObjectSerializer;
-import com.github.myth.core.coordinator.impl.CoordinatorServiceImpl;
 import com.github.myth.core.disruptor.publisher.MythTransactionEventPublisher;
 import com.github.myth.core.helper.SpringBeanUtils;
 import com.github.myth.core.service.MythMqSendService;

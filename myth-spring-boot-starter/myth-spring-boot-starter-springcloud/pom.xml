@@ -11,5 +11,11 @@
 
     <artifactId>myth-spring-boot-starter-springcloud</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.github.myth</groupId>
+            <artifactId>myth-springcloud</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

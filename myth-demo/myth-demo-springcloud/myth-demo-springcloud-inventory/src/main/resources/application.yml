@@ -6,9 +6,9 @@ server:
 spring:
     datasource:
         driver-class-name:  com.mysql.jdbc.Driver
-        url: jdbc:mysql://192.168.1.68:3306/myth_stock?useUnicode=true&characterEncoding=utf8
-        username: xiaoyu
-        password: Wgj@555888
+        url: jdbc:mysql://10.4.4.202:3306/myth_stock?useUnicode=true&characterEncoding=utf8
+        username: root
+        password: 123123
         platform: mysql
         type: com.alibaba.druid.pool.DruidDataSource
         initialSize: 20
@@ -58,6 +58,18 @@ eureka:
  client:
      serviceUrl:
        defaultZone: http://localhost:8761/eureka/
+
+com:
+  github :
+      myth :
+        serializer : kryo
+        repositorySupport : db
+        mythDbConfig :
+                 driverClassName  : com.mysql.jdbc.Driver
+                 url :  jdbc:mysql://10.4.4.202:3306/myth?useUnicode=true&amp;characterEncoding=utf8
+                 username : root
+                 password : 123123
+
 
 inventory-service :
    ribbon.NFLoadBalancerRuleClassName : com.netflix.loadbalancer.RandomRule

@@ -21,16 +21,13 @@ package com.github.myth.core.service.engine;
 import com.github.myth.common.bean.context.MythTransactionContext;
 import com.github.myth.common.bean.entity.MythParticipant;
 import com.github.myth.common.bean.entity.MythTransaction;
-import com.github.myth.common.enums.CoordinatorActionEnum;
 import com.github.myth.common.enums.EventTypeEnum;
 import com.github.myth.common.enums.MythRoleEnum;
 import com.github.myth.common.enums.MythStatusEnum;
 import com.github.myth.common.utils.LogUtil;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
-import com.github.myth.core.coordinator.CoordinatorService;
-import com.github.myth.core.coordinator.command.CoordinatorAction;
-import com.github.myth.core.coordinator.command.CoordinatorCommand;
 import com.github.myth.core.disruptor.publisher.MythTransactionEventPublisher;
+import com.github.myth.core.service.MythSendMessageService;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -56,29 +53,16 @@ public class MythTransactionEngine {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MythTransactionEngine.class);
 
-
     /**
      * 将事务信息存放在threadLocal里面
      */
     private static final ThreadLocal<MythTransaction> CURRENT = new ThreadLocal<>();
 
-    private final CoordinatorService coordinatorService;
-
-
-    private final CoordinatorCommand coordinatorCommand;
+    @Autowired
+    private MythSendMessageService mythSendMessageService;
 
     @Autowired
     private MythTransactionEventPublisher publishEvent;
-
-
-    @Autowired
-    public MythTransactionEngine(CoordinatorCommand coordinatorCommand,
-                                 CoordinatorService coordinatorService) {
-        this.coordinatorCommand = coordinatorCommand;
-        this.coordinatorService = coordinatorService;
-
-    }
-
 
 
     public MythTransaction begin(ProceedingJoinPoint point) {
@@ -156,7 +140,7 @@ public class MythTransactionEngine {
     public void sendMessage() {
         MythTransaction mythTransaction = getCurrentTransaction();
         if (Objects.nonNull(mythTransaction)) {
-            coordinatorService.sendMessage(mythTransaction);
+            mythSendMessageService.sendMessage(mythTransaction);
         }
     }
 
