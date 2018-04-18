@@ -9,17 +9,14 @@ import com.github.myth.common.exception.MythRuntimeException;
 import com.github.myth.common.utils.GsonUtils;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.helper.SpringBeanUtils;
-import com.github.myth.core.service.impl.MythTransactionManager;
+import com.github.myth.core.service.engine.MythTransactionEngine;
 import com.weibo.api.motan.common.MotanConstants;
 import com.weibo.api.motan.core.extension.Activation;
-import com.weibo.api.motan.core.extension.Scope;
-import com.weibo.api.motan.core.extension.Spi;
 import com.weibo.api.motan.core.extension.SpiMeta;
 import com.weibo.api.motan.filter.Filter;
 import com.weibo.api.motan.rpc.Caller;
 import com.weibo.api.motan.rpc.Request;
 import com.weibo.api.motan.rpc.Response;
-import com.weibo.api.motan.rpc.RpcContext;
 import com.weibo.api.motan.util.ReflectUtil;
 
 import java.lang.reflect.Method;
@@ -80,7 +77,7 @@ public class MotanMythTransactionFilter implements Filter {
                     buildParticipant(mythTransactionContext, myth,
                             method, clazz, arguments, args);
             if (Objects.nonNull(participant)) {
-                SpringBeanUtils.getInstance().getBean(MythTransactionManager.class)
+                SpringBeanUtils.getInstance().getBean(MythTransactionEngine.class)
                         .registerParticipant(participant);
             }
             try {

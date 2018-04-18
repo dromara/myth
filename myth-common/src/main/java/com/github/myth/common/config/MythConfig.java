@@ -38,26 +38,6 @@ public class MythConfig {
      */
     private String serializer = "kryo";
 
-    /**
-     * 回滚队列大小
-     */
-    private int coordinatorQueueMax = 5000;
-    /**
-     * 监听回滚队列线程数
-     */
-    private int coordinatorThreadMax = Runtime.getRuntime().availableProcessors() << 1;
-
-
-    /**
-     * 线程池的拒绝策略 {@linkplain com.github.myth.common.enums.RejectedPolicyTypeEnum}
-     */
-    private String rejectPolicy = "Abort";
-
-    /**
-     * 线程池的队列类型 {@linkplain com.github.myth.common.enums.BlockingQueueTypeEnum}
-     */
-    private String blockingQueueType = "Linked";
-
 
     /**
      * 补偿存储类型 {@linkplain com.github.myth.common.enums.RepositorySupportEnum}
@@ -92,6 +72,11 @@ public class MythConfig {
      */
     private int recoverDelayTime = 60;
 
+    /**
+     * disruptor  bufferSize
+     */
+    private int bufferSize = 1024;
+
 
     /**
      * db配置
@@ -118,6 +103,198 @@ public class MythConfig {
      * file配置
      */
     private MythFileConfig mythFileConfig;
+
+    public MythConfig() {
+    }
+
+    public MythConfig(Builder builder) {
+        builder(builder);
+    }
+
+    public static Builder create() {
+        return new Builder();
+    }
+
+    public void builder(Builder builder) {
+        this.serializer = builder.serializer;
+        this.repositorySuffix = builder.repositorySuffix;
+        this.repositorySupport = builder.repositorySupport;
+        this.needRecover = builder.needRecover;
+        this.scheduledThreadMax = builder.scheduledThreadMax;
+        this.scheduledDelay = builder.scheduledDelay;
+        this.retryMax = builder.retryMax;
+        this.recoverDelayTime = builder.recoverDelayTime;
+        this.bufferSize = builder.bufferSize;
+        this.mythDbConfig = builder.mythDbConfig;
+        this.mythMongoConfig = builder.mythMongoConfig;
+        this.mythRedisConfig = builder.mythRedisConfig;
+        this.mythZookeeperConfig = builder.mythZookeeperConfig;
+        this.mythFileConfig = builder.mythFileConfig;
+    }
+
+
+    public static class Builder {
+
+        private String repositorySuffix;
+
+        private String serializer = "kryo";
+
+        private String repositorySupport = "db";
+
+        private Boolean needRecover = false;
+
+        private int scheduledThreadMax = Runtime.getRuntime().availableProcessors() << 1;
+
+        private int scheduledDelay = 60;
+
+        private int retryMax = 3;
+
+        private int recoverDelayTime = 60;
+
+        private int bufferSize = 1024;
+
+        private MythDbConfig mythDbConfig;
+
+        private MythMongoConfig mythMongoConfig;
+
+        private MythRedisConfig mythRedisConfig;
+
+        private MythZookeeperConfig mythZookeeperConfig;
+
+        private MythFileConfig mythFileConfig;
+
+        public Builder setRepositorySuffix(String repositorySuffix) {
+            this.repositorySuffix = repositorySuffix;
+            return this;
+        }
+
+        public Builder setSerializer(String serializer) {
+            this.serializer = serializer;
+            return this;
+        }
+
+        public Builder setRepositorySupport(String repositorySupport) {
+            this.repositorySupport = repositorySupport;
+            return this;
+        }
+
+        public Builder setNeedRecover(Boolean needRecover) {
+            this.needRecover = needRecover;
+            return this;
+        }
+
+        public Builder setScheduledThreadMax(int scheduledThreadMax) {
+            this.scheduledThreadMax = scheduledThreadMax;
+            return this;
+        }
+
+        public Builder setScheduledDelay(int scheduledDelay) {
+            this.scheduledDelay = scheduledDelay;
+            return this;
+        }
+
+        public Builder setRetryMax(int retryMax) {
+            this.retryMax = retryMax;
+            return this;
+        }
+
+        public Builder setRecoverDelayTime(int recoverDelayTime) {
+            this.recoverDelayTime = recoverDelayTime;
+            return this;
+        }
+
+        public Builder setBufferSize(int bufferSize) {
+            this.bufferSize = bufferSize;
+            return this;
+        }
+
+        public Builder setMythDbConfig(MythDbConfig mythDbConfig) {
+            this.mythDbConfig = mythDbConfig;
+            return this;
+        }
+
+        public Builder setMythMongoConfig(MythMongoConfig mythMongoConfig) {
+            this.mythMongoConfig = mythMongoConfig;
+            return this;
+        }
+
+        public Builder setMythRedisConfig(MythRedisConfig mythRedisConfig) {
+            this.mythRedisConfig = mythRedisConfig;
+            return this;
+        }
+
+        public Builder setMythZookeeperConfig(MythZookeeperConfig mythZookeeperConfig) {
+            this.mythZookeeperConfig = mythZookeeperConfig;
+            return this;
+        }
+
+        public Builder setMythFileConfig(MythFileConfig mythFileConfig) {
+            this.mythFileConfig = mythFileConfig;
+            return this;
+        }
+
+        public String getRepositorySuffix() {
+            return repositorySuffix;
+        }
+
+        public String getSerializer() {
+            return serializer;
+        }
+
+        public String getRepositorySupport() {
+            return repositorySupport;
+        }
+
+        public Boolean getNeedRecover() {
+            return needRecover;
+        }
+
+        public int getScheduledThreadMax() {
+            return scheduledThreadMax;
+        }
+
+        public int getScheduledDelay() {
+            return scheduledDelay;
+        }
+
+        public int getRetryMax() {
+            return retryMax;
+        }
+
+        public int getRecoverDelayTime() {
+            return recoverDelayTime;
+        }
+
+        public int getBufferSize() {
+            return bufferSize;
+        }
+
+        public MythDbConfig getMythDbConfig() {
+            return mythDbConfig;
+        }
+
+        public MythMongoConfig getMythMongoConfig() {
+            return mythMongoConfig;
+        }
+
+        public MythRedisConfig getMythRedisConfig() {
+            return mythRedisConfig;
+        }
+
+        public MythZookeeperConfig getMythZookeeperConfig() {
+            return mythZookeeperConfig;
+        }
+
+        public MythFileConfig getMythFileConfig() {
+            return mythFileConfig;
+        }
+
+
+        public MythConfig build() {
+            return new MythConfig(this);
+        }
+
+    }
 
 
 }

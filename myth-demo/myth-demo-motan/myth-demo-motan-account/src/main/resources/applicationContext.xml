@@ -35,10 +35,6 @@
     <bean id="mythTransactionBootstrap" class="com.github.myth.core.bootstrap.MythTransactionBootstrap">
         <property name="repositorySuffix" value="account-service"/>
         <property name="serializer" value="kryo"/>
-        <property name="coordinatorQueueMax" value="5000"/>
-        <property name="coordinatorThreadMax" value="8"/>
-        <property name="rejectPolicy" value="Abort"/>
-        <property name="blockingQueueType" value="Linked"/>
         <property name="repositorySupport" value="db"/>
         <property name="mythDbConfig">
             <bean class="com.github.myth.common.config.MythDbConfig">

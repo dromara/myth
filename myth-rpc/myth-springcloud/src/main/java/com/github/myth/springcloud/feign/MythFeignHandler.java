@@ -23,7 +23,7 @@ import com.github.myth.common.bean.entity.MythInvocation;
 import com.github.myth.common.bean.entity.MythParticipant;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.helper.SpringBeanUtils;
-import com.github.myth.core.service.impl.MythTransactionManager;
+import com.github.myth.core.service.engine.MythTransactionEngine;
 import feign.InvocationHandlerFactory.MethodHandler;
 import feign.Target;
 import org.slf4j.Logger;
@@ -57,12 +57,12 @@ public class MythFeignHandler implements InvocationHandler {
                 return this.handlers.get(method).invoke(args);
             }
             try {
-                final MythTransactionManager mythTransactionManager =
-                        SpringBeanUtils.getInstance().getBean(MythTransactionManager.class);
+                final MythTransactionEngine mythTransactionEngine =
+                        SpringBeanUtils.getInstance().getBean(MythTransactionEngine.class);
 
                 final MythParticipant participant = buildParticipant(myth, method, args);
                 if (Objects.nonNull(participant)) {
-                    mythTransactionManager.registerParticipant(participant);
+                    mythTransactionEngine.registerParticipant(participant);
                 }
                 return this.handlers.get(method).invoke(args);
             } catch (Throwable throwable) {

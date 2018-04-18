@@ -18,25 +18,14 @@
 
 package com.github.myth.core.service.handler;
 
-import com.github.myth.annotation.Myth;
-import com.github.myth.annotation.PropagationEnum;
 import com.github.myth.common.bean.context.MythTransactionContext;
-import com.github.myth.common.bean.entity.MythTransaction;
-import com.github.myth.common.enums.MythStatusEnum;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.service.MythTransactionHandler;
-import com.github.myth.core.service.impl.MythTransactionManager;
+import com.github.myth.core.service.engine.MythTransactionEngine;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import java.lang.reflect.Method;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -56,12 +45,12 @@ public class StartMythTransactionHandler implements MythTransactionHandler {
     private static final Lock LOCK = new ReentrantLock();
 
 
-    private final MythTransactionManager mythTransactionManager;
+    private final MythTransactionEngine mythTransactionEngine;
 
 
     @Autowired
-    public StartMythTransactionHandler(MythTransactionManager mythTransactionManager) {
-        this.mythTransactionManager = mythTransactionManager;
+    public StartMythTransactionHandler(MythTransactionEngine mythTransactionEngine) {
+        this.mythTransactionEngine = mythTransactionEngine;
     }
 
 
@@ -78,26 +67,20 @@ public class StartMythTransactionHandler implements MythTransactionHandler {
 
         try {
 
-            //主要防止并发问题，对事务日志的写造成压力，加了锁进行处理
-            try {
-                LOCK.lock();
-                mythTransactionManager.begin(point);
-            } finally {
-                LOCK.unlock();
-            }
+            mythTransactionEngine.begin(point);
 
             return point.proceed();
 
         } catch (Throwable throwable) {
 
             //更新失败的日志信息
-            mythTransactionManager.failTransaction(throwable.getMessage());
+            mythTransactionEngine.failTransaction(throwable.getMessage());
 
             throw throwable;
         } finally {
             //发送消息
-            mythTransactionManager.sendMessage();
-            mythTransactionManager.cleanThreadLocal();
+            mythTransactionEngine.sendMessage();
+            mythTransactionEngine.cleanThreadLocal();
             TransactionContextLocal.getInstance().remove();
         }
     }

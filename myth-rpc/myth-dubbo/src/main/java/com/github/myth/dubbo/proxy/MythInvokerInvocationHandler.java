@@ -10,7 +10,7 @@ import com.github.myth.common.exception.MythRuntimeException;
 import com.github.myth.common.utils.DefaultValueUtils;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.helper.SpringBeanUtils;
-import com.github.myth.core.service.impl.MythTransactionManager;
+import com.github.myth.core.service.engine.MythTransactionEngine;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -48,9 +48,9 @@ public class MythInvokerInvocationHandler extends InvokerInvocationHandler {
                         buildParticipant(mythTransactionContext, myth,
                                 method, clazz, args, arguments);
                 if (Objects.nonNull(participant)) {
-                    final MythTransactionManager mythTransactionManager =
-                            SpringBeanUtils.getInstance().getBean(MythTransactionManager.class);
-                    mythTransactionManager.registerParticipant(participant);
+                    final MythTransactionEngine mythTransactionEngine =
+                            SpringBeanUtils.getInstance().getBean(MythTransactionEngine.class);
+                    mythTransactionEngine.registerParticipant(participant);
                 }
 
                 return super.invoke(target, method, args);

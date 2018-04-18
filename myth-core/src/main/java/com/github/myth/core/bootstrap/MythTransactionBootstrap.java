@@ -31,15 +31,13 @@ import org.springframework.stereotype.Component;
 /**
  * @author xiaoyu
  */
-@Component
 public class MythTransactionBootstrap extends MythConfig implements ApplicationContextAware {
 
-
-    private final MythInitService mythInitService;
+    private MythInitService mythInitService;
 
     @Autowired
     public MythTransactionBootstrap(MythInitService mythInitService) {
-        this.mythInitService = mythInitService;
+       this.mythInitService = mythInitService;
     }
 
     @Override
@@ -49,7 +47,7 @@ public class MythTransactionBootstrap extends MythConfig implements ApplicationC
     }
 
 
-    private void start(MythConfig tccConfig) {
-        mythInitService.initialization(tccConfig);
+    private void start(MythConfig mythConfig) {
+        mythInitService.initialization(mythConfig);
     }
 }
