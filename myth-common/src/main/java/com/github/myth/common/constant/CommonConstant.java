@@ -40,6 +40,8 @@ public interface CommonConstant {
 
     String MYTH_TRANSACTION_CONTEXT = "MYTH_TRANSACTION_CONTEXT";
 
+    String TOPIC_TAG_SEPARATOR = ",";
+
 
     int SUCCESS = 1;
 

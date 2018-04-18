@@ -1,16 +1,18 @@
 package com.github.myth.aliyunmq.service;
 
-import java.util.List;
-
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.SendResult;
 import com.aliyun.openservices.ons.api.bean.ProducerBean;
+import com.github.myth.common.constant.CommonConstant;
 import com.github.myth.common.exception.MythRuntimeException;
 import com.github.myth.common.utils.LogUtil;
 import com.github.myth.core.service.MythMqSendService;
 import com.google.common.base.Splitter;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * 功能 :
@@ -24,7 +26,6 @@ public class AliyunmqSendServiceImpl implements MythMqSendService {
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AliyunmqSendServiceImpl.class);
 
-    private final String TOPIC_TAG_SEPERATOR = ",";
 
     private ProducerBean producer;
 
@@ -36,8 +37,8 @@ public class AliyunmqSendServiceImpl implements MythMqSendService {
     public void sendMessage(String destination, Integer pattern, byte[] message) {
         try {
             Message msg;
-            List<String> stringList = Splitter.on(TOPIC_TAG_SEPERATOR).trimResults().splitToList(destination);
-            if (stringList.size() > 1) {
+            List<String> stringList = Splitter.on(CommonConstant.TOPIC_TAG_SEPARATOR).trimResults().splitToList(destination);
+            if (CollectionUtils.isNotEmpty(stringList)) {
                 String topic = stringList.get(0);
                 String tags = stringList.get(1);
                 msg = new Message(topic, tags, message);
