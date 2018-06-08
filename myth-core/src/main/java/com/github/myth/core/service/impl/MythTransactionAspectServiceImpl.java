@@ -28,38 +28,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>Description: .</p>
+ * MythTransactionAspectServiceImpl.
  *
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/11/30 9:56
- * @since JDK 1.8
  */
 @Component
 public class MythTransactionAspectServiceImpl implements MythTransactionAspectService {
 
-
     private final MythTransactionFactoryService mythTransactionFactoryService;
 
     @Autowired
-    public MythTransactionAspectServiceImpl(MythTransactionFactoryService mythTransactionFactoryService) {
+    public MythTransactionAspectServiceImpl(final MythTransactionFactoryService mythTransactionFactoryService) {
         this.mythTransactionFactoryService = mythTransactionFactoryService;
     }
 
-    /**
-     * myth事务切面服务
-     *
-     * @param mythTransactionContext myth事务上下文对象
-     * @param point                  切点
-     * @return object
-     * @throws Throwable 异常信息
-     */
     @Override
     @SuppressWarnings("unchecked")
-    public Object invoke(MythTransactionContext mythTransactionContext, ProceedingJoinPoint point) throws Throwable {
+    public Object invoke(final MythTransactionContext mythTransactionContext, final ProceedingJoinPoint point) throws Throwable {
         final Class clazz = mythTransactionFactoryService.factoryOf(mythTransactionContext);
-        final MythTransactionHandler mythTransactionHandler =
-                (MythTransactionHandler) SpringBeanUtils.getInstance().getBean(clazz);
+        final MythTransactionHandler mythTransactionHandler = (MythTransactionHandler) SpringBeanUtils.getInstance().getBean(clazz);
         return mythTransactionHandler.handler(point, mythTransactionContext);
     }
 }

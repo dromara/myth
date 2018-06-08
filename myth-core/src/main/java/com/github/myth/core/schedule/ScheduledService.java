@@ -42,21 +42,16 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * <p>Description: .</p>
- *
+ * ScheduledService.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2018/3/5 14:29
- * @since JDK 1.8
  */
 @Component
 public class ScheduledService {
 
     /**
-     * logger
+     * logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledService.class);
-
 
     @Autowired
     private MythSendMessageService mythSendMessageService;
@@ -67,37 +62,31 @@ public class ScheduledService {
     @Autowired
     private MythTransactionEventPublisher publisher;
 
-    public void scheduledAutoRecover(MythConfig mythConfig) {
-        new ScheduledThreadPoolExecutor(1,
-                MythTransactionThreadFactory.create("MythAutoRecoverService",
-                        true)).scheduleWithFixedDelay(() -> {
-            LogUtil.debug(LOGGER, "auto recover execute delayTime:{}",
-                    mythConfig::getScheduledDelay);
-            try {
-                final List<MythTransaction> mythTransactionList =
-                        coordinatorService.listAllByDelay(acquireData(mythConfig));
-                if (CollectionUtils.isNotEmpty(mythTransactionList)) {
-                    mythTransactionList
-                            .forEach(mythTransaction -> {
+    public void scheduledAutoRecover(final MythConfig mythConfig) {
+        new ScheduledThreadPoolExecutor(1, MythTransactionThreadFactory.create("MythAutoRecoverService", true))
+                .scheduleWithFixedDelay(() -> {
+                    LogUtil.debug(LOGGER, "auto recover execute delayTime:{}", mythConfig::getScheduledDelay);
+                    try {
+                        final List<MythTransaction> mythTransactionList = coordinatorService.listAllByDelay(acquireData(mythConfig));
+                        if (CollectionUtils.isNotEmpty(mythTransactionList)) {
+                            mythTransactionList.forEach(mythTransaction -> {
                                 final Boolean success = mythSendMessageService.sendMessage(mythTransaction);
                                 //发送成功 ，更改状态
                                 if (success) {
                                     mythTransaction.setStatus(MythStatusEnum.COMMIT.getCode());
                                     publisher.publishEvent(mythTransaction, EventTypeEnum.UPDATE_STATUS.getCode());
-
                                 }
                             });
-                }
+                        }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }, 30, mythConfig.getScheduledDelay(), TimeUnit.SECONDS);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }, 30, mythConfig.getScheduledDelay(), TimeUnit.SECONDS);
 
     }
 
-
-    private Date acquireData(MythConfig mythConfig) {
+    private Date acquireData(final MythConfig mythConfig) {
         return new Date(LocalDateTime.now().atZone(ZoneId.systemDefault())
                 .toInstant().toEpochMilli() - (mythConfig.getRecoverDelayTime() * 1000));
     }

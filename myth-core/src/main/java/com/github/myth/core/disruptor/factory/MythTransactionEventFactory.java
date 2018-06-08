@@ -19,17 +19,12 @@
 
 package com.github.myth.core.disruptor.factory;
 
-
 import com.github.myth.core.disruptor.event.MythTransactionEvent;
 import com.lmax.disruptor.EventFactory;
 
 /**
- * <p>Description: .</p>
- *
+ * MythTransactionEventFactory.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2018/3/5 11:30
- * @since JDK 1.8yth
  */
 public class MythTransactionEventFactory implements EventFactory<MythTransactionEvent> {
 

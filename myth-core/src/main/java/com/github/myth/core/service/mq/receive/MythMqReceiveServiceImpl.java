@@ -47,26 +47,20 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * <p>Description: .</p>
- *
+ * MythMqReceiveServiceImpl.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/11/30 13:59
- * @since JDK 1.8
  */
 @Service("mythMqReceiveService")
 public class MythMqReceiveServiceImpl implements MythMqReceiveService {
 
     /**
-     * logger
+     * logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MythMqReceiveServiceImpl.class);
 
-
-    private volatile ObjectSerializer serializer;
-
     private static final Lock LOCK = new ReentrantLock();
 
+    private volatile ObjectSerializer serializer;
 
     @Autowired
     private CoordinatorService coordinatorService;
@@ -74,19 +68,11 @@ public class MythMqReceiveServiceImpl implements MythMqReceiveService {
     @Autowired
     private MythTransactionEventPublisher publisher;
 
-
     @Autowired
     private MythConfig mythConfig;
 
-
-    /**
-     * myth框架处理发出的mq消息
-     *
-     * @param message 实体对象转换成byte[]后的数据
-     * @return true 成功 false 失败
-     */
     @Override
-    public Boolean processMessage(byte[] message) {
+    public Boolean processMessage(final byte[] message) {
         try {
             MessageEntity entity;
             try {
@@ -101,10 +87,8 @@ public class MythMqReceiveServiceImpl implements MythMqReceiveService {
              * 3 记录本地日志
              */
             LOCK.lock();
-
             final String transId = entity.getTransId();
             final MythTransaction mythTransaction = coordinatorService.findByTransId(transId);
-
             //第一次调用 也就是服务down机，或者没有调用到的时候， 通过mq执行
             if (Objects.isNull(mythTransaction)) {
                 try {
@@ -127,15 +111,14 @@ public class MythMqReceiveServiceImpl implements MythMqReceiveService {
                 } finally {
                     TransactionContextLocal.getInstance().remove();
                 }
-
             } else {
                 //如果是执行失败的话
                 if (mythTransaction.getStatus() == MythStatusEnum.FAILURE.getCode()) {
                     //如果超过了最大重试次数 则不执行
                     if (mythTransaction.getRetriedCount() >= mythConfig.getRetryMax()) {
                         LogUtil.error(LOGGER, () -> "此事务已经超过了最大重试次数:" + mythConfig.getRetryMax()
-                                + " ,执行接口为:" + entity.getMythInvocation().getTargetClass() + " ,方法为:" +
-                                entity.getMythInvocation().getMethodName() + ",事务id为：" + entity.getTransId());
+                                + " ,执行接口为:" + entity.getMythInvocation().getTargetClass() + " ,方法为:"
+                                + entity.getMythInvocation().getMethodName() + ",事务id为：" + entity.getTransId());
                         return Boolean.FALSE;
                     }
                     try {
@@ -162,24 +145,19 @@ public class MythMqReceiveServiceImpl implements MythMqReceiveService {
         return Boolean.TRUE;
     }
 
-
-    private void execute(MessageEntity entity) throws Exception {
+    private void execute(final MessageEntity entity) throws Exception {
         //设置事务上下文，这个类会传递给远端
         MythTransactionContext context = new MythTransactionContext();
         //设置事务id
         context.setTransId(entity.getTransId());
-
         //设置为发起者角色
         context.setRole(MythRoleEnum.LOCAL.getCode());
-
         TransactionContextLocal.getInstance().set(context);
-
         executeLocalTransaction(entity.getMythInvocation());
     }
 
-
     @SuppressWarnings("unchecked")
-    private void executeLocalTransaction(MythInvocation mythInvocation) throws Exception {
+    private void executeLocalTransaction(final MythInvocation mythInvocation) throws Exception {
         if (Objects.nonNull(mythInvocation)) {
             final Class clazz = mythInvocation.getTargetClass();
             final String method = mythInvocation.getMethodName();
@@ -187,12 +165,13 @@ public class MythMqReceiveServiceImpl implements MythMqReceiveService {
             final Class[] parameterTypes = mythInvocation.getParameterTypes();
             final Object bean = SpringBeanUtils.getInstance().getBean(clazz);
             MethodUtils.invokeMethod(bean, method, args, parameterTypes);
-            LogUtil.debug(LOGGER, "Myth执行本地协调事务:{}", () -> mythInvocation.getTargetClass()
-                    + ":" + mythInvocation.getMethodName());
+            LogUtil.debug(LOGGER, "Myth执行本地协调事务:{}", () -> mythInvocation.getTargetClass() + ":" + mythInvocation.getMethodName());
+
         }
     }
 
-    private MythTransaction buildTransactionLog(String transId, String errorMsg, Integer status, String targetClass, String targetMethod) {
+    private MythTransaction buildTransactionLog(final String transId, final String errorMsg, final Integer status,
+                                                final String targetClass, final String targetMethod) {
         MythTransaction logTransaction = new MythTransaction(transId);
         logTransaction.setRetriedCount(1);
         logTransaction.setStatus(status);

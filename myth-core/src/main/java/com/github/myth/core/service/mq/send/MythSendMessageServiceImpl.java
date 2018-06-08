@@ -1,3 +1,21 @@
+/*
+ *
+ * Copyright 2017-2018 549477611@qq.com(xiaoyu)
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.github.myth.core.service.mq.send;
 
 import com.github.myth.common.bean.entity.MythParticipant;
@@ -18,16 +36,11 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * <p>Description: .</p>
- *
+ * MythSendMessageServiceImpl.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2018/4/14 17:47
- * @since JDK 1.8
  */
 @Service("mythSendMessageService")
 public class MythSendMessageServiceImpl implements MythSendMessageService {
-
 
     private volatile ObjectSerializer serializer;
 
@@ -36,14 +49,8 @@ public class MythSendMessageServiceImpl implements MythSendMessageService {
     @Autowired
     private MythTransactionEventPublisher publisher;
 
-    /**
-     * 发送消息
-     *
-     * @param mythTransaction 消息体
-     * @return true 处理成功  false 处理失败
-     */
     @Override
-    public Boolean sendMessage(MythTransaction mythTransaction) {
+    public Boolean sendMessage(final MythTransaction mythTransaction) {
         if (Objects.isNull(mythTransaction)) {
             return false;
         }
@@ -55,16 +62,11 @@ public class MythSendMessageServiceImpl implements MythSendMessageService {
          * 如果本地异常，则不需要发送mq ，此时mythParticipants为空
          */
         if (CollectionUtils.isNotEmpty(mythParticipants)) {
-
             for (MythParticipant mythParticipant : mythParticipants) {
-                MessageEntity messageEntity =
-                        new MessageEntity(mythParticipant.getTransId(),
-                                mythParticipant.getMythInvocation());
+                MessageEntity messageEntity = new MessageEntity(mythParticipant.getTransId(), mythParticipant.getMythInvocation());
                 try {
                     final byte[] message = getObjectSerializer().serialize(messageEntity);
-                    getMythMqSendService().sendMessage(mythParticipant.getDestination(),
-                            mythParticipant.getPattern(),
-                            message);
+                    getMythMqSendService().sendMessage(mythParticipant.getDestination(), mythParticipant.getPattern(), message);
                 } catch (Exception e) {
                     e.printStackTrace();
                     return Boolean.FALSE;
@@ -77,7 +79,6 @@ public class MythSendMessageServiceImpl implements MythSendMessageService {
         }
         return Boolean.TRUE;
     }
-
 
     private synchronized MythMqSendService getMythMqSendService() {
         if (mythMqSendService == null) {

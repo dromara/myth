@@ -15,21 +15,34 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.github.myth.core.helper;
 
-import java.nio.ByteBuffer;
+package com.github.myth.dubbo.service;
 
+import com.alibaba.dubbo.config.ApplicationConfig;
+import com.github.myth.core.service.RpcApplicationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author xiaoyu
  */
-public class ByteUtils {
+@Service("applicationService")
+public class DubboRpcApplicationServiceImpl implements RpcApplicationService {
 
-    public static byte[] longToBytes(long l) {
-        return ByteBuffer.allocate(8).putLong(l).array();
+
+    /**
+     * dubbo ApplicationConfig
+     */
+    private final ApplicationConfig applicationConfig;
+
+    @Autowired(required = false)
+    public DubboRpcApplicationServiceImpl(ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
     }
 
-    public static long bytesToLong(byte[] bytes) {
-        return ByteBuffer.wrap(bytes).getLong();
+
+    @Override
+    public String acquireName() {
+        return applicationConfig.getName();
     }
 }

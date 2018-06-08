@@ -15,20 +15,20 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.core.interceptor;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 
-
 /**
+ * MythTransactionInterceptor.
  * @author xiaoyu
  */
 @FunctionalInterface
 public interface MythTransactionInterceptor {
 
-
     /**
-     * tcc分布式事务拦截方法
+     * tcc分布式事务拦截方法.
      *
      * @param pjp tcc切入点
      * @return Object

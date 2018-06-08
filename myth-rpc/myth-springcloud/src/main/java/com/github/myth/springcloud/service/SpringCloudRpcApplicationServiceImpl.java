@@ -16,17 +16,23 @@
  *
  */
 
-package com.github.myth.core.service;
+package com.github.myth.springcloud.service;
+
+import com.github.myth.core.service.RpcApplicationService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 /**
  * @author xiaoyu
  */
-public interface ApplicationService {
+@Service("applicationService")
+public class SpringCloudRpcApplicationServiceImpl implements RpcApplicationService {
 
-    /**
-     * 获取applicationName
-     *
-     * @return applicationName
-     */
-    String acquireName();
+    @Value("${spring.application.name}")
+    private String appName;
+
+    @Override
+    public String acquireName() {
+        return appName;
+    }
 }

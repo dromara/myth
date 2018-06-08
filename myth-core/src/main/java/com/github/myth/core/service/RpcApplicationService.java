@@ -15,37 +15,19 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.github.myth.core.concurrent.threadlocal;
+
+package com.github.myth.core.service;
 
 /**
+ * RpcApplicationService.
  * @author xiaoyu
  */
-public class CoordinatorLocal {
+public interface RpcApplicationService {
 
-    private static final CoordinatorLocal COMPENSATION_LOCAL = new CoordinatorLocal();
-
-    private CoordinatorLocal() {
-
-    }
-
-    public static CoordinatorLocal getInstance() {
-        return COMPENSATION_LOCAL;
-    }
-
-
-    private static final ThreadLocal<String> CURRENT_LOCAL = new ThreadLocal<>();
-
-
-    public void set(String coordinatorId) {
-        CURRENT_LOCAL.set(coordinatorId);
-    }
-
-    public String get() {
-        return CURRENT_LOCAL.get();
-    }
-
-    public void remove() {
-        CURRENT_LOCAL.remove();
-    }
-
+    /**
+     * acquired rpc application name.
+     *
+     * @return application name
+     */
+    String acquireName();
 }

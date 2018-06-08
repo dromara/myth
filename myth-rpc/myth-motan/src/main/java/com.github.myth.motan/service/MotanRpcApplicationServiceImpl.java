@@ -17,7 +17,7 @@
  */
 package com.github.myth.motan.service;
 
-import com.github.myth.core.service.ApplicationService;
+import com.github.myth.core.service.RpcApplicationService;
 import com.weibo.api.motan.config.springsupport.BasicServiceConfigBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,13 +27,13 @@ import org.springframework.stereotype.Service;
  * @author xiaoyu
  */
 @Service
-public class MotanApplicationServiceImpl implements ApplicationService {
+public class MotanRpcApplicationServiceImpl implements RpcApplicationService {
 
 
     private final BasicServiceConfigBean basicServiceConfigBean;
 
     @Autowired
-    public MotanApplicationServiceImpl(BasicServiceConfigBean basicServiceConfigBean) {
+    public MotanRpcApplicationServiceImpl(BasicServiceConfigBean basicServiceConfigBean) {
         this.basicServiceConfigBean = basicServiceConfigBean;
     }
 

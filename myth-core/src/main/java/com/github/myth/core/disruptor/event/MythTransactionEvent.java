@@ -25,12 +25,8 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * <p>Description: .</p>
- *
+ * MythTransactionEvent.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2018/3/5 11:27
- * @since JDK 1.8
  */
 @Data
 public class MythTransactionEvent implements Serializable {
@@ -39,6 +35,9 @@ public class MythTransactionEvent implements Serializable {
 
     private int type;
 
+    /**
+     * help gc.
+     */
     public void clear() {
         mythTransaction = null;
     }

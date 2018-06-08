@@ -15,6 +15,7 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.core.bootstrap;
 
 import com.github.myth.common.config.MythConfig;
@@ -25,10 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.stereotype.Component;
 
 
 /**
+ * Myth Bootstrap.
  * @author xiaoyu
  */
 public class MythTransactionBootstrap extends MythConfig implements ApplicationContextAware {
@@ -36,18 +37,17 @@ public class MythTransactionBootstrap extends MythConfig implements ApplicationC
     private MythInitService mythInitService;
 
     @Autowired
-    public MythTransactionBootstrap(MythInitService mythInitService) {
-       this.mythInitService = mythInitService;
+    public MythTransactionBootstrap(final MythInitService mythInitService) {
+        this.mythInitService = mythInitService;
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
         SpringBeanUtils.getInstance().setCfgContext((ConfigurableApplicationContext) applicationContext);
         start(this);
     }
 
-
-    private void start(MythConfig mythConfig) {
+    private void start(final MythConfig mythConfig) {
         mythInitService.initialization(mythConfig);
     }
 }

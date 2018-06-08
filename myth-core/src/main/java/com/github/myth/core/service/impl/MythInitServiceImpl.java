@@ -42,18 +42,14 @@ import java.util.ServiceLoader;
 import java.util.stream.StreamSupport;
 
 /**
- * <p>Description: .</p>
- *
+ * myth init.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/11/29 11:44
- * @since JDK 1.8
  */
 @Service
 public class MythInitServiceImpl implements MythInitService {
 
     /**
-     * logger
+     * logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MythInitServiceImpl.class);
 
@@ -61,24 +57,20 @@ public class MythInitServiceImpl implements MythInitService {
 
     private final MythTransactionEventPublisher publisher;
 
-    @Autowired
-    private ScheduledService scheduledService;
+    private final ScheduledService scheduledService;
 
     @Autowired
-    public MythInitServiceImpl(CoordinatorService coordinatorService, MythTransactionEventPublisher publisher) {
+    public MythInitServiceImpl(final CoordinatorService coordinatorService,
+                               final MythTransactionEventPublisher publisher,
+                               final ScheduledService scheduledService) {
         this.coordinatorService = coordinatorService;
         this.publisher = publisher;
+        this.scheduledService = scheduledService;
     }
 
-
-    /**
-     * Myth分布式事务初始化方法
-     *
-     * @param mythConfig TCC配置
-     */
     @Override
-    public void initialization(MythConfig mythConfig) {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> LOGGER.error("系统关闭")));
+    public void initialization(final MythConfig mythConfig) {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> LOGGER.error("myth have error!")));
         try {
             loadSpiSupport(mythConfig);
             publisher.start(mythConfig.getBufferSize());
@@ -87,58 +79,42 @@ public class MythInitServiceImpl implements MythInitService {
             if (mythConfig.getNeedRecover()) {
                 scheduledService.scheduledAutoRecover(mythConfig);
             }
-
         } catch (Exception ex) {
-            LogUtil.error(LOGGER, "Myth事务初始化异常:{}", ex::getMessage);
+            LogUtil.error(LOGGER, "Myth init fail:{}", ex::getMessage);
             //非正常关闭
             System.exit(1);
         }
-        LogUtil.info(LOGGER, () -> "Myth事务初始化成功！");
+        LogUtil.info(LOGGER, () -> "Myth init success");
     }
 
     /**
-     * 根据配置文件初始化spi
+     * load spi support.
      *
-     * @param mythConfig 配置信息
+     * @param mythConfig {@linkplain MythConfig}
      */
-    private void loadSpiSupport(MythConfig mythConfig) {
-
+    private void loadSpiSupport(final MythConfig mythConfig) {
         //spi  serialize
-        final SerializeEnum serializeEnum =
-                SerializeEnum.acquire(mythConfig.getSerializer());
-        final ServiceLoader<ObjectSerializer> objectSerializers =
-                ServiceBootstrap.loadAll(ObjectSerializer.class);
-
+        final SerializeEnum serializeEnum = SerializeEnum.acquire(mythConfig.getSerializer());
+        final ServiceLoader<ObjectSerializer> objectSerializers = ServiceBootstrap.loadAll(ObjectSerializer.class);
         final ObjectSerializer serializer =
                 StreamSupport.stream(objectSerializers.spliterator(),
                         true)
-                        .filter(objectSerializer ->
-                                Objects.equals(objectSerializer.getScheme(),
-                                        serializeEnum.getSerialize()))
+                        .filter(objectSerializer -> Objects.equals(objectSerializer.getScheme(), serializeEnum.getSerialize()))
                         .findFirst()
                         .orElse(new KryoSerializer());
-
         coordinatorService.setSerializer(serializer);
         SpringBeanUtils.getInstance().registerBean(ObjectSerializer.class.getName(), serializer);
-
         //spi  repository support
-        final RepositorySupportEnum repositorySupportEnum =
-                RepositorySupportEnum.acquire(mythConfig.getRepositorySupport());
-        final ServiceLoader<CoordinatorRepository> recoverRepositories =
-                ServiceBootstrap.loadAll(CoordinatorRepository.class);
-
-
+        final RepositorySupportEnum repositorySupportEnum = RepositorySupportEnum.acquire(mythConfig.getRepositorySupport());
+        final ServiceLoader<CoordinatorRepository> recoverRepositories = ServiceBootstrap.loadAll(CoordinatorRepository.class);
         final CoordinatorRepository repository =
                 StreamSupport.stream(recoverRepositories.spliterator(), false)
-                        .filter(recoverRepository ->
-                                Objects.equals(recoverRepository.getScheme(),
-                                        repositorySupportEnum.getSupport())).findFirst()
+                        .filter(recoverRepository -> Objects.equals(recoverRepository.getScheme(), repositorySupportEnum.getSupport()))
+                        .findFirst()
                         .orElse(new JdbcCoordinatorRepository());
-
         //将CoordinatorRepository实现注入到spring容器
         repository.setSerializer(serializer);
         SpringBeanUtils.getInstance().registerBean(CoordinatorRepository.class.getName(), repository);
-
-
     }
+
 }

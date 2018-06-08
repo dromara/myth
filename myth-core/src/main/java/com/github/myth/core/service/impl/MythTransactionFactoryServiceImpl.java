@@ -31,33 +31,21 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 /**
- * <p>Description: .</p>
- *
+ * MythTransactionFactoryServiceImpl.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/11/30 10:08
- * @since JDK 1.8
  */
 @Component
 public class MythTransactionFactoryServiceImpl implements MythTransactionFactoryService {
 
-
     private final MythTransactionEngine mythTransactionEngine;
 
     @Autowired
-    public MythTransactionFactoryServiceImpl(MythTransactionEngine mythTransactionEngine) {
+    public MythTransactionFactoryServiceImpl(final MythTransactionEngine mythTransactionEngine) {
         this.mythTransactionEngine = mythTransactionEngine;
     }
 
-    /**
-     * 返回 实现TxTransactionHandler类的名称
-     *
-     * @param context 事务上下文
-     * @return Class<T>
-     * @throws Throwable 抛出异常
-     */
     @Override
-    public Class factoryOf(MythTransactionContext context) throws Throwable {
+    public Class factoryOf(final MythTransactionContext context) throws Throwable {
         //如果事务还没开启或者 myth事务上下文是空， 那么应该进入发起调用
         if (!mythTransactionEngine.isBegin() && Objects.isNull(context)) {
             return StartMythTransactionHandler.class;

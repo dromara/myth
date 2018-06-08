@@ -22,18 +22,19 @@ import com.github.myth.common.bean.context.MythTransactionContext;
 import org.aspectj.lang.ProceedingJoinPoint;
 
 /**
+ * MythTransactionAspectService.
  * @author xiaoyu
  */
 @FunctionalInterface
 public interface MythTransactionAspectService {
 
     /**
-     * myth事务切面服务
+     * myth aspect.
      *
-     * @param mythTransactionContext myth事务上下文对象
-     * @param point                 切点
+     * @param mythTransactionContext {@linkplain MythTransactionContext}
+     * @param point       cut point.
      * @return object
-     * @throws Throwable 异常信息
+     * @throws Throwable ex
      */
     Object invoke(MythTransactionContext mythTransactionContext, ProceedingJoinPoint point) throws Throwable;
 }
