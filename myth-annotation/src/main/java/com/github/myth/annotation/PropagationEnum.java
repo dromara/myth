@@ -15,10 +15,11 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.annotation;
 
-
 /**
+ * PropagationEnum.
  * @author xiaoyu
  */
 
@@ -59,10 +60,9 @@ public enum PropagationEnum {
      */
     PROPAGATION_NESTED(6);
 
-
     private final int value;
 
-    PropagationEnum(int value) {
+    PropagationEnum(final int value) {
         this.value = value;
     }
 
@@ -74,6 +74,5 @@ public enum PropagationEnum {
     public int getValue() {
         return this.value;
     }
-
 
 }

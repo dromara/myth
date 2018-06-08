@@ -15,12 +15,13 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.github.myth.common.config;
 
+package com.github.myth.common.config;
 
 import lombok.Data;
 
 /**
+ * MythFileConfig.
  * @author xiaoyu
  */
 @Data

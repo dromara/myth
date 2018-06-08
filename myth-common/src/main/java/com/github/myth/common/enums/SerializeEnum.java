@@ -15,14 +15,15 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.github.myth.common.enums;
 
+package com.github.myth.common.enums;
 
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
 /**
+ * SerializeEnum.
  * @author xiaoyu
  */
 
@@ -50,7 +51,7 @@ public enum SerializeEnum {
 
     private String serialize;
 
-    SerializeEnum(String serialize) {
+    SerializeEnum(final String serialize) {
         this.serialize = serialize;
     }
 
@@ -60,7 +61,7 @@ public enum SerializeEnum {
      * @param serialize the serialize protocol
      * @return the serialize protocol enum
      */
-    public static SerializeEnum acquire(String serialize) {
+    public static SerializeEnum acquire(final String serialize) {
         Optional<SerializeEnum> serializeEnum =
                 Arrays.stream(SerializeEnum.values())
                         .filter(v -> Objects.equals(v.getSerialize(), serialize))
@@ -83,9 +84,8 @@ public enum SerializeEnum {
      *
      * @param serialize the serialize protocol
      */
-    public void setSerialize(String serialize) {
+    public void setSerialize(final String serialize) {
         this.serialize = serialize;
     }
-
 
 }

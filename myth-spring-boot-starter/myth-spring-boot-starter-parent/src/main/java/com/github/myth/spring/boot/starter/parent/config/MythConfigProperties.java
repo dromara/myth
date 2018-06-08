@@ -17,19 +17,15 @@
  *
  */
 
-package com.github.myth.spring.boot.starter.springcloud.config;
+package com.github.myth.spring.boot.starter.parent.config;
 
 import com.github.myth.common.config.MythConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>Description: .</p>
- *
+ * MythConfigProperties.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2018/3/7 14:26
- * @since JDK 1.8
  */
 @Component
 @ConfigurationProperties(prefix = "com.github.myth")

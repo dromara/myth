@@ -15,14 +15,16 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.common.enums;
 
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
-
 /**
+ * RepositorySupportEnum.
+ *
  * @author xiaoyu
  */
 public enum RepositorySupportEnum {
@@ -54,7 +56,7 @@ public enum RepositorySupportEnum {
 
     private String support;
 
-    RepositorySupportEnum(String support) {
+    RepositorySupportEnum(final String support) {
         this.support = support;
     }
 
@@ -64,7 +66,7 @@ public enum RepositorySupportEnum {
      * @param support the compensate cache type
      * @return the compensate cache type enum
      */
-    public static RepositorySupportEnum acquire(String support) {
+    public static RepositorySupportEnum acquire(final String support) {
         Optional<RepositorySupportEnum> repositorySupportEnum =
                 Arrays.stream(RepositorySupportEnum.values())
                         .filter(v -> Objects.equals(v.getSupport(), support))
@@ -72,12 +74,21 @@ public enum RepositorySupportEnum {
         return repositorySupportEnum.orElse(RepositorySupportEnum.DB);
     }
 
-
+    /**
+     * Gets support.
+     *
+     * @return the support
+     */
     public String getSupport() {
         return support;
     }
 
-    public void setSupport(String support) {
+    /**
+     * Sets support.
+     *
+     * @param support the support
+     */
+    public void setSupport(final String support) {
         this.support = support;
     }
 }

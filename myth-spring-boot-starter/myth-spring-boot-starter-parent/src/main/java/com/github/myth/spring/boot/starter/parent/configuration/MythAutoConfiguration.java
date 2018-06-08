@@ -1,40 +1,54 @@
-package com.github.myth.spring.boot.starter.motan.configuration;
+package com.github.myth.spring.boot.starter.parent.configuration;
 
 import com.github.myth.common.config.MythConfig;
 import com.github.myth.core.bootstrap.MythTransactionBootstrap;
 import com.github.myth.core.service.MythInitService;
-import com.github.myth.spring.boot.starter.motan.config.MythConfigProperties;
+import com.github.myth.spring.boot.starter.parent.config.MythConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 /**
- * <p>Description: .</p>
+ * Myth spring boot starter.
  *
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2018/4/16 13:55
- * @since JDK 1.8
  */
-public class MythMotanAutoConfiguration {
+@Configuration
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableConfigurationProperties
+@ComponentScan(basePackages = { "com.github.myth" })
+public class MythAutoConfiguration {
 
     private final MythConfigProperties mythConfigProperties;
 
     @Autowired
-    public MythMotanAutoConfiguration(MythConfigProperties mythConfigProperties) {
+    public MythAutoConfiguration(final MythConfigProperties mythConfigProperties) {
         this.mythConfigProperties = mythConfigProperties;
     }
 
+    /**
+     * init MythTransactionBootstrap
+     *
+     * @param mythInitService {@linkplain MythInitService}
+     * @return MythTransactionBootstrap
+     */
+    @Bean
+    public MythTransactionBootstrap tccTransactionBootstrap(final MythInitService mythInitService) {
+        final MythTransactionBootstrap bootstrap = new MythTransactionBootstrap(mythInitService);
+        bootstrap.builder(builder());
+        return bootstrap;
+    }
+
+    /**
+     * init bean of  MythConfig.
+     * @return
+     */
     @Bean
     public MythConfig mythConfig() {
         return builder().build();
-    }
-
-    @Bean
-    public MythTransactionBootstrap mythTransactionBootstrap(MythInitService mythInitService) {
-        final MythTransactionBootstrap bootstrap =
-                new MythTransactionBootstrap(mythInitService);
-        bootstrap.builder(builder());
-        return bootstrap;
     }
 
     private MythConfig.Builder builder() {

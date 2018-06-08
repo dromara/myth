@@ -23,35 +23,25 @@ import com.github.myth.common.bean.entity.MythParticipant;
 import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.exception.MythException;
 import com.github.myth.common.serializer.ObjectSerializer;
-import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>Description: .</p>
- *
+ * RepositoryConvertUtils.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/11/7 15:12
- * @since JDK 1.8
  */
 public class RepositoryConvertUtils {
 
-
-    public static byte[] convert(MythTransaction mythTransaction,
-                                 ObjectSerializer objectSerializer) throws MythException {
+    public static byte[] convert(final MythTransaction mythTransaction, final ObjectSerializer objectSerializer) throws MythException {
         CoordinatorRepositoryAdapter adapter = new CoordinatorRepositoryAdapter();
-
         adapter.setTransId(mythTransaction.getTransId());
         adapter.setLastTime(mythTransaction.getLastTime());
         adapter.setCreateTime(mythTransaction.getCreateTime());
         adapter.setRetriedCount(mythTransaction.getRetriedCount());
         adapter.setStatus(mythTransaction.getStatus());
-
         adapter.setTargetClass(mythTransaction.getTargetClass());
         adapter.setTargetMethod(mythTransaction.getTargetMethod());
-
         adapter.setRole(mythTransaction.getRole());
         adapter.setErrorMsg(mythTransaction.getErrorMsg());
         adapter.setVersion(mythTransaction.getVersion());
@@ -60,33 +50,20 @@ public class RepositoryConvertUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static  MythTransaction transformBean(byte[] contents,
-                                                ObjectSerializer objectSerializer) throws MythException {
-
-
+    public static MythTransaction transformBean(final byte[] contents, final ObjectSerializer objectSerializer) throws MythException {
         MythTransaction mythTransaction = new MythTransaction();
-
-        final CoordinatorRepositoryAdapter adapter =
-                objectSerializer.deSerialize(contents, CoordinatorRepositoryAdapter.class);
-
-        List<MythParticipant> participants =
-                objectSerializer.deSerialize(adapter.getContents(), ArrayList.class);
-
+        final CoordinatorRepositoryAdapter adapter = objectSerializer.deSerialize(contents, CoordinatorRepositoryAdapter.class);
+        List<MythParticipant> participants = objectSerializer.deSerialize(adapter.getContents(), ArrayList.class);
         mythTransaction.setLastTime(adapter.getLastTime());
         mythTransaction.setRetriedCount(adapter.getRetriedCount());
         mythTransaction.setCreateTime(adapter.getCreateTime());
         mythTransaction.setTransId(adapter.getTransId());
         mythTransaction.setStatus(adapter.getStatus());
-
         mythTransaction.setMythParticipants(participants);
-
         mythTransaction.setRole(adapter.getRole());
-
         mythTransaction.setTargetClass(adapter.getTargetClass());
         mythTransaction.setTargetMethod(adapter.getTargetMethod());
-
         mythTransaction.setVersion(adapter.getVersion());
         return mythTransaction;
-
     }
 }
