@@ -5,6 +5,8 @@ myth
 
 #  Features
 
+  * ##### 天然无缝集成 spring-boot-starter 。
+  
   * ##### RPC框架支持 : dubbo,motan,springcloud。
 
   * ##### 消息中间件支持 : jms(activimq),amqp(rabbitmq),kafka,roceketmq。
