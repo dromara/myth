@@ -24,20 +24,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-
 /**
+ * MotanMythTransactionAspect.
  * @author xiaoyu
  */
 @Aspect
 @Component
 public class MotanMythTransactionAspect extends AbstractMythTransactionAspect implements Ordered {
 
-
     @Autowired
-    public MotanMythTransactionAspect(MotanMythTransactionInterceptor motanMythTransactionInterceptor) {
+    public MotanMythTransactionAspect(final MotanMythTransactionInterceptor motanMythTransactionInterceptor) {
         super.setMythTransactionInterceptor(motanMythTransactionInterceptor);
     }
-
 
     @Override
     public int getOrder() {

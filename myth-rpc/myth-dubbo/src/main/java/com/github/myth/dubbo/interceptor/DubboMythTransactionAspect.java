@@ -24,20 +24,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-
 /**
+ * DubboMythTransactionAspect.
  * @author xiaoyu
  */
 @Aspect
 @Component
 public class DubboMythTransactionAspect extends AbstractMythTransactionAspect implements Ordered {
 
-
     @Autowired
-    public DubboMythTransactionAspect(DubboMythTransactionInterceptor dubboMythTransactionInterceptor) {
+    public DubboMythTransactionAspect(final DubboMythTransactionInterceptor dubboMythTransactionInterceptor) {
         super.setMythTransactionInterceptor(dubboMythTransactionInterceptor);
     }
-
 
     @Override
     public int getOrder() {

@@ -30,7 +30,7 @@ public class MythAutoConfiguration {
     }
 
     /**
-     * init MythTransactionBootstrap
+     * init MythTransactionBootstrap.
      *
      * @param mythInitService {@linkplain MythInitService}
      * @return MythTransactionBootstrap
@@ -44,7 +44,7 @@ public class MythAutoConfiguration {
 
     /**
      * init bean of  MythConfig.
-     * @return
+     * @return {@linkplain MythConfig}
      */
     @Bean
     public MythConfig mythConfig() {

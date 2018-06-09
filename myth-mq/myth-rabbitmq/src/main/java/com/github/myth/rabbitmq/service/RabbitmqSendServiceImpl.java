@@ -1,3 +1,21 @@
+/*
+ *
+ * Copyright 2017-2018 549477611@qq.com(xiaoyu)
+ *
+ * This copyrighted material is made available to anyone wishing to use, modify,
+ * copy, or redistribute it subject to the terms and conditions of the GNU
+ * Lesser General Public License, as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
+ * for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 package com.github.myth.rabbitmq.service;
 
 import com.github.myth.common.utils.LogUtil;
@@ -9,33 +27,21 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.support.CorrelationData;
 
 /**
- * <p>Description: .</p>
- *  Rabbitmq 发生消息服务
+ * RabbitmqSendServiceImpl.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/12/7 15:29
- * @since JDK 1.8
  */
-public class RabbitmqSendServiceImpl implements MythMqSendService,RabbitTemplate.ConfirmCallback{
+public class RabbitmqSendServiceImpl implements MythMqSendService, RabbitTemplate.ConfirmCallback {
 
-    /** logger */
     private static final Logger LOGGER = LoggerFactory.getLogger(RabbitmqSendServiceImpl.class);
 
     private AmqpTemplate amqpTemplate;
 
-    public void setAmqpTemplate(AmqpTemplate amqpTemplate) {
+    public void setAmqpTemplate(final AmqpTemplate amqpTemplate) {
         this.amqpTemplate = amqpTemplate;
     }
 
-    /**
-     * 发送消息
-     *
-     * @param destination 队列
-     * @param pattern     mq 模式
-     * @param message     MythTransaction实体对象转换成byte[]后的数据
-     */
     @Override
-    public void sendMessage(String destination, Integer pattern, byte[] message) {
+    public void sendMessage(final String destination, final Integer pattern, final byte[] message) {
         amqpTemplate.convertAndSend(destination, message);
     }
 
@@ -50,11 +56,11 @@ public class RabbitmqSendServiceImpl implements MythMqSendService,RabbitTemplate
      * @param cause           An optional cause, for nack, when available, otherwise null.
      */
     @Override
-    public void confirm(CorrelationData correlationData, boolean ack, String cause) {
+    public void confirm(final CorrelationData correlationData, final boolean ack, final String cause) {
         if (ack) {
-            LogUtil.info(LOGGER,()->"消息成功发送！");
+            LogUtil.info(LOGGER, () -> "rabbit mq send message success！");
         } else {
-            LogUtil.info(LOGGER,()->"消息发送失败！" + cause+"\n重新发送");
+            LogUtil.info(LOGGER, () -> "rabbit mq send message fail！" + cause + " retry send!");
 
         }
     }

@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
+ * DubboMythTransactionInterceptor.
  * @author xiaoyu
  */
 @Component
@@ -39,20 +40,18 @@ public class DubboMythTransactionInterceptor implements MythTransactionIntercept
     private final MythTransactionAspectService mythTransactionAspectService;
 
     @Autowired
-    public DubboMythTransactionInterceptor(MythTransactionAspectService mythTransactionAspectService) {
+    public DubboMythTransactionInterceptor(final MythTransactionAspectService mythTransactionAspectService) {
         this.mythTransactionAspectService = mythTransactionAspectService;
     }
 
-
     @Override
-    public Object interceptor(ProceedingJoinPoint pjp) throws Throwable {
+    public Object interceptor(final ProceedingJoinPoint pjp) throws Throwable {
         final String context = RpcContext.getContext().getAttachment(CommonConstant.MYTH_TRANSACTION_CONTEXT);
         MythTransactionContext mythTransactionContext;
         if (StringUtils.isNoneBlank(context)) {
-            mythTransactionContext =
-                    GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
-        }else{
-            mythTransactionContext= TransactionContextLocal.getInstance().get();
+            mythTransactionContext = GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
+        } else {
+            mythTransactionContext = TransactionContextLocal.getInstance().get();
         }
         return mythTransactionAspectService.invoke(mythTransactionContext, pjp);
     }

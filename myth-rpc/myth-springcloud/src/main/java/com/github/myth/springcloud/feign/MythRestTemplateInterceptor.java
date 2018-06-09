@@ -15,6 +15,7 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.springcloud.feign;
 
 import com.github.myth.common.bean.context.MythTransactionContext;
@@ -25,18 +26,16 @@ import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.springframework.context.annotation.Configuration;
 
-
 /**
+ * MythRestTemplateInterceptor.
  * @author xiaoyu
  */
 @Configuration
 public class MythRestTemplateInterceptor implements RequestInterceptor {
 
-
     @Override
-    public void apply(RequestTemplate requestTemplate) {
-        final MythTransactionContext mythTransactionContext =
-                TransactionContextLocal.getInstance().get();
+    public void apply(final RequestTemplate requestTemplate) {
+        final MythTransactionContext mythTransactionContext = TransactionContextLocal.getInstance().get();
         requestTemplate.header(CommonConstant.MYTH_TRANSACTION_CONTEXT,
                 GsonUtils.getInstance().toJson(mythTransactionContext));
     }

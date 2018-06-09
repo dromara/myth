@@ -15,6 +15,7 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.core.spi.repository;
 
 import com.github.myth.common.bean.adapter.CoordinatorRepositoryAdapter;
@@ -50,36 +51,24 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
+ * use redis save mythTransaction log.
  * @author xiaoyu
  */
 public class RedisCoordinatorRepository implements CoordinatorRepository {
 
-    /**
-     * logger
-     */
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisCoordinatorRepository.class);
 
-
     private ObjectSerializer objectSerializer;
-
 
     private JedisClient jedisClient;
 
     private String keyPrefix;
 
-    /**
-     * 创建本地事务对象
-     *
-     * @param mythTransaction 事务对象
-     * @return rows
-     */
     @Override
-    public int create(MythTransaction mythTransaction) {
+    public int create(final MythTransaction mythTransaction) {
         try {
-            final String redisKey =
-                    RepositoryPathUtils.buildRedisKey(keyPrefix, mythTransaction.getTransId());
-            jedisClient.set(redisKey,
-                    RepositoryConvertUtils.convert(mythTransaction, objectSerializer));
+            final String redisKey = RepositoryPathUtils.buildRedisKey(keyPrefix, mythTransaction.getTransId());
+            jedisClient.set(redisKey, RepositoryConvertUtils.convert(mythTransaction, objectSerializer));
             return CommonConstant.SUCCESS;
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,14 +76,8 @@ public class RedisCoordinatorRepository implements CoordinatorRepository {
         }
     }
 
-    /**
-     * 删除对象
-     *
-     * @param transId transId
-     * @return rows
-     */
     @Override
-    public int remove(String transId) {
+    public int remove(final String transId) {
         try {
             final String redisKey = RepositoryPathUtils.buildRedisKey(keyPrefix, transId);
             return jedisClient.del(redisKey).intValue();
@@ -104,83 +87,48 @@ public class RedisCoordinatorRepository implements CoordinatorRepository {
         }
     }
 
-    /**
-     * 更新数据
-     *
-     * @param mythTransaction 事务对象
-     * @return rows 1 成功 0 失败 失败需要抛异常
-     */
     @Override
-    public int update(MythTransaction mythTransaction) throws MythRuntimeException {
+    public int update(final MythTransaction mythTransaction) throws MythRuntimeException {
         try {
-            final String redisKey =
-                    RepositoryPathUtils.buildRedisKey(keyPrefix, mythTransaction.getTransId());
+            final String redisKey = RepositoryPathUtils.buildRedisKey(keyPrefix, mythTransaction.getTransId());
             mythTransaction.setVersion(mythTransaction.getVersion() + 1);
             mythTransaction.setLastTime(new Date());
             mythTransaction.setRetriedCount(mythTransaction.getRetriedCount() + 1);
-            jedisClient.set(redisKey,
-                    RepositoryConvertUtils.convert(mythTransaction, objectSerializer));
+            jedisClient.set(redisKey, RepositoryConvertUtils.convert(mythTransaction, objectSerializer));
             return CommonConstant.SUCCESS;
         } catch (Exception e) {
             throw new MythRuntimeException(e);
         }
     }
 
-    /**
-     * 更新事务失败日志
-     *
-     * @param mythTransaction 实体对象
-     * @return rows 1 成功
-     * @throws MythRuntimeException 异常信息
-     */
     @Override
-    public int updateFailTransaction(MythTransaction mythTransaction) throws MythRuntimeException {
+    public void updateFailTransaction(final MythTransaction mythTransaction) throws MythRuntimeException {
         try {
-            final String redisKey =
-                    RepositoryPathUtils.buildRedisKey(keyPrefix, mythTransaction.getTransId());
+            final String redisKey = RepositoryPathUtils.buildRedisKey(keyPrefix, mythTransaction.getTransId());
             mythTransaction.setLastTime(new Date());
-            jedisClient.set(redisKey,
-                    RepositoryConvertUtils.convert(mythTransaction, objectSerializer));
-            return CommonConstant.SUCCESS;
+            jedisClient.set(redisKey, RepositoryConvertUtils.convert(mythTransaction, objectSerializer));
         } catch (Exception e) {
             throw new MythRuntimeException(e);
         }
     }
 
-    /**
-     * 更新 List<Participant>  只更新这一个字段数据
-     *
-     * @param mythTransaction 实体对象
-     */
     @Override
-    public int updateParticipant(MythTransaction mythTransaction) throws MythRuntimeException {
-        final String redisKey =
-                RepositoryPathUtils.buildRedisKey(keyPrefix, mythTransaction.getTransId());
-
+    public void updateParticipant(final MythTransaction mythTransaction) throws MythRuntimeException {
+        final String redisKey = RepositoryPathUtils.buildRedisKey(keyPrefix, mythTransaction.getTransId());
         byte[] contents = jedisClient.get(redisKey.getBytes());
         try {
             CoordinatorRepositoryAdapter adapter = objectSerializer.deSerialize(contents, CoordinatorRepositoryAdapter.class);
             adapter.setContents(objectSerializer.serialize(mythTransaction.getMythParticipants()));
             jedisClient.set(redisKey, objectSerializer.serialize(adapter));
-            return CommonConstant.SUCCESS;
         } catch (MythException e) {
             e.printStackTrace();
             throw new MythRuntimeException(e);
         }
     }
 
-    /**
-     * 更新补偿数据状态
-     *
-     * @param id     事务id
-     * @param status 状态
-     * @return rows 1 成功 0 失败
-     */
     @Override
-    public int updateStatus(String id, Integer status) throws MythRuntimeException {
-        final String redisKey =
-                RepositoryPathUtils.buildRedisKey(keyPrefix, id);
-
+    public int updateStatus(final String id, final Integer status) throws MythRuntimeException {
+        final String redisKey = RepositoryPathUtils.buildRedisKey(keyPrefix, id);
         byte[] contents = jedisClient.get(redisKey.getBytes());
         try {
             CoordinatorRepositoryAdapter adapter = objectSerializer.deSerialize(contents, CoordinatorRepositoryAdapter.class);
@@ -193,15 +141,8 @@ public class RedisCoordinatorRepository implements CoordinatorRepository {
         return CommonConstant.SUCCESS;
     }
 
-
-    /**
-     * 根据transId获取对象
-     *
-     * @param transId transId
-     * @return TccTransaction
-     */
     @Override
-    public MythTransaction findByTransId(String transId) {
+    public MythTransaction findByTransId(final String transId) {
         try {
             final String redisKey = RepositoryPathUtils.buildRedisKey(keyPrefix, transId);
             byte[] contents = jedisClient.get(redisKey.getBytes());
@@ -211,14 +152,8 @@ public class RedisCoordinatorRepository implements CoordinatorRepository {
         }
     }
 
-    /**
-     * 获取延迟多长时间后的事务信息,只要为了防止并发的时候，刚新增的数据被执行
-     *
-     * @param date 延迟后的时间
-     * @return List<MythTransaction>
-     */
     @Override
-    public List<MythTransaction> listAllByDelay(Date date) {
+    public List<MythTransaction> listAllByDelay(final Date date) {
         final List<MythTransaction> mythTransactionList = listAll();
         return mythTransactionList.stream()
                 .filter(mythTransaction -> mythTransaction.getLastTime().compareTo(date) > 0)
@@ -242,47 +177,29 @@ public class RedisCoordinatorRepository implements CoordinatorRepository {
         }
     }
 
-
-    /**
-     * 初始化操作
-     *
-     * @param modelName  模块名称
-     * @param mythConfig 配置信息
-     */
     @Override
-    public void init(String modelName, MythConfig mythConfig) {
+    public void init(final String modelName, final MythConfig mythConfig) {
         keyPrefix = RepositoryPathUtils.buildRedisKeyPrefix(modelName);
         final MythRedisConfig mythRedisConfig = mythConfig.getMythRedisConfig();
         try {
             buildJedisPool(mythRedisConfig);
         } catch (Exception e) {
-            LogUtil.error(LOGGER, "redis 初始化异常！请检查配置信息:{}", e::getMessage);
+            LogUtil.error(LOGGER, "redis init error please check your config ! ex:{}", e::getMessage);
         }
     }
 
-
-    /**
-     * 设置scheme
-     *
-     * @return scheme 命名
-     */
     @Override
     public String getScheme() {
         return RepositorySupportEnum.REDIS.getSupport();
     }
 
-    /**
-     * 设置序列化信息
-     *
-     * @param objectSerializer 序列化实现
-     */
     @Override
-    public void setSerializer(ObjectSerializer objectSerializer) {
+    public void setSerializer(final ObjectSerializer objectSerializer) {
         this.objectSerializer = objectSerializer;
     }
 
-    private void buildJedisPool(MythRedisConfig mythRedisConfig) {
-        LogUtil.debug(LOGGER, () -> "开始构建redis 配置信息");
+    private void buildJedisPool(final MythRedisConfig mythRedisConfig) {
+        LogUtil.debug(LOGGER, () -> "myth begin init redis....");
         JedisPoolConfig config = new JedisPoolConfig();
         config.setMaxIdle(mythRedisConfig.getMaxIdle());
         //最小空闲连接数, 默认0
@@ -309,7 +226,7 @@ public class RedisCoordinatorRepository implements CoordinatorRepository {
         JedisPool jedisPool;
         //如果是集群模式
         if (mythRedisConfig.getCluster()) {
-            LogUtil.info(LOGGER, () -> " 构造redis集群模式");
+            LogUtil.info(LOGGER, () -> " redis cluster.............");
             final String clusterUrl = mythRedisConfig.getClusterUrl();
             final Set<HostAndPort> hostAndPorts = Splitter.on(clusterUrl)
                     .splitToList(";").stream()
@@ -324,6 +241,5 @@ public class RedisCoordinatorRepository implements CoordinatorRepository {
             }
             jedisClient = new JedisClientSingle(jedisPool);
         }
-
     }
 }

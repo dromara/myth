@@ -17,6 +17,8 @@
 
 package com.github.myth.common.utils;
 
+import com.github.myth.common.exception.MythRuntimeException;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -47,6 +49,7 @@ public class FileUtils {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            throw new MythRuntimeException(e);
         }
     }
 }

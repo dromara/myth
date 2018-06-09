@@ -30,39 +30,26 @@ import static com.github.myth.annotation.MessageTypeEnum.P2P;
 import static com.github.myth.annotation.MessageTypeEnum.TOPIC;
 
 /**
- * <p>Description: .</p>
- *
+ * ActivemqSendServiceImpl.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/11/30 11:38
- * @since JDK 1.8
  */
 public class ActivemqSendServiceImpl implements MythMqSendService {
 
-
     private JmsTemplate jmsTemplate;
 
-    public void setJmsTemplate(JmsTemplate jmsTemplate) {
+    public void setJmsTemplate(final JmsTemplate jmsTemplate) {
         this.jmsTemplate = jmsTemplate;
     }
 
-
-    /**
-     * 发送消息
-     *
-     * @param destination 队列
-     * @param pattern     mq 模式
-     * @param message     MythTransaction实体对象转换成byte[]后的数据
-     */
     @Override
-    public void sendMessage(String destination, Integer pattern, byte[] message) {
+    public void sendMessage(final String destination, final Integer pattern, final byte[] message) {
         Destination queue = new ActiveMQQueue(destination);
         if (Objects.equals(P2P.getCode(), pattern)) {
-            queue  = new ActiveMQQueue(destination);
+            queue = new ActiveMQQueue(destination);
         } else if (Objects.equals(TOPIC.getCode(), pattern)) {
-            queue  = new ActiveMQTopic(destination);
+            queue = new ActiveMQTopic(destination);
         }
-        jmsTemplate.convertAndSend(queue , message);
+        jmsTemplate.convertAndSend(queue, message);
     }
 
 }
