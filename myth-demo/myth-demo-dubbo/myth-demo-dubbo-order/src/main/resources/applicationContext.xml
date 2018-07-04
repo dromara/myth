@@ -44,10 +44,10 @@
         <property name="mythDbConfig">
             <bean class="com.github.myth.common.config.MythDbConfig">
                 <property name="url"
-                          value="jdbc:mysql://localhost:3306/myth?useUnicode=true&amp;characterEncoding=utf8"/>
+                          value="jdbc:mysql://10.4.4.202:3306/myth?useUnicode=true&amp;characterEncoding=utf8"/>
                 <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
                 <property name="username" value="root"/>
-                <property name="password" value="123456"/>
+                <property name="password" value="123123"/>
             </bean>
         </property>
     </bean>

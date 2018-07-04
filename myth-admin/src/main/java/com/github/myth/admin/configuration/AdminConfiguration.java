@@ -15,6 +15,7 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.admin.configuration;
 
 import com.github.myth.admin.interceptor.AuthInterceptor;
@@ -35,54 +36,44 @@ import java.util.ServiceLoader;
 import java.util.stream.StreamSupport;
 
 /**
- * <p>Description: .</p>
- *
+ * AdminConfiguration.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/10/23 21:08
- * @since JDK 1.8
  */
 @Configuration
 public class AdminConfiguration {
-
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurerAdapter() {
             @Override
-            public void addInterceptors(InterceptorRegistry registry) {
+            public void addInterceptors(final InterceptorRegistry registry) {
                 registry.addInterceptor(new AuthInterceptor()).addPathPatterns("/**");
             }
         };
     }
 
-
+    @Configuration
     static class SerializerConfiguration {
 
         private final Environment env;
 
         @Autowired
-        public SerializerConfiguration(Environment env) {
+        SerializerConfiguration(final Environment env) {
             this.env = env;
         }
 
-
         @Bean
         public ObjectSerializer objectSerializer() {
-
             final SerializeEnum serializeEnum =
                     SerializeEnum.acquire(env.getProperty("myth.serializer.support"));
             final ServiceLoader<ObjectSerializer> objectSerializers =
                     ServiceBootstrap.loadAll(ObjectSerializer.class);
-
             return StreamSupport.stream(objectSerializers.spliterator(), false)
                     .filter(objectSerializer ->
                             Objects.equals(objectSerializer.getScheme(),
                                     serializeEnum.getSerialize())).findFirst()
                     .orElse(new KryoSerializer());
-
         }
-
     }
 
 }

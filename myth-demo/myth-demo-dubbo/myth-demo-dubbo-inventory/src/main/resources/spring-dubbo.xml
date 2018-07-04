@@ -29,7 +29,7 @@
 
     <dubbo:registry protocol="zookeeper" address="localhost:2181"/>
 
-    <dubbo:protocol accesslog="true" name="dubbo" port="20885"/>
+    <dubbo:protocol accesslog="true" name="dubbo" port="20887"/>
 
     <dubbo:service interface="com.github.myth.demo.dubbo.inventory.api.service.InventoryService"
                    ref="inventoryService"/>

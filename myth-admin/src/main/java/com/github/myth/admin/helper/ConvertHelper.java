@@ -22,18 +22,13 @@ import com.github.myth.admin.vo.LogVO;
 import com.github.myth.common.bean.adapter.CoordinatorRepositoryAdapter;
 import com.github.myth.common.utils.DateUtils;
 
-
 /**
- * <p>Description: .</p>
- *
+ * ConvertHelper.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/10/23 11:53
- * @since JDK 1.8
  */
 public class ConvertHelper {
 
-    public static LogVO buildVO(CoordinatorRepositoryAdapter adapter) {
+    public static LogVO buildVO(final CoordinatorRepositoryAdapter adapter) {
         LogVO vo = new LogVO();
         vo.setTransId(adapter.getTransId());
         vo.setCreateTime(DateUtils.parseDate(adapter.getCreateTime()));
@@ -44,7 +39,6 @@ public class ConvertHelper {
         vo.setTargetMethod(adapter.getTargetMethod());
         vo.setErrorMsg(adapter.getErrorMsg());
         return vo;
-
     }
 
 }

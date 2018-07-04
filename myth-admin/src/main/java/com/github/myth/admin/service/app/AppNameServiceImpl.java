@@ -16,25 +16,27 @@
  *
  */
 
-package com.github.myth.admin.service;
+package com.github.myth.admin.service.app;
+
+import com.google.common.base.Splitter;
+import com.github.myth.admin.service.AppNameService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * <p>Description: .</p>
- *
+ * AppNameServiceImpl.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/10/20 16:34
- * @since JDK 1.8
  */
-public interface ApplicationNameService {
+@Service("recoverApplicationNameService")
+public class AppNameServiceImpl implements AppNameService {
 
+    @Value("${myth.application.list}")
+    private String appNameList;
 
-    /**
-     * 获取之前参与分布式事务项目的应用名称
-     *
-     * @return List<String>
-     */
-    List<String> list();
+    @Override
+    public List<String> list() {
+        return Splitter.on(",").splitToList(appNameList);
+    }
 }

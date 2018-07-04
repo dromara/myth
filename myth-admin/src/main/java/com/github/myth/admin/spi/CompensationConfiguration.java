@@ -28,6 +28,7 @@ import com.github.myth.admin.service.log.ZookeeperLogServiceImpl;
 import com.github.myth.common.jedis.JedisClient;
 import com.github.myth.common.jedis.JedisClientCluster;
 import com.github.myth.common.jedis.JedisClientSingle;
+import com.github.myth.common.serializer.ObjectSerializer;
 import com.google.common.base.Splitter;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -57,13 +58,14 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
+ * CompensationConfiguration.
  * @author xiaoyu
  */
 @Configuration
 public class CompensationConfiguration {
 
     /**
-     * spring.profiles.active = {}
+     * spring.profiles.active = {}.
      */
     @Configuration
     @Profile("db")
@@ -72,7 +74,7 @@ public class CompensationConfiguration {
         private final Environment env;
 
         @Autowired
-        public JdbcConfiguration(Environment env) {
+        JdbcConfiguration(final Environment env) {
             this.env = env;
         }
 
@@ -103,10 +105,7 @@ public class CompensationConfiguration {
             jdbcLogService.setDbType(env.getProperty("myth.db.driver"));
             return jdbcLogService;
         }
-
-
     }
-
 
     @Configuration
     @Profile("redis")
@@ -114,9 +113,12 @@ public class CompensationConfiguration {
 
         private final Environment env;
 
+        private final ObjectSerializer objectSerializer;
+
         @Autowired
-        public RedisConfiguration(Environment env) {
+        RedisConfiguration(final Environment env, final ObjectSerializer objectSerializer) {
             this.env = env;
+            this.objectSerializer = objectSerializer;
         }
 
         @Bean
@@ -148,21 +150,25 @@ public class CompensationConfiguration {
                 jedisClient = new JedisClientSingle(jedisPool);
 
             }
-
-            return new RedisLogServiceImpl(jedisClient);
+            return new RedisLogServiceImpl(jedisClient, objectSerializer);
         }
-
-
     }
 
     @Configuration
     @Profile("file")
     static class FileLogConfiguration {
 
+        private final ObjectSerializer objectSerializer;
+
+        @Autowired
+        FileLogConfiguration(final ObjectSerializer objectSerializer) {
+            this.objectSerializer = objectSerializer;
+        }
+
         @Bean
         @Qualifier("fileLogService")
         public LogService fileLogService() {
-            return new FileLogServiceImpl();
+            return new FileLogServiceImpl(objectSerializer);
         }
 
     }
@@ -171,15 +177,17 @@ public class CompensationConfiguration {
     @Profile("zookeeper")
     static class ZookeeperConfiguration {
 
-        private final Environment env;
-
-        @Autowired
-        public ZookeeperConfiguration(Environment env) {
-            this.env = env;
-        }
-
         private static final Lock LOCK = new ReentrantLock();
 
+        private final Environment env;
+
+        private final ObjectSerializer objectSerializer;
+
+        @Autowired
+        ZookeeperConfiguration(final Environment env, final ObjectSerializer objectSerializer) {
+            this.env = env;
+            this.objectSerializer = objectSerializer;
+        }
 
         @Bean
         @Qualifier("zookeeperLogService")
@@ -198,10 +206,8 @@ public class CompensationConfiguration {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            return new ZookeeperLogServiceImpl(zooKeeper);
+            return new ZookeeperLogServiceImpl(zooKeeper, objectSerializer);
         }
-
     }
 
     @Configuration
@@ -211,7 +217,7 @@ public class CompensationConfiguration {
         private final Environment env;
 
         @Autowired
-        public MongoConfiguration(Environment env) {
+        MongoConfiguration(final Environment env) {
             this.env = env;
         }
 
@@ -225,9 +231,7 @@ public class CompensationConfiguration {
                     env.getProperty("myth.mongo.userName"),
                     env.getProperty("myth.mongo.dbName"),
                     env.getProperty("myth.mongo.password").toCharArray());
-            clientFactoryBean.setCredentials(new MongoCredential[]{
-                    credential
-            });
+            clientFactoryBean.setCredentials(new MongoCredential[]{credential});
             List<String> urls = Splitter.on(",").trimResults().splitToList(env.getProperty("myth.mongo.url"));
             ServerAddress[] sds = new ServerAddress[urls.size()];
             for (int i = 0; i < sds.length; i++) {
