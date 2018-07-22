@@ -15,6 +15,10 @@
     <dependencies>
         <dependency>
             <groupId>com.github.myth</groupId>
+            <artifactId>myth-spring-boot-start-parent</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.myth</groupId>
             <artifactId>myth-dubbo</artifactId>
         </dependency>
     </dependencies>

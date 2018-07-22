@@ -24,24 +24,14 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.stereotype.Component;
 
 /**
+ * this is local.
  * @author xiaoyu
  */
 @Component
 public class LocalMythTransactionHandler implements MythTransactionHandler {
 
-
-    /**
-     * Myth分布式事务处理接口
-     *
-     * @param point                  point 切点
-     * @param mythTransactionContext myth事务上下文
-     * @return Object
-     * @throws Throwable 异常
-     */
     @Override
-    public Object handler(ProceedingJoinPoint point, MythTransactionContext mythTransactionContext) throws Throwable {
-
+    public Object handler(final ProceedingJoinPoint point, final MythTransactionContext mythTransactionContext) throws Throwable {
         return point.proceed();
-
     }
 }

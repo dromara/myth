@@ -15,11 +15,13 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.common.config;
 
 import lombok.Data;
 
 /**
+ * MythConfig.
  * @author xiaoyu
  */
 @Data
@@ -28,86 +30,81 @@ public class MythConfig {
     /**
      * 资源后缀  此参数请填写  关于是事务存储路径
      * 1 如果是表存储 这个就是表名后缀，其他方式存储一样
-     * 2 如果此参数不填写，那么会默认获取应用的applicationName
+     * 2 如果此参数不填写，那么会默认获取应用的applicationName.
      */
     private String repositorySuffix;
 
-
     /**
-     * 提供不同的序列化对象 {@linkplain com.github.myth.common.enums.SerializeEnum}
+     * 提供不同的序列化对象. {@linkplain com.github.myth.common.enums.SerializeEnum}
      */
     private String serializer = "kryo";
 
-
     /**
-     * 补偿存储类型 {@linkplain com.github.myth.common.enums.RepositorySupportEnum}
+     * 补偿存储类型. {@linkplain com.github.myth.common.enums.RepositorySupportEnum}
      */
     private String repositorySupport = "db";
-
 
     /**
      * 是否需要自动恢复
      * 1 注意 当为事务发起方的时候（调用方/消费方），这里需要填true，
-     * 默认为false，为了节省资源，不开启线程池调度
+     * 默认为false，为了节省资源，不开启线程池调度.
      */
     private Boolean needRecover = false;
 
     /**
-     * 任务调度线程大小
+     * 任务调度线程大小.
      */
     private int scheduledThreadMax = Runtime.getRuntime().availableProcessors() << 1;
 
     /**
-     * 调度时间周期 单位秒
+     * 调度时间周期单位秒.
      */
     private int scheduledDelay = 60;
 
     /**
-     * 最大重试次数
+     * 最大重试次数.
      */
     private int retryMax = 3;
 
     /**
-     * 事务恢复间隔时间 单位秒（注意 此时间表示本地事务创建的时间多少秒以后才会执行）
+     * 事务恢复间隔时间 单位秒（注意 此时间表示本地事务创建的时间多少秒以后才会执行）.
      */
     private int recoverDelayTime = 60;
 
     /**
-     * disruptor  bufferSize
+     * disruptor  bufferSize.
      */
     private int bufferSize = 1024;
 
-
     /**
-     * db配置
+     * db配置.
      */
     private MythDbConfig mythDbConfig;
 
     /**
-     * mongo配置
+     * mongo配置.
      */
     private MythMongoConfig mythMongoConfig;
 
-
     /**
-     * redis配置
+     * redis配置.
      */
     private MythRedisConfig mythRedisConfig;
 
     /**
-     * zookeeper配置
+     * zookeeper配置.
      */
     private MythZookeeperConfig mythZookeeperConfig;
 
     /**
-     * file配置
+     * file配置.
      */
     private MythFileConfig mythFileConfig;
 
     public MythConfig() {
     }
 
-    public MythConfig(Builder builder) {
+    public MythConfig(final Builder builder) {
         builder(builder);
     }
 
@@ -115,7 +112,7 @@ public class MythConfig {
         return new Builder();
     }
 
-    public void builder(Builder builder) {
+    public void builder(final Builder builder) {
         this.serializer = builder.serializer;
         this.repositorySuffix = builder.repositorySuffix;
         this.repositorySupport = builder.repositorySupport;
@@ -131,7 +128,6 @@ public class MythConfig {
         this.mythZookeeperConfig = builder.mythZookeeperConfig;
         this.mythFileConfig = builder.mythFileConfig;
     }
-
 
     public static class Builder {
 
@@ -289,12 +285,9 @@ public class MythConfig {
             return mythFileConfig;
         }
 
-
         public MythConfig build() {
             return new MythConfig(this);
         }
-
     }
-
 
 }

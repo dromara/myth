@@ -15,21 +15,22 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.github.myth.core.service;
 
+package com.github.myth.core.service;
 
 import com.github.myth.common.config.MythConfig;
 
 /**
+ * MythInitService.
  * @author xiaoyu
  */
 @FunctionalInterface
 public interface MythInitService {
 
     /**
-     * Myth分布式事务初始化方法
+     * myth init.
      *
-     * @param mythConfig TCC配置
+     * @param mythConfig {@linkplain MythConfig}
      */
     void initialization(MythConfig mythConfig);
 }

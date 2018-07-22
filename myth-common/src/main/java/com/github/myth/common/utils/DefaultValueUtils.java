@@ -1,18 +1,19 @@
 package com.github.myth.common.utils;
 
 /**
- *
- * @author xiaoyu@kuparts.com
- * @version 1.0
- * @date 2018/1/21 下午6:21
- * @since JDK 1.8
+ * DefaultValueUtils.
+ * @author xiaoyu
  */
 public class DefaultValueUtils {
 
-
     private static final int ZERO = 0;
 
-    public static  Object getDefaultValue(Class type) {
+    /**
+     * return default object.
+     * @param type class
+     * @return Object
+     */
+    public static Object getDefaultValue(final Class type) {
         if (boolean.class.equals(type)) {
             return Boolean.FALSE;
         } else if (byte.class.equals(type)) {

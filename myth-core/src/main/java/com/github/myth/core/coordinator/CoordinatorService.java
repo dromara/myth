@@ -18,7 +18,6 @@
 
 package com.github.myth.core.coordinator;
 
-
 import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.config.MythConfig;
 import com.github.myth.common.exception.MythException;
@@ -29,101 +28,89 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * CoordinatorService.
  * @author xiaoyu
  */
 public interface CoordinatorService {
 
     /**
-     * 保存本地事务日志
+     * start coordinator service.
      *
-     * @param mythConfig 配置信息
-     * @throws MythException 异常
+     * @param mythConfig {@linkplain MythConfig}
+     * @throws MythException ex
      */
     void start(MythConfig mythConfig) throws MythException;
 
     /**
-     * 保存本地事务信息
+     * save MythTransaction.
      *
-     * @param mythTransaction 实体对象
-     * @return 主键 transId
+     * @param mythTransaction {@linkplain MythTransaction}
+     * @return pk
      */
     String save(MythTransaction mythTransaction);
 
     /**
-     * 根据事务id获取MythTransaction
+     * find MythTransaction by id.
      *
-     * @param transId 事务id
-     * @return MythTransaction
+     * @param transId pk
+     * @return {@linkplain MythTransaction}
      */
     MythTransaction findByTransId(String transId);
 
 
     /**
-     * 获取延迟多长时间后的事务信息,只要为了防止并发的时候，刚新增的数据被执行
+     * find  MythTransaction by Delay Date.
      *
-     * @param date 延迟后的时间
-     * @return List<MythTransaction>
+     * @param date delay date
+     * @return {@linkplain MythTransaction}
      */
     List<MythTransaction> listAllByDelay(Date date);
 
-
     /**
-     * 删除补偿事务信息
+     * delete MythTransaction.
      *
-     * @param transId 事务id
-     * @return true成功 false 失败
+     * @param transId pk
+     * @return true  false
      */
     boolean remove(String transId);
 
-
     /**
-     * 更新
+     * update  MythTransaction.
      *
-     * @param mythTransaction 实体对象
-     * @return rows 1 成功
-     * @throws MythRuntimeException 异常信息
+     * @param mythTransaction {@linkplain MythTransaction}
+     * @return rows 1
+     * @throws MythRuntimeException ex
      */
     int update(MythTransaction mythTransaction) throws MythRuntimeException;
 
 
     /**
-     * 更新事务失败日志
-     * @param mythTransaction 实体对象
-     * @return rows 1 成功
-     * @throws MythRuntimeException
+     * update fail info.
+     * @param mythTransaction {@linkplain MythTransaction}
+     * @throws MythRuntimeException ex
      */
-    void updateFailTransaction(MythTransaction mythTransaction) throws  MythRuntimeException;
-
+    void updateFailTransaction(MythTransaction mythTransaction) throws MythRuntimeException;
 
     /**
-     * 更新 List<MythParticipant>  只更新这一个字段数据
-     *
-     * @param mythTransaction 实体对象
-     * @return rows 1 rows 1 成功
-     * @throws MythRuntimeException 异常信息
+     * update Participant.
+     * @param mythTransaction {@linkplain MythTransaction}
+     * @throws MythRuntimeException ex
      */
-    int updateParticipant(MythTransaction mythTransaction) throws MythRuntimeException;
-
+    void updateParticipant(MythTransaction mythTransaction) throws MythRuntimeException;
 
     /**
-     * 更新本地日志状态
-     *
-     * @param transId 事务id
-     * @param status  状态
-     * @return rows 1 rows 1 成功
-     * @throws MythRuntimeException 异常信息
+     * update status.
+     * @param transId pk
+     * @param status  status
+     * @return rows 1
+     * @throws MythRuntimeException ex
      */
     int updateStatus(String transId, Integer status) throws MythRuntimeException;
 
-
     /**
-     * 设置序列化方式
-     * @param serializer 序列化方式
+     * set ObjectSerializer.
+     * @param serializer {@linkplain ObjectSerializer}
      */
     void setSerializer(ObjectSerializer serializer);
-
-
-
-
 
 }

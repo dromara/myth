@@ -15,97 +15,44 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.core.concurrent.threadpool;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ * MythTransactionThreadFactory.
  * @author xiaoyu
  */
-public class MythTransactionThreadFactory implements ThreadFactory {
-
-    private static final Logger log = LoggerFactory.getLogger(MythTransactionThreadFactory.class);
-
-    private final AtomicLong threadNumber = new AtomicLong(1);
-
-    private final String namePrefix;
+public final class MythTransactionThreadFactory implements ThreadFactory {
 
     private static volatile boolean daemon;
 
     private static final ThreadGroup THREAD_GROUP = new ThreadGroup("MythTransaction");
 
-    public static ThreadGroup getThreadGroup() {
-        return THREAD_GROUP;
-    }
+    private final AtomicLong threadNumber = new AtomicLong(1);
 
-    public static ThreadFactory create(String namePrefix, boolean daemon) {
-        return new MythTransactionThreadFactory(namePrefix, daemon);
-    }
+    private final String namePrefix;
 
-    public static boolean waitAllShutdown(int timeoutInMillis) {
-        ThreadGroup group = getThreadGroup();
-        Thread[] activeThreads = new Thread[group.activeCount()];
-        group.enumerate(activeThreads);
-        Set<Thread> alives = new HashSet<Thread>(Arrays.asList(activeThreads));
-        Set<Thread> dies = new HashSet<Thread>();
-        log.info("Current ACTIVE thread count is: {}", alives.size());
-        long expire = System.currentTimeMillis() + timeoutInMillis;
-        while (System.currentTimeMillis() < expire) {
-            classify(alives, dies, thread -> !thread.isAlive() || thread.isInterrupted() || thread.isDaemon());
-            if (alives.size() > 0) {
-                log.info("Alive MythTransaction threads: {}", alives);
-                try {
-                    TimeUnit.SECONDS.sleep(2);
-                } catch (InterruptedException ex) {
-                    // ignore
-                }
-            } else {
-                log.info("All txTransaction threads are shutdown.");
-                return true;
-            }
-        }
-        log.warn("Some MythTransaction threads are still alive but expire time has reached, alive threads: {}",
-                alives);
-        return false;
-    }
-
-    private interface ClassifyStandard<T> {
-        /**
-         * 没啥用
-         *
-         * @param thread 线程
-         * @return boolean
-         */
-        boolean satisfy(T thread);
-    }
-
-    private static <T> void classify(Set<T> src, Set<T> des, ClassifyStandard<T> standard) {
-        Set<T> set = new HashSet<>();
-        for (T t : src) {
-            if (standard.satisfy(t)) {
-                set.add(t);
-            }
-        }
-        src.removeAll(set);
-        des.addAll(set);
-    }
-
-    private MythTransactionThreadFactory(String namePrefix, boolean daemon) {
+    private MythTransactionThreadFactory(final String namePrefix, final boolean daemon) {
         this.namePrefix = namePrefix;
         MythTransactionThreadFactory.daemon = daemon;
     }
 
+    /**
+     * create ThreadFactory.
+     *
+     * @param namePrefix namePrefix
+     * @param daemon     daemon
+     * @return ThreadFactory
+     */
+    public static ThreadFactory create(final String namePrefix, final boolean daemon) {
+        return new MythTransactionThreadFactory(namePrefix, daemon);
+    }
 
     @Override
-    public Thread newThread(Runnable runnable) {
+    public Thread newThread(final Runnable runnable) {
         Thread thread = new Thread(THREAD_GROUP, runnable,
                 THREAD_GROUP.getName() + "-" + namePrefix + "-" + threadNumber.getAndIncrement());
         thread.setDaemon(daemon);

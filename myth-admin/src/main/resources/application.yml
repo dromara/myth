@@ -1,0 +1,20 @@
+server:
+   port: 8888
+   context-path: /myth-admin
+
+spring:
+   application:
+      name: myth-admin
+   profiles:
+     active: db
+
+myth:
+   admin :
+      userName : admin
+      password : admin
+   application:
+      list : account-service,inventory-service,order-service
+   serializer :
+      support: kryo
+   retry :
+      max: 10

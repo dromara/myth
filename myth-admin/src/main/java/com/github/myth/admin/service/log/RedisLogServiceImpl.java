@@ -18,6 +18,10 @@
 
 package com.github.myth.admin.service.log;
 
+import com.github.myth.admin.helper.ConvertHelper;
+import com.github.myth.admin.helper.PageHelper;
+import com.github.myth.admin.page.CommonPager;
+import com.github.myth.admin.query.ConditionQuery;
 import com.github.myth.admin.service.LogService;
 import com.github.myth.admin.vo.LogVO;
 import com.github.myth.common.bean.adapter.CoordinatorRepositoryAdapter;
@@ -26,15 +30,9 @@ import com.github.myth.common.serializer.ObjectSerializer;
 import com.github.myth.common.utils.DateUtils;
 import com.github.myth.common.utils.RepositoryPathUtils;
 import com.google.common.collect.Sets;
-import com.github.myth.admin.helper.ConvertHelper;
-import com.github.myth.admin.helper.PageHelper;
-import com.github.myth.admin.page.CommonPager;
-import com.github.myth.admin.query.ConditionQuery;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Objects;
@@ -42,62 +40,29 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * <p>Description: .</p>
- * redis实现
- *
+ * redis impl.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/10/19 17:08
- * @since JDK 1.8
  */
 @SuppressWarnings("unchecked")
+@RequiredArgsConstructor
 public class RedisLogServiceImpl implements LogService {
 
+    private final JedisClient jedisClient;
 
-    private JedisClient jedisClient;
+    private final ObjectSerializer objectSerializer;
 
-
-    public RedisLogServiceImpl(JedisClient jedisClient) {
-        this.jedisClient = jedisClient;
-    }
-
-
-    @Autowired
-    private ObjectSerializer objectSerializer;
-
-
-    /**
-     * logger
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(RedisLogServiceImpl.class);
-
-    /**
-     * 分页获取补偿事务信息
-     *
-     * @param query 查询条件
-     * @return CommonPager<TransactionRecoverVO>
-     */
     @Override
-    public CommonPager<LogVO> listByPage(ConditionQuery query) {
-
+    public CommonPager<LogVO> listByPage(final ConditionQuery query) {
         CommonPager<LogVO> commonPager = new CommonPager<>();
-
-        final String redisKeyPrefix = RepositoryPathUtils.buildRedisKeyPrefix(query.getApplicationName());
-
+        final String redisKeyPrefix =
+                RepositoryPathUtils.buildRedisKeyPrefix(query.getApplicationName());
         final int currentPage = query.getPageParameter().getCurrentPage();
         final int pageSize = query.getPageParameter().getPageSize();
-
         int start = (currentPage - 1) * pageSize;
-
-
-        //transaction:compensate:alipay-service:
         //获取所有的key
         Set<byte[]> keys;
-
         List<LogVO> voList;
-
         int totalCount;
-
         //如果只查 重试条件的
         if (StringUtils.isBlank(query.getTransId())) {
             keys = jedisClient.keys((redisKeyPrefix + "*").getBytes());
@@ -111,7 +76,6 @@ public class RedisLogServiceImpl implements LogService {
             totalCount = keys.size();
             voList = findAll(keys);
         }
-
         if (keys.size() <= 0 || keys.size() < start) {
             return commonPager;
         }
@@ -120,58 +84,28 @@ public class RedisLogServiceImpl implements LogService {
         return commonPager;
     }
 
-
-    private LogVO buildVOByKey(byte[] key) {
-        final byte[] bytes = jedisClient.get(key);
-        try {
-            final CoordinatorRepositoryAdapter adapter = objectSerializer.deSerialize(bytes, CoordinatorRepositoryAdapter.class);
-            return ConvertHelper.buildVO(adapter);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * 批量删除补偿事务信息
-     *
-     * @param ids             ids 事务id集合
-     * @param applicationName 应用名称
-     * @return true 成功
-     */
     @Override
-    public Boolean batchRemove(List<String> ids, String applicationName) {
-        LOGGER.debug("开始执行批量删除！");
-        if (CollectionUtils.isEmpty(ids) || StringUtils.isBlank(applicationName)) {
+    public Boolean batchRemove(final List<String> ids, final String appName) {
+        if (CollectionUtils.isEmpty(ids) || StringUtils.isBlank(appName)) {
             return Boolean.FALSE;
         }
-        String keyPrefix = RepositoryPathUtils.buildRedisKeyPrefix(applicationName);
+        String keyPrefix = RepositoryPathUtils.buildRedisKeyPrefix(appName);
         final String[] keys = ids.stream()
                 .map(id ->
                         RepositoryPathUtils.buildRedisKey(keyPrefix, id)).toArray(String[]::new);
-
         jedisClient.del(keys);
         return Boolean.TRUE;
     }
 
-    /**
-     * 更改恢复次数
-     *
-     * @param id              事务id
-     * @param retry           恢复次数
-     * @param applicationName 应用名称
-     * @return true 成功
-     */
     @Override
-    public Boolean updateRetry(String id, Integer retry, String applicationName) {
-        if (StringUtils.isBlank(id) || StringUtils.isBlank(applicationName) || Objects.isNull(retry)) {
+    public Boolean updateRetry(final String id, final Integer retry, final String appName) {
+        if (StringUtils.isBlank(id) || StringUtils.isBlank(appName) || Objects.isNull(retry)) {
             return Boolean.FALSE;
         }
-        String keyPrefix = RepositoryPathUtils.buildRedisKeyPrefix(applicationName);
+        String keyPrefix = RepositoryPathUtils.buildRedisKeyPrefix(appName);
         final String key = RepositoryPathUtils.buildRedisKey(keyPrefix, id);
         final byte[] bytes = jedisClient.get(key.getBytes());
         try {
-            LOGGER.debug("redis 执行更新");
             final CoordinatorRepositoryAdapter adapter =
                     objectSerializer.deSerialize(bytes, CoordinatorRepositoryAdapter.class);
             adapter.setRetriedCount(retry);
@@ -181,18 +115,32 @@ public class RedisLogServiceImpl implements LogService {
         } catch (Exception e) {
             return Boolean.FALSE;
         }
-
     }
 
-
-    private List<LogVO> findAll(Set<byte[]> keys) {
+    private List<LogVO> findAll(final Set<byte[]> keys) {
         return keys.parallelStream()
-                .map(this::buildVOByKey).filter(Objects::nonNull).collect(Collectors.toList());
+                .map(this::buildVOByKey)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
+    private List<LogVO> findByPage(final Set<byte[]> keys, final int start, final int pageSize) {
+        return keys.parallelStream()
+                .skip(start).limit(pageSize)
+                .map(this::buildVOByKey)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
 
-    private List<LogVO> findByPage(Set<byte[]> keys, int start, int pageSize) {
-        return keys.parallelStream().skip(start).limit(pageSize)
-                .map(this::buildVOByKey).filter(Objects::nonNull).collect(Collectors.toList());
+    private LogVO buildVOByKey(final byte[] key) {
+        final byte[] bytes = jedisClient.get(key);
+        try {
+            final CoordinatorRepositoryAdapter adapter =
+                    objectSerializer.deSerialize(bytes, CoordinatorRepositoryAdapter.class);
+            return ConvertHelper.buildVO(adapter);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

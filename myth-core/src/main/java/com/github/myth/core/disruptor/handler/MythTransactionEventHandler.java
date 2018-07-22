@@ -28,12 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>Description: .</p>
- *
+ * MythTransactionEventHandler.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2018/3/5 11:52
- * @since JDK 1.8
  */
 @Component
 public class MythTransactionEventHandler implements EventHandler<MythTransactionEvent> {
@@ -42,8 +38,7 @@ public class MythTransactionEventHandler implements EventHandler<MythTransaction
     private CoordinatorService coordinatorService;
 
     @Override
-    public void onEvent(MythTransactionEvent mythTransactionEvent,
-                        long sequence, boolean endOfBatch) {
+    public void onEvent(final MythTransactionEvent mythTransactionEvent, final long sequence, final boolean endOfBatch) {
         if (mythTransactionEvent.getType() == EventTypeEnum.SAVE.getCode()) {
             coordinatorService.save(mythTransactionEvent.getMythTransaction());
         } else if (mythTransactionEvent.getType() == EventTypeEnum.UPDATE_PARTICIPANT.getCode()) {
@@ -51,8 +46,7 @@ public class MythTransactionEventHandler implements EventHandler<MythTransaction
         } else if (mythTransactionEvent.getType() == EventTypeEnum.UPDATE_STATUS.getCode()) {
             final MythTransaction mythTransaction = mythTransactionEvent.getMythTransaction();
             coordinatorService.updateStatus(mythTransaction.getTransId(), mythTransaction.getStatus());
-        }
-        else if (mythTransactionEvent.getType() == EventTypeEnum.UPDATE_FAIR.getCode()) {
+        } else if (mythTransactionEvent.getType() == EventTypeEnum.UPDATE_FAIR.getCode()) {
             coordinatorService.updateFailTransaction(mythTransactionEvent.getMythTransaction());
         }
         mythTransactionEvent.clear();

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.github.myth.common.enums;
 
 /**
@@ -42,7 +43,7 @@ public enum EventTypeEnum {
     /**
      * Update participant event type enum.
      */
-    UPDATE_PARTICIPANT(3,"更新参与者"),
+    UPDATE_PARTICIPANT(3, "更新参与者"),
 
     /**
      * Update fair event type enum.
@@ -55,7 +56,7 @@ public enum EventTypeEnum {
 
     private String desc;
 
-    EventTypeEnum(int code, String desc) {
+    EventTypeEnum(final int code, final String desc) {
         this.code = code;
         this.desc = desc;
     }
@@ -74,7 +75,7 @@ public enum EventTypeEnum {
      *
      * @param code the code
      */
-    public void setCode(int code) {
+    public void setCode(final int code) {
         this.code = code;
     }
 
@@ -92,7 +93,7 @@ public enum EventTypeEnum {
      *
      * @param desc the desc
      */
-    public void setDesc(String desc) {
+    public void setDesc(final String desc) {
         this.desc = desc;
     }
 }

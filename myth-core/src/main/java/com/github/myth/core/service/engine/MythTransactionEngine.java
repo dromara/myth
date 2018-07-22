@@ -15,8 +15,8 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.github.myth.core.service.engine;
 
+package com.github.myth.core.service.engine;
 
 import com.github.myth.common.bean.context.MythTransactionContext;
 import com.github.myth.common.bean.entity.MythParticipant;
@@ -40,8 +40,8 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.Optional;
 
-
 /**
+ * MythTransactionEngine.
  * @author xiaoyu
  */
 @Component
@@ -49,12 +49,12 @@ import java.util.Optional;
 public class MythTransactionEngine {
 
     /**
-     * logger
+     * logger.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(MythTransactionEngine.class);
 
     /**
-     * 将事务信息存放在threadLocal里面
+     * save MythTransaction in threadLocal.
      */
     private static final ThreadLocal<MythTransaction> CURRENT = new ThreadLocal<>();
 
@@ -64,37 +64,33 @@ public class MythTransactionEngine {
     @Autowired
     private MythTransactionEventPublisher publishEvent;
 
-
-    public MythTransaction begin(ProceedingJoinPoint point) {
+    /**
+     * this is stater begin MythTransaction.
+     *
+     * @param point cut point.
+     */
+    public void begin(final ProceedingJoinPoint point) {
         LogUtil.debug(LOGGER, () -> "开始执行Myth分布式事务！start");
-        MythTransaction mythTransaction =
-                buildMythTransaction(point, MythRoleEnum.START.getCode(),
-                        MythStatusEnum.BEGIN.getCode(), "");
-
+        MythTransaction mythTransaction = buildMythTransaction(point, MythRoleEnum.START.getCode(), MythStatusEnum.BEGIN.getCode(), "");
         //发布事务保存事件，异步保存
         publishEvent.publishEvent(mythTransaction, EventTypeEnum.SAVE.getCode());
-
-
         //当前事务保存到ThreadLocal
         CURRENT.set(mythTransaction);
-
         //设置tcc事务上下文，这个类会传递给远端
         MythTransactionContext context = new MythTransactionContext();
-
         //设置事务id
         context.setTransId(mythTransaction.getTransId());
-
         //设置为发起者角色
         context.setRole(MythRoleEnum.START.getCode());
-
         TransactionContextLocal.getInstance().set(context);
-
-        return mythTransaction;
-
     }
 
-
-    public void failTransaction(String errorMsg) {
+    /**
+     * save errorMsg into MythTransaction .
+     *
+     * @param errorMsg errorMsg
+     */
+    public void failTransaction(final String errorMsg) {
         MythTransaction mythTransaction = getCurrentTransaction();
         if (Objects.nonNull(mythTransaction)) {
             mythTransaction.setStatus(MythStatusEnum.FAILURE.getCode());
@@ -103,79 +99,83 @@ public class MythTransactionEngine {
         }
     }
 
-
-    public MythTransaction actorTransaction(ProceedingJoinPoint point, MythTransactionContext mythTransactionContext) {
+    /**
+     * this is actor begin transaction.
+     *
+     * @param point                  cut point
+     * @param mythTransactionContext {@linkplain MythTransactionContext}
+     */
+    public void actorTransaction(final ProceedingJoinPoint point, final MythTransactionContext mythTransactionContext) {
         MythTransaction mythTransaction =
                 buildMythTransaction(point, MythRoleEnum.PROVIDER.getCode(),
                         MythStatusEnum.BEGIN.getCode(), mythTransactionContext.getTransId());
-
         //发布事务保存事件，异步保存
         publishEvent.publishEvent(mythTransaction, EventTypeEnum.SAVE.getCode());
-
         //当前事务保存到ThreadLocal
         CURRENT.set(mythTransaction);
-
         //设置提供者角色
         mythTransactionContext.setRole(MythRoleEnum.PROVIDER.getCode());
-
         TransactionContextLocal.getInstance().set(mythTransactionContext);
-
-        return mythTransaction;
-
     }
 
-
-    public void updateStatus(int status) {
+    /**
+     * update transaction status.
+     * @param status {@linkplain MythStatusEnum}
+     */
+    public void updateStatus(final int status) {
         MythTransaction mythTransaction = getCurrentTransaction();
         Optional.ofNullable(mythTransaction)
                 .map(t -> {
                     t.setStatus(status);
                     return t;
                 }).ifPresent(t -> publishEvent.publishEvent(t, EventTypeEnum.UPDATE_STATUS.getCode()));
-
         mythTransaction.setStatus(MythStatusEnum.COMMIT.getCode());
     }
 
-
+    /**
+     * send message.
+     */
     public void sendMessage() {
-        MythTransaction mythTransaction = getCurrentTransaction();
-        if (Objects.nonNull(mythTransaction)) {
-            mythSendMessageService.sendMessage(mythTransaction);
-        }
+        Optional.ofNullable(getCurrentTransaction()).ifPresent(c -> mythSendMessageService.sendMessage(c));
     }
 
-
+    /**
+     * transaction is begin.
+     * @return true
+     */
     public boolean isBegin() {
         return CURRENT.get() != null;
     }
 
-
+    /**
+     * help gc.
+     */
     public void cleanThreadLocal() {
         CURRENT.remove();
     }
-
 
     private MythTransaction getCurrentTransaction() {
         return CURRENT.get();
     }
 
-
-    public void registerParticipant(MythParticipant participant) {
+    /**
+     * add participant into transaction.
+     * @param participant {@linkplain MythParticipant}
+     */
+    public void registerParticipant(final MythParticipant participant) {
         final MythTransaction mythTransaction = this.getCurrentTransaction();
         mythTransaction.registerParticipant(participant);
         publishEvent.publishEvent(mythTransaction, EventTypeEnum.UPDATE_PARTICIPANT.getCode());
-
     }
 
-    private MythTransaction buildMythTransaction(ProceedingJoinPoint point, int role, int status,
-                                                 String transId) {
+    private MythTransaction buildMythTransaction(final ProceedingJoinPoint point, final int role,
+                                                 final int status, final String transId) {
         MythTransaction mythTransaction;
         if (StringUtils.isNoneBlank(transId)) {
             mythTransaction = new MythTransaction(transId);
         } else {
             mythTransaction = new MythTransaction();
         }
-
         MethodSignature signature = (MethodSignature) point.getSignature();
         Method method = signature.getMethod();
         Class<?> clazz = point.getTarget().getClass();

@@ -24,12 +24,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * <p>Description: .</p>
- *
+ * MessageEntity.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/11/30 15:07
- * @since JDK 1.8
  */
 @Data
 @AllArgsConstructor
@@ -37,13 +33,12 @@ import lombok.NoArgsConstructor;
 public class MessageEntity {
 
     /**
-     * 事务id
+     * 事务id.
      */
     private String transId;
 
-
     /**
-     * 执行器
+     * 执行器.
      */
     private MythInvocation mythInvocation;
 

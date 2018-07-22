@@ -15,6 +15,7 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.springcloud.interceptor;
 
 import com.github.myth.common.bean.context.MythTransactionContext;
@@ -36,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 /**
+ * SpringCloudMythTransactionInterceptor.
  * @author xiaoyu
  */
 @Component
@@ -44,24 +46,22 @@ public class SpringCloudMythTransactionInterceptor implements MythTransactionInt
     private final MythTransactionAspectService mythTransactionAspectService;
 
     @Autowired
-    public SpringCloudMythTransactionInterceptor(MythTransactionAspectService mythTransactionAspectService) {
+    public SpringCloudMythTransactionInterceptor(final MythTransactionAspectService mythTransactionAspectService) {
         this.mythTransactionAspectService = mythTransactionAspectService;
     }
 
-
     @Override
-    public Object interceptor(ProceedingJoinPoint pjp) throws Throwable {
+    public Object interceptor(final ProceedingJoinPoint pjp) throws Throwable {
         MythTransactionContext mythTransactionContext = TransactionContextLocal.getInstance().get();
-        if (Objects.nonNull(mythTransactionContext) &&
-                mythTransactionContext.getRole() == MythRoleEnum.LOCAL.getCode()) {
+        if (Objects.nonNull(mythTransactionContext)
+                && mythTransactionContext.getRole() == MythRoleEnum.LOCAL.getCode()) {
             mythTransactionContext = TransactionContextLocal.getInstance().get();
         } else {
             RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
             HttpServletRequest request = requestAttributes == null ? null : ((ServletRequestAttributes) requestAttributes).getRequest();
             String context = request == null ? null : request.getHeader(CommonConstant.MYTH_TRANSACTION_CONTEXT);
             if (StringUtils.isNoneBlank(context)) {
-                mythTransactionContext =
-                        GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
+                mythTransactionContext = GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
             }
         }
         return mythTransactionAspectService.invoke(mythTransactionContext, pjp);

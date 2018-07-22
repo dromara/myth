@@ -18,74 +18,55 @@
 
 package com.github.myth.admin.service.log;
 
-import com.github.myth.admin.service.LogService;
-import com.github.myth.admin.vo.LogVO;
-import com.github.myth.admin.helper.PageHelper;
 import com.github.myth.admin.helper.ConvertHelper;
+import com.github.myth.admin.helper.PageHelper;
 import com.github.myth.admin.page.CommonPager;
 import com.github.myth.admin.page.PageParameter;
 import com.github.myth.admin.query.ConditionQuery;
+import com.github.myth.admin.service.LogService;
+import com.github.myth.admin.vo.LogVO;
 import com.github.myth.common.bean.adapter.CoordinatorRepositoryAdapter;
-import com.github.myth.common.exception.MythException;
 import com.github.myth.common.serializer.ObjectSerializer;
 import com.github.myth.common.utils.DateUtils;
 import com.github.myth.common.utils.FileUtils;
 import com.github.myth.common.utils.RepositoryPathUtils;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * <p>Description: .</p>
- * 文件实现
- *
+ * file impl.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/10/19 17:08
- * @since JDK 1.8
  */
+@RequiredArgsConstructor
 public class FileLogServiceImpl implements LogService {
 
+    private final ObjectSerializer objectSerializer;
 
-    @Autowired
-    private ObjectSerializer objectSerializer;
-
-
-    /**
-     * 分页获取补偿事务信息
-     *
-     * @param query 查询条件
-     * @return CommonPager<TransactionRecoverVO>
-     */
     @Override
-    public CommonPager<LogVO> listByPage(ConditionQuery query) {
-
+    public CommonPager<LogVO> listByPage(final ConditionQuery query) {
         final String filePath = RepositoryPathUtils.buildFilePath(query.getApplicationName());
         final PageParameter pageParameter = query.getPageParameter();
         final int currentPage = pageParameter.getCurrentPage();
         final int pageSize = pageParameter.getPageSize();
-
         int start = (currentPage - 1) * pageSize;
-
         CommonPager<LogVO> voCommonPager = new CommonPager<>();
         File path;
         File[] files;
         int totalCount;
         List<LogVO> voList;
-
         //如果只查 重试条件的
         if (StringUtils.isBlank(query.getTransId())) {
             path = new File(filePath);
             files = path.listFiles();
-            totalCount = files.length;
+            totalCount = Objects.requireNonNull(files).length;
             voList = findByPage(files, start, pageSize);
         } else {
             final String fullFileName =
@@ -100,42 +81,26 @@ public class FileLogServiceImpl implements LogService {
         return voCommonPager;
     }
 
-
-    /**
-     * 批量删除补偿事务信息
-     *
-     * @param ids             ids 事务id集合
-     * @param applicationName 应用名称
-     * @return true 成功
-     */
     @Override
-    public Boolean batchRemove(List<String> ids, String applicationName) {
-        if (CollectionUtils.isEmpty(ids) || StringUtils.isBlank(applicationName)) {
+    public Boolean batchRemove(final List<String> ids, final String appName) {
+        if (CollectionUtils.isEmpty(ids) || StringUtils.isBlank(appName)) {
             return Boolean.FALSE;
         }
-        final String filePath = RepositoryPathUtils.buildFilePath(applicationName);
-        ids.stream().map(id -> new File(RepositoryPathUtils.getFullFileName(filePath, id)))
+        final String filePath = RepositoryPathUtils.buildFilePath(appName);
+        ids.stream().map(id ->
+                new File(RepositoryPathUtils.getFullFileName(filePath, id)))
                 .forEach(File::delete);
-
         return Boolean.TRUE;
     }
 
-
-    /**
-     * 更改恢复次数
-     *
-     * @param id              事务id
-     * @param retry           恢复次数
-     * @param applicationName 应用名称
-     * @return true 成功
-     */
     @Override
-    public Boolean updateRetry(String id, Integer retry, String applicationName) {
-        if (StringUtils.isBlank(id) || StringUtils.isBlank(applicationName) ||
-                Objects.isNull(retry)) {
+    public Boolean updateRetry(final String id, final Integer retry, final String appName) {
+        if (StringUtils.isBlank(id)
+                || StringUtils.isBlank(appName)
+                || Objects.isNull(retry)) {
             return false;
         }
-        final String filePath = RepositoryPathUtils.buildFilePath(applicationName);
+        final String filePath = RepositoryPathUtils.buildFilePath(appName);
         final String fullFileName = RepositoryPathUtils.getFullFileName(filePath, id);
         final File file = new File(fullFileName);
         final CoordinatorRepositoryAdapter adapter = readRecover(file);
@@ -157,8 +122,7 @@ public class FileLogServiceImpl implements LogService {
         return false;
     }
 
-
-    private CoordinatorRepositoryAdapter readRecover(File file) {
+    private CoordinatorRepositoryAdapter readRecover(final File file) {
         try {
             try (FileInputStream fis = new FileInputStream(file)) {
                 byte[] content = new byte[(int) file.length()];
@@ -169,11 +133,9 @@ public class FileLogServiceImpl implements LogService {
             e.printStackTrace();
             return null;
         }
-
-
     }
 
-    private LogVO readTransaction(File file) {
+    private LogVO readTransaction(final File file) {
         try {
             try (FileInputStream fis = new FileInputStream(file)) {
                 byte[] content = new byte[(int) file.length()];
@@ -187,7 +149,7 @@ public class FileLogServiceImpl implements LogService {
         }
     }
 
-    private List<LogVO> findAll(File[] files) {
+    private List<LogVO> findAll(final File[] files) {
         if (files != null && files.length > 0) {
             return Arrays.stream(files)
                     .map(this::readTransaction)
@@ -196,7 +158,7 @@ public class FileLogServiceImpl implements LogService {
         return null;
     }
 
-    private List<LogVO> findByPage(File[] files, int start, int pageSize) {
+    private List<LogVO> findByPage(final File[] files, final int start, final int pageSize) {
         if (files != null && files.length > 0) {
             return Arrays.stream(files).skip(start).limit(pageSize)
                     .map(this::readTransaction)
@@ -204,6 +166,5 @@ public class FileLogServiceImpl implements LogService {
         }
         return null;
     }
-
 
 }

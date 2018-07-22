@@ -15,10 +15,11 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.common.exception;
 
-
 /**
+ * MythException.
  * @author xiaoyu
  */
 public class MythException extends Exception {
@@ -27,15 +28,15 @@ public class MythException extends Exception {
     public MythException() {
     }
 
-    public MythException(String message) {
+    public MythException(final String message) {
         super(message);
     }
 
-    public MythException(String message, Throwable cause) {
+    public MythException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public MythException(Throwable cause) {
+    public MythException(final Throwable cause) {
         super(cause);
     }
 }

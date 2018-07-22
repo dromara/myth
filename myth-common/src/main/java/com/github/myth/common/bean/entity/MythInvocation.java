@@ -15,6 +15,7 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.common.bean.entity;
 
 import lombok.AllArgsConstructor;
@@ -24,8 +25,8 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-
 /**
+ * MythInvocation.
  * @author xiaoyu
  */
 @Data
@@ -38,7 +39,6 @@ public class MythInvocation implements Serializable {
     @Getter
     private Class targetClass;
 
-
     @Getter
     private String methodName;
 
@@ -47,8 +47,5 @@ public class MythInvocation implements Serializable {
 
     @Getter
     private Object[] args;
-
-
-
 
 }

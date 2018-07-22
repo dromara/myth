@@ -15,8 +15,8 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.github.myth.common.enums;
 
+package com.github.myth.common.enums;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -52,7 +52,7 @@ public enum RejectedPolicyTypeEnum {
 
     private String value;
 
-    RejectedPolicyTypeEnum(String value) {
+    RejectedPolicyTypeEnum(final String value) {
         this.value = value;
     }
 
@@ -71,7 +71,7 @@ public enum RejectedPolicyTypeEnum {
      * @param value the value
      * @return the rejected policy type enum
      */
-    public static RejectedPolicyTypeEnum fromString(String value) {
+    public static RejectedPolicyTypeEnum fromString(final String value) {
         Optional<RejectedPolicyTypeEnum> rejectedPolicyTypeEnum =
                 Arrays.stream(RejectedPolicyTypeEnum.values())
                         .filter(v -> Objects.equals(v.getValue(), value))

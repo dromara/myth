@@ -15,8 +15,8 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.github.myth.springcloud.feign;
 
+package com.github.myth.springcloud.feign;
 
 import feign.Feign;
 import feign.InvocationHandlerFactory;
@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 /**
+ * MythRestTemplateConfiguration.
  * @author xiaoyu
  */
 @Configuration
@@ -36,7 +37,6 @@ public class MythRestTemplateConfiguration {
         return Feign.builder().requestInterceptor(new MythRestTemplateInterceptor())
                 .invocationHandlerFactory(invocationHandlerFactory());
     }
-
 
     @Bean
     public InvocationHandlerFactory invocationHandlerFactory() {

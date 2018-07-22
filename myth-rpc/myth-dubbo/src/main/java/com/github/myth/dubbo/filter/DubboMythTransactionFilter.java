@@ -18,7 +18,6 @@
 
 package com.github.myth.dubbo.filter;
 
-
 import com.alibaba.dubbo.common.Constants;
 import com.alibaba.dubbo.common.extension.Activate;
 import com.alibaba.dubbo.rpc.Filter;
@@ -37,22 +36,19 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 
 /**
+ * DubboMythTransactionFilter.
  * @author xiaoyu
  */
-@Activate(group = {Constants.SERVER_KEY, Constants.CONSUMER})
+@Activate(group = { Constants.SERVER_KEY, Constants.CONSUMER})
 public class DubboMythTransactionFilter implements Filter {
-
 
     @Override
     @SuppressWarnings("unchecked")
-    public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
-
+    public Result invoke(final Invoker<?> invoker, final Invocation invocation) throws RpcException {
         String methodName = invocation.getMethodName();
         Class clazz = invoker.getInterface();
         Class[] args = invocation.getParameterTypes();
-        final Object[] arguments = invocation.getArguments();
-
-        Method method = null;
+        Method method;
         Myth myth = null;
         try {
             method = clazz.getDeclaredMethod(methodName, args);
@@ -60,20 +56,14 @@ public class DubboMythTransactionFilter implements Filter {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-
         if (Objects.nonNull(myth)) {
-            final MythTransactionContext mythTransactionContext =
-                    TransactionContextLocal.getInstance().get();
+            final MythTransactionContext mythTransactionContext =TransactionContextLocal.getInstance().get();
             if (Objects.nonNull(mythTransactionContext)) {
                 RpcContext.getContext()
-                        .setAttachment(CommonConstant.MYTH_TRANSACTION_CONTEXT,
-                                GsonUtils.getInstance().toJson(mythTransactionContext));
+                        .setAttachment(CommonConstant.MYTH_TRANSACTION_CONTEXT,GsonUtils.getInstance().toJson(mythTransactionContext));
             }
-
         }
-
         return invoker.invoke(invocation);
-
     }
 
 }

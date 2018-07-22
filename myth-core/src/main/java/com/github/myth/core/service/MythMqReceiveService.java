@@ -19,21 +19,16 @@
 package com.github.myth.core.service;
 
 /**
- * <p>Description: .</p>
- *
+ * process receive mq info .
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/11/30 13:58
- * @since JDK 1.8
  */
 @FunctionalInterface
 public interface MythMqReceiveService {
 
-
     /**
-     * myth框架处理发出的mq消息
-     * @param message 实体对象转换成byte[]后的数据
-     * @return true 成功 false 失败
+     * process receive mq info .
+     * @param message byte[] message
+     * @return true success
      */
     Boolean processMessage(byte[] message);
 }

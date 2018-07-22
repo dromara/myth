@@ -20,6 +20,7 @@
 package com.github.myth.core.disruptor.publisher;
 
 import com.github.myth.common.bean.entity.MythTransaction;
+import com.github.myth.common.enums.EventTypeEnum;
 import com.github.myth.core.disruptor.event.MythTransactionEvent;
 import com.github.myth.core.disruptor.factory.MythTransactionEventFactory;
 import com.github.myth.core.disruptor.handler.MythTransactionEventHandler;
@@ -35,12 +36,8 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * <p>Description: .</p>
- *
+ * MythTransactionEventPublisher.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2018/3/5 15:01
- * @since JDK 1.8
  */
 @Component
 public class MythTransactionEventPublisher implements DisposableBean {
@@ -50,32 +47,32 @@ public class MythTransactionEventPublisher implements DisposableBean {
     @Autowired
     private MythTransactionEventHandler mythTransactionEventHandler;
 
-
-    public void start(int bufferSize) {
-        disruptor =
-                new Disruptor<>(new MythTransactionEventFactory(),
-                        bufferSize, r -> {
-                    AtomicInteger index = new AtomicInteger(1);
-                    return new Thread(null, r, "disruptor-thread-" + index.getAndIncrement());
-                }, ProducerType.MULTI, new YieldingWaitStrategy());
-
+    /**
+     * start disruptor.
+     *
+     * @param bufferSize bufferSize
+     */
+    public void start(final int bufferSize) {
+        disruptor = new Disruptor<>(new MythTransactionEventFactory(), bufferSize, r -> {
+            AtomicInteger index = new AtomicInteger(1);
+            return new Thread(null, r, "disruptor-thread-" + index.getAndIncrement());
+        }, ProducerType.MULTI, new YieldingWaitStrategy());
         disruptor.handleEventsWith(mythTransactionEventHandler);
         disruptor.start();
     }
 
-    public void publishEvent(MythTransaction mythTransaction, int type) {
+
+    /**
+     * publish disruptor event.
+     *
+     * @param mythTransaction {@linkplain MythTransaction }
+     * @param type            {@linkplain EventTypeEnum}
+     */
+    public void publishEvent(final MythTransaction mythTransaction, final int type) {
         final RingBuffer<MythTransactionEvent> ringBuffer = disruptor.getRingBuffer();
         ringBuffer.publishEvent(new MythTransactionEventTranslator(type), mythTransaction);
     }
 
-
-    /**
-     * Invoked by a BeanFactory on destruction of a singleton.
-     *
-     * @throws Exception in case of shutdown errors.
-     *                   Exceptions will get logged but not rethrown to allow
-     *                   other beans to release their resources too.
-     */
     @Override
     public void destroy() {
         disruptor.shutdown();

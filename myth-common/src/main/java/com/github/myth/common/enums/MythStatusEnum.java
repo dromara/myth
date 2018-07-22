@@ -15,6 +15,7 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.common.enums;
 
 import java.util.Arrays;
@@ -22,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
+ * MythStatusEnum.
  * @author xiaoyu
  */
 
@@ -68,13 +70,12 @@ public enum MythStatusEnum {
 
     private String desc;
 
-    MythStatusEnum(int code, String desc) {
+    MythStatusEnum(final int code, final String desc) {
         this.code = code;
         this.desc = desc;
     }
 
-
-    public static MythStatusEnum acquireByCode(int code) {
+    public static MythStatusEnum acquireByCode(final int code) {
         Optional<MythStatusEnum> transactionStatusEnum =
                 Arrays.stream(MythStatusEnum.values())
                         .filter(v -> Objects.equals(v.getCode(), code))
@@ -83,7 +84,7 @@ public enum MythStatusEnum {
 
     }
 
-    public static String acquireDescByCode(int code) {
+    public static String acquireDescByCode(final int code) {
         return acquireByCode(code).getDesc();
     }
 
@@ -101,7 +102,7 @@ public enum MythStatusEnum {
      *
      * @param code the code
      */
-    public void setCode(int code) {
+    public void setCode(final int code) {
         this.code = code;
     }
 
@@ -119,7 +120,7 @@ public enum MythStatusEnum {
      *
      * @param desc the desc
      */
-    public void setDesc(String desc) {
+    public void setDesc(final String desc) {
         this.desc = desc;
     }
 }

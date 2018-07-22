@@ -20,17 +20,15 @@ package com.github.myth.admin.service.log;
 
 import com.github.myth.admin.helper.PageHelper;
 import com.github.myth.admin.page.CommonPager;
+import com.github.myth.admin.page.PageParameter;
 import com.github.myth.admin.query.ConditionQuery;
 import com.github.myth.admin.service.LogService;
 import com.github.myth.admin.vo.LogVO;
-import com.github.myth.admin.page.PageParameter;
 import com.github.myth.common.utils.DateUtils;
 import com.github.myth.common.utils.DbTypeUtils;
 import com.github.myth.common.utils.RepositoryPathUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -40,13 +38,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * <p>Description: .</p>
- * jdbc实现
- *
+ * jdbc impl.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/10/19 17:08
- * @since JDK 1.8
  */
 public class JdbcLogServiceImpl implements LogService {
 
@@ -55,102 +48,58 @@ public class JdbcLogServiceImpl implements LogService {
 
     private String dbType;
 
-    /** logger */
-    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcLogServiceImpl.class);
-
-
-    /**
-     * 分页获取补偿事务信息
-     *
-     * @param query 查询条件
-     * @return CommonPager<TransactionRecoverVO>
-     */
     @Override
-    public CommonPager<LogVO> listByPage(ConditionQuery query) {
+    public CommonPager<LogVO> listByPage(final ConditionQuery query) {
         final String tableName = RepositoryPathUtils.buildDbTableName(query.getApplicationName());
         final PageParameter pageParameter = query.getPageParameter();
-
         StringBuilder sqlBuilder = new StringBuilder();
-
-        sqlBuilder.append("select trans_id,target_class,target_method," +
-                " retried_count,create_time,last_time,version,error_msg from ")
+        sqlBuilder.append("select trans_id,target_class,target_method,"
+                + " retried_count,create_time,last_time,version,error_msg from ")
                 .append(tableName).append(" where 1= 1 ");
-
 
         if (StringUtils.isNoneBlank(query.getTransId())) {
             sqlBuilder.append(" and trans_id = ").append(query.getTransId());
         }
-
-
         final String sql = buildPageSql(sqlBuilder.toString(), pageParameter);
-
         CommonPager<LogVO> pager = new CommonPager<>();
-
-
         final List<Map<String, Object>> mapList = jdbcTemplate.queryForList(sql);
-
         if (CollectionUtils.isNotEmpty(mapList)) {
-
             pager.setDataList(mapList.stream().map(this::buildByMap).collect(Collectors.toList()));
         }
-
         final Integer totalCount =
-                jdbcTemplate.queryForObject("select count(1) from " + tableName, Integer.class);
-
-
+                jdbcTemplate.queryForObject(String.format("select count(1) from %s", tableName), Integer.class);
         pager.setPage(PageHelper.buildPage(pageParameter, totalCount));
-
         return pager;
     }
 
-    /**
-     * 批量删除补偿事务信息
-     *
-     * @param ids             ids 事务id集合
-     * @param applicationName 应用名称
-     * @return true 成功
-     */
     @Override
-    public Boolean batchRemove(List<String> ids, String applicationName) {
-        if (CollectionUtils.isEmpty(ids) || StringUtils.isBlank(applicationName)) {
+    public Boolean batchRemove(final List<String> ids, final String appName) {
+        if (CollectionUtils.isEmpty(ids) || StringUtils.isBlank(appName)) {
             return Boolean.FALSE;
         }
-        final String tableName = RepositoryPathUtils.buildDbTableName(applicationName);
+        final String tableName = RepositoryPathUtils.buildDbTableName(appName);
         ids.stream()
                 .map(id -> buildDelSql(tableName, id))
                 .forEach(sql -> jdbcTemplate.execute(sql));
-
         return Boolean.TRUE;
     }
 
-    /**
-     * 更改恢复次数
-     *
-     * @param id              事务id
-     * @param retry           恢复次数
-     * @param applicationName 应用名称
-     * @return true 成功
-     */
     @Override
-    public Boolean updateRetry(String id, Integer retry, String applicationName) {
-        if (StringUtils.isBlank(id) || StringUtils.isBlank(applicationName) || Objects.isNull(retry)) {
+    public Boolean updateRetry(final String id, final Integer retry, final String appName) {
+        if (StringUtils.isBlank(id)
+                || StringUtils.isBlank(appName)
+                || Objects.isNull(retry)) {
             return false;
         }
-        final String tableName = RepositoryPathUtils.buildDbTableName(applicationName);
-
-        StringBuilder sqlBuilder = new StringBuilder();
-
-        sqlBuilder.append("update ").append(tableName)
-                .append("  set retried_count = ")
-                .append(retry).append(",last_time= '")
-                .append(DateUtils.getCurrentDateTime()).append("'")
-                .append(" where trans_id =").append(id);
-        jdbcTemplate.execute(sqlBuilder.toString());
+        final String tableName = RepositoryPathUtils.buildDbTableName(appName);
+        String sqlBuilder =
+                String.format("update %s  set retried_count = %d,last_time= '%s' where trans_id =%s",
+                        tableName, retry, DateUtils.getCurrentDateTime(), id);
+        jdbcTemplate.execute(sqlBuilder);
         return Boolean.TRUE;
     }
 
-
-    private LogVO buildByMap(Map<String, Object> map) {
+    private LogVO buildByMap(final Map<String, Object> map) {
         LogVO vo = new LogVO();
         vo.setTransId((String) map.get("trans_id"));
         vo.setRetriedCount((Integer) map.get("retried_count"));
@@ -163,17 +112,11 @@ public class JdbcLogServiceImpl implements LogService {
         return vo;
     }
 
-
-
-    public String getDbType() {
-        return dbType;
-    }
-
-    public void setDbType(String dbType) {
+    public void setDbType(final String dbType) {
         this.dbType = DbTypeUtils.buildByDriverClassName(dbType);
     }
 
-    private String buildPageSql(String sql, PageParameter pageParameter) {
+    private String buildPageSql(final String sql, final PageParameter pageParameter) {
         switch (dbType) {
             case "mysql":
                 return PageHelper.buildPageSqlForMysql(sql, pageParameter).toString();
@@ -187,7 +130,7 @@ public class JdbcLogServiceImpl implements LogService {
 
     }
 
-    private String buildDelSql(String tableName, String id) {
+    private String buildDelSql(final String tableName, final String id) {
         return "DELETE FROM " + tableName + " WHERE trans_id=" + id;
     }
 }

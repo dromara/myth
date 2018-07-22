@@ -19,31 +19,24 @@
 
 package com.github.myth.core.disruptor.translator;
 
-
-import com.github.myth.annotation.Myth;
 import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.core.disruptor.event.MythTransactionEvent;
 import com.lmax.disruptor.EventTranslatorOneArg;
 
 /**
- * <p>Description: .</p>
- *
+ * MythTransactionEventTranslator.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2018/3/5 11:54
- * @since JDK 1.8
  */
 public class MythTransactionEventTranslator implements EventTranslatorOneArg<MythTransactionEvent, MythTransaction> {
 
     private int type;
 
-    public MythTransactionEventTranslator(int type) {
+    public MythTransactionEventTranslator(final int type) {
         this.type = type;
     }
 
     @Override
-    public void translateTo(MythTransactionEvent mythTransactionEvent, long l,
-                            MythTransaction mythTransaction) {
+    public void translateTo(final MythTransactionEvent mythTransactionEvent, final long l, final MythTransaction mythTransaction) {
         mythTransactionEvent.setMythTransaction(mythTransaction);
         mythTransactionEvent.setType(type);
     }
