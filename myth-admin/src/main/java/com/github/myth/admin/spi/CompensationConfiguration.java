@@ -27,6 +27,7 @@ import com.github.myth.admin.service.log.RedisLogServiceImpl;
 import com.github.myth.admin.service.log.ZookeeperLogServiceImpl;
 import com.github.myth.common.jedis.JedisClient;
 import com.github.myth.common.jedis.JedisClientCluster;
+import com.github.myth.common.jedis.JedisClientSentinel;
 import com.github.myth.common.jedis.JedisClientSingle;
 import com.github.myth.common.serializer.ObjectSerializer;
 import com.google.common.base.Splitter;
@@ -48,9 +49,11 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.JedisSentinelPool;
 
 import javax.sql.DataSource;
 import java.net.InetSocketAddress;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
@@ -59,6 +62,7 @@ import java.util.stream.Collectors;
 
 /**
  * CompensationConfiguration.
+ *
  * @author xiaoyu
  */
 @Configuration
@@ -124,20 +128,30 @@ public class CompensationConfiguration {
         @Bean
         @Qualifier("redisLogService")
         public LogService redisLogService() {
-
             JedisPool jedisPool;
             JedisPoolConfig config = new JedisPoolConfig();
             JedisClient jedisClient;
             final Boolean cluster = env.getProperty("myth.redis.cluster", Boolean.class);
+            final Boolean sentinel = env.getProperty("myth.redis.sentinel", Boolean.class);
+            final String password = env.getProperty("myth.redis.password");
             if (cluster) {
                 final String clusterUrl = env.getProperty("myth.redis.clusterUrl");
-                final Set<HostAndPort> hostAndPorts = Splitter.on(clusterUrl)
-                        .splitToList(";").stream()
+                final Set<HostAndPort> hostAndPorts = Splitter.on(";")
+                        .splitToList(clusterUrl).stream()
                         .map(HostAndPort::parseString).collect(Collectors.toSet());
                 JedisCluster jedisCluster = new JedisCluster(hostAndPorts, config);
                 jedisClient = new JedisClientCluster(jedisCluster);
+            } else if (sentinel) {
+                final String sentinelUrl = env.getProperty("myth.redis.sentinelUrl");
+                final Set<String> hostAndPorts =
+                        new HashSet<>(Splitter.on(";")
+                                .splitToList(sentinelUrl));
+                final String master = env.getProperty("myth.redis.master");
+                JedisSentinelPool pool =
+                        new JedisSentinelPool(master, hostAndPorts,
+                                config, password);
+                jedisClient = new JedisClientSentinel(pool);
             } else {
-                final String password = env.getProperty("myth.redis.password");
                 final String port = env.getProperty("myth.redis.port");
                 final String hostName = env.getProperty("myth.redis.hostName");
                 if (StringUtils.isNoneBlank(password)) {
@@ -148,7 +162,6 @@ public class CompensationConfiguration {
                             Integer.parseInt(port), 30);
                 }
                 jedisClient = new JedisClientSingle(jedisPool);
-
             }
             return new RedisLogServiceImpl(jedisClient, objectSerializer);
         }

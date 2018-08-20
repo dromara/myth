@@ -21,15 +21,19 @@ package com.github.myth.core.disruptor.publisher;
 
 import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.enums.EventTypeEnum;
+import com.github.myth.common.utils.LogUtil;
 import com.github.myth.core.concurrent.threadpool.MythTransactionThreadFactory;
 import com.github.myth.core.disruptor.event.MythTransactionEvent;
 import com.github.myth.core.disruptor.factory.MythTransactionEventFactory;
 import com.github.myth.core.disruptor.handler.MythTransactionEventHandler;
 import com.github.myth.core.disruptor.translator.MythTransactionEventTranslator;
 import com.lmax.disruptor.BlockingWaitStrategy;
+import com.lmax.disruptor.ExceptionHandler;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,6 +52,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class MythTransactionEventPublisher implements DisposableBean {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MythTransactionEventPublisher.class);
 
     private static final int MAX_THREAD = Runtime.getRuntime().availableProcessors() << 1;
 
@@ -79,6 +84,24 @@ public class MythTransactionEventPublisher implements DisposableBean {
                 MythTransactionThreadFactory.create("myth-log-disruptor", false),
                 new ThreadPoolExecutor.AbortPolicy());
         disruptor.handleEventsWith(mythTransactionEventHandler);
+        disruptor.setDefaultExceptionHandler(new ExceptionHandler<MythTransactionEvent>() {
+            @Override
+            public void handleEventException(Throwable ex, long sequence, MythTransactionEvent event) {
+                LogUtil.error(LOGGER, () -> "Disruptor handleEventException:"
+                        + event.getType() + event.getMythTransaction().toString() + ex.getMessage());
+            }
+
+            @Override
+            public void handleOnStartException(Throwable ex) {
+                LogUtil.error(LOGGER, () -> "Disruptor start exception");
+            }
+
+            @Override
+            public void handleOnShutdownException(Throwable ex) {
+                LogUtil.error(LOGGER, () -> "Disruptor close Exception ");
+            }
+        });
+
         disruptor.start();
     }
 

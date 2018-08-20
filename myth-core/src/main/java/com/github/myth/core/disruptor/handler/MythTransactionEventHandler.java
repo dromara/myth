@@ -34,8 +34,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class MythTransactionEventHandler implements EventHandler<MythTransactionEvent> {
 
+    private final CoordinatorService coordinatorService;
+
     @Autowired
-    private CoordinatorService coordinatorService;
+    public MythTransactionEventHandler(CoordinatorService coordinatorService) {
+        this.coordinatorService = coordinatorService;
+    }
 
     @Override
     public void onEvent(final MythTransactionEvent mythTransactionEvent, final long sequence, final boolean endOfBatch) {

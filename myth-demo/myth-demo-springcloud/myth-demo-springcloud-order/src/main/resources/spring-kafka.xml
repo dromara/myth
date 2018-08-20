@@ -8,7 +8,7 @@
     <bean id="producerProperties" class="java.util.HashMap">
         <constructor-arg>
             <map>
-                <entry key="bootstrap.servers" value="localhost:9092" />
+                <entry key="bootstrap.servers" value="192.168.1.91:9092" />
                 <entry key="group.id" value="0" />
                 <entry key="retries" value="1" />
                 <entry key="batch.size" value="16384" />

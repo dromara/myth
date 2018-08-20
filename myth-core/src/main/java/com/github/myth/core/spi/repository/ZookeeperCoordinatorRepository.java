@@ -49,6 +49,7 @@ import java.util.stream.Collectors;
 
 /**
  * use zookeeper save mythTransaction log.
+ *
  * @author xiaoyu
  */
 public class ZookeeperCoordinatorRepository implements CoordinatorRepository {
@@ -110,9 +111,13 @@ public class ZookeeperCoordinatorRepository implements CoordinatorRepository {
         final String path = RepositoryPathUtils.buildZookeeperRootPath(rootPathPrefix, mythTransaction.getTransId());
         try {
             byte[] content = zooKeeper.getData(path, false, new Stat());
-            final CoordinatorRepositoryAdapter adapter = objectSerializer.deSerialize(content, CoordinatorRepositoryAdapter.class);
-            adapter.setContents(objectSerializer.serialize(mythTransaction.getMythParticipants()));
-            zooKeeper.create(path, objectSerializer.serialize(adapter), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+            if (content != null) {
+                final CoordinatorRepositoryAdapter adapter =
+                        objectSerializer.deSerialize(content, CoordinatorRepositoryAdapter.class);
+                adapter.setContents(objectSerializer.serialize(mythTransaction.getMythParticipants()));
+                zooKeeper.create(path, objectSerializer.serialize(adapter),
+                        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+            }
         } catch (Exception e) {
             throw new MythRuntimeException(e);
         }
@@ -123,16 +128,19 @@ public class ZookeeperCoordinatorRepository implements CoordinatorRepository {
         final String path = RepositoryPathUtils.buildZookeeperRootPath(rootPathPrefix, id);
         try {
             byte[] content = zooKeeper.getData(path, false, new Stat());
-            final CoordinatorRepositoryAdapter adapter = objectSerializer.deSerialize(content, CoordinatorRepositoryAdapter.class);
-            adapter.setStatus(status);
-            zooKeeper.create(path,
-                    objectSerializer.serialize(adapter),
-                    ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-            return CommonConstant.SUCCESS;
+            if (content != null) {
+                final CoordinatorRepositoryAdapter adapter =
+                        objectSerializer.deSerialize(content, CoordinatorRepositoryAdapter.class);
+                adapter.setStatus(status);
+                zooKeeper.create(path,
+                        objectSerializer.serialize(adapter),
+                        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+
+            }
         } catch (Exception e) {
             throw new MythRuntimeException(e);
         }
-
+        return CommonConstant.SUCCESS;
     }
 
     @Override

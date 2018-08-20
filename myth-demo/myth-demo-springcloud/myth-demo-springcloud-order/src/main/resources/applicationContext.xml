@@ -56,12 +56,12 @@
             </bean>
         </property>
     </bean>-->
-
-    <import resource="spring-rocketmq.xml"/>
+    <import resource="spring-kafka.xml"/>
+    <!--<import resource="spring-rocketmq.xml"/>-->
 
   <!--  <import resource="spring-rabbitmq.xml"/>
 
-    <import resource="spring-kafka.xml"/>-->
+    -->
 
 <!--
     <import resource="spring-activemq.xml"/>

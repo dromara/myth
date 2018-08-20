@@ -29,6 +29,7 @@ import com.github.myth.common.exception.MythException;
 import com.github.myth.common.exception.MythRuntimeException;
 import com.github.myth.common.jedis.JedisClient;
 import com.github.myth.common.jedis.JedisClientCluster;
+import com.github.myth.common.jedis.JedisClientSentinel;
 import com.github.myth.common.jedis.JedisClientSingle;
 import com.github.myth.common.serializer.ObjectSerializer;
 import com.github.myth.common.utils.LogUtil;
@@ -44,14 +45,17 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.JedisSentinelPool;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * use redis save mythTransaction log.
+ *
  * @author xiaoyu
  */
 public class RedisCoordinatorRepository implements CoordinatorRepository {
@@ -117,9 +121,11 @@ public class RedisCoordinatorRepository implements CoordinatorRepository {
         final String redisKey = RepositoryPathUtils.buildRedisKey(keyPrefix, mythTransaction.getTransId());
         byte[] contents = jedisClient.get(redisKey.getBytes());
         try {
-            CoordinatorRepositoryAdapter adapter = objectSerializer.deSerialize(contents, CoordinatorRepositoryAdapter.class);
-            adapter.setContents(objectSerializer.serialize(mythTransaction.getMythParticipants()));
-            jedisClient.set(redisKey, objectSerializer.serialize(adapter));
+            if (contents != null) {
+                CoordinatorRepositoryAdapter adapter = objectSerializer.deSerialize(contents, CoordinatorRepositoryAdapter.class);
+                adapter.setContents(objectSerializer.serialize(mythTransaction.getMythParticipants()));
+                jedisClient.set(redisKey, objectSerializer.serialize(adapter));
+            }
         } catch (MythException e) {
             e.printStackTrace();
             throw new MythRuntimeException(e);
@@ -131,9 +137,11 @@ public class RedisCoordinatorRepository implements CoordinatorRepository {
         final String redisKey = RepositoryPathUtils.buildRedisKey(keyPrefix, id);
         byte[] contents = jedisClient.get(redisKey.getBytes());
         try {
-            CoordinatorRepositoryAdapter adapter = objectSerializer.deSerialize(contents, CoordinatorRepositoryAdapter.class);
-            adapter.setStatus(status);
-            jedisClient.set(redisKey, objectSerializer.serialize(adapter));
+            if (contents != null) {
+                CoordinatorRepositoryAdapter adapter = objectSerializer.deSerialize(contents, CoordinatorRepositoryAdapter.class);
+                adapter.setStatus(status);
+                jedisClient.set(redisKey, objectSerializer.serialize(adapter));
+            }
         } catch (MythException e) {
             e.printStackTrace();
             throw new MythRuntimeException(e);
@@ -185,6 +193,7 @@ public class RedisCoordinatorRepository implements CoordinatorRepository {
             buildJedisPool(mythRedisConfig);
         } catch (Exception e) {
             LogUtil.error(LOGGER, "redis init error please check your config ! ex:{}", e::getMessage);
+            throw new MythRuntimeException(e);
         }
     }
 
@@ -226,18 +235,34 @@ public class RedisCoordinatorRepository implements CoordinatorRepository {
         JedisPool jedisPool;
         //如果是集群模式
         if (mythRedisConfig.getCluster()) {
-            LogUtil.info(LOGGER, () -> " redis cluster.............");
+            LogUtil.info(LOGGER, () -> "myth build redis cluster ............");
             final String clusterUrl = mythRedisConfig.getClusterUrl();
-            final Set<HostAndPort> hostAndPorts = Splitter.on(clusterUrl)
-                    .splitToList(";").stream()
-                    .map(HostAndPort::parseString).collect(Collectors.toSet());
+            final Set<HostAndPort> hostAndPorts =
+                    Splitter.on(";")
+                            .splitToList(clusterUrl)
+                            .stream()
+                            .map(HostAndPort::parseString).collect(Collectors.toSet());
             JedisCluster jedisCluster = new JedisCluster(hostAndPorts, config);
             jedisClient = new JedisClientCluster(jedisCluster);
+        } else if (mythRedisConfig.getSentinel()) {
+            LogUtil.info(LOGGER, () -> "myth build redis sentinel ............");
+            final String sentinelUrl = mythRedisConfig.getSentinelUrl();
+            final Set<String> hostAndPorts =
+                    new HashSet<>(Splitter.on(";")
+                            .splitToList(sentinelUrl));
+
+            JedisSentinelPool pool =
+                    new JedisSentinelPool(mythRedisConfig.getMasterName(), hostAndPorts,
+                            config, mythRedisConfig.getTimeOut(), mythRedisConfig.getPassword());
+            jedisClient = new JedisClientSentinel(pool);
         } else {
             if (StringUtils.isNoneBlank(mythRedisConfig.getPassword())) {
-                jedisPool = new JedisPool(config, mythRedisConfig.getHostName(), mythRedisConfig.getPort(), mythRedisConfig.getTimeOut(), mythRedisConfig.getPassword());
+                jedisPool = new JedisPool(config, mythRedisConfig.getHostName(), mythRedisConfig.getPort(),
+                        mythRedisConfig.getTimeOut(),
+                        mythRedisConfig.getPassword());
             } else {
-                jedisPool = new JedisPool(config, mythRedisConfig.getHostName(), mythRedisConfig.getPort(), mythRedisConfig.getTimeOut());
+                jedisPool = new JedisPool(config, mythRedisConfig.getHostName(), mythRedisConfig.getPort(),
+                        mythRedisConfig.getTimeOut());
             }
             jedisClient = new JedisClientSingle(jedisPool);
         }

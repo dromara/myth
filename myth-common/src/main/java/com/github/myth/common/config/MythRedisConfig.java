@@ -29,7 +29,19 @@ public class MythRedisConfig {
 
     private Boolean cluster = false;
 
+    private Boolean sentinel = false;
+
+    /**
+     * clusterUrl   example:ip:port;ip:port.
+     */
     private String clusterUrl;
+
+    /**
+     * sentinelUrl   example:ip:port;ip:port.
+     */
+    private String sentinelUrl;
+
+    private String masterName;
 
     private String hostName;
 
