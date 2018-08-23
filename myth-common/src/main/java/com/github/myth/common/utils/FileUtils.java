@@ -53,15 +53,15 @@ public class FileUtils {
             throw new MythRuntimeException(e);
         } 
         finally { // add by eddy
-        	if(null != raf)
-        	{
-        		try {
-					raf.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-		            throw new MythRuntimeException(e);
-				}
-        	}
+	    if(null != raf)
+	    {
+		try {
+		    raf.close();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		    throw new MythRuntimeException(e);
+		}
+	    }
         }
     }
 }
