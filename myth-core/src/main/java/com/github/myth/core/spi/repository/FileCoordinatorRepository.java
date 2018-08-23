@@ -227,6 +227,6 @@ public class FileCoordinatorRepository implements CoordinatorRepository {
                 }
             }
         }
-        return false;
+        return true;// 已初始化目录，直接返回true
     }
 }
