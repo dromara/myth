@@ -115,8 +115,10 @@ public class ZookeeperCoordinatorRepository implements CoordinatorRepository {
                 final CoordinatorRepositoryAdapter adapter =
                         objectSerializer.deSerialize(content, CoordinatorRepositoryAdapter.class);
                 adapter.setContents(objectSerializer.serialize(mythTransaction.getMythParticipants()));
-                zooKeeper.create(path, objectSerializer.serialize(adapter),
-                        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                //TODO issue 28 重复创建node ==> 异常
+                //zooKeeper.create(path, objectSerializer.serialize(adapter),
+                //        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                zooKeeper.setData(path, objectSerializer.serialize(adapter), -1);
             }
         } catch (Exception e) {
             throw new MythRuntimeException(e);
@@ -132,10 +134,11 @@ public class ZookeeperCoordinatorRepository implements CoordinatorRepository {
                 final CoordinatorRepositoryAdapter adapter =
                         objectSerializer.deSerialize(content, CoordinatorRepositoryAdapter.class);
                 adapter.setStatus(status);
-                zooKeeper.create(path,
-                        objectSerializer.serialize(adapter),
-                        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-
+                //TODO issue 28 重复创建node ==> 异常
+                //zooKeeper.create(path,
+                //        objectSerializer.serialize(adapter),
+                //        ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                zooKeeper.setData(path, objectSerializer.serialize(adapter), -1);
             }
         } catch (Exception e) {
             throw new MythRuntimeException(e);
