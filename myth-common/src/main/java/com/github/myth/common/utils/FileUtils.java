@@ -36,8 +36,9 @@ public class FileUtils {
      * @param contents 内容
      */
     public static void writeFile(final String fullFileName, final byte[] contents) {
+        RandomAccessFile raf = null;
         try {
-            RandomAccessFile raf = new RandomAccessFile(fullFileName, "rw");
+            raf = new RandomAccessFile(fullFileName, "rw");
             try (FileChannel channel = raf.getChannel()) {
                 ByteBuffer buffer = ByteBuffer.allocate(contents.length);
                 buffer.put(contents);
@@ -50,6 +51,17 @@ public class FileUtils {
         } catch (IOException e) {
             e.printStackTrace();
             throw new MythRuntimeException(e);
+        } 
+        finally { // add by eddy
+	    if(null != raf)
+	    {
+		try {
+		    raf.close();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		    throw new MythRuntimeException(e);
+		}
+	    }
         }
     }
 }
