@@ -26,14 +26,16 @@ import java.nio.channels.FileChannel;
 
 /**
  * FileUtils.
+ *
  * @author xiaoyu(Myth)
  */
 public class FileUtils {
 
     /**
-     * 写入文件.
-     * @param fullFileName 文件路径全称
-     * @param contents 内容
+     * writeFile.
+     *
+     * @param fullFileName file path
+     * @param contents     contents
      */
     public static void writeFile(final String fullFileName, final byte[] contents) {
         RandomAccessFile raf = null;
@@ -51,17 +53,15 @@ public class FileUtils {
         } catch (IOException e) {
             e.printStackTrace();
             throw new MythRuntimeException(e);
-        } 
-        finally { // add by eddy
-	    if(null != raf)
-	    {
-		try {
-		    raf.close();
-		} catch (IOException e) {
-		    e.printStackTrace();
-		    throw new MythRuntimeException(e);
-		}
-	    }
+        } finally { // add by eddy
+            if (null != raf) {
+                try {
+                    raf.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    throw new MythRuntimeException(e);
+                }
+            }
         }
     }
 }
