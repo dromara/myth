@@ -18,29 +18,26 @@
 
 package com.github.myth.core.concurrent.threadlocal;
 
-
 import com.github.myth.common.bean.context.MythTransactionContext;
 
 /**
+ * TransactionContextLocal.
  * @author xiaoyu
  */
-public class TransactionContextLocal {
-
+public final class TransactionContextLocal {
 
     private static final ThreadLocal<MythTransactionContext> CURRENT_LOCAL = new ThreadLocal<>();
 
     private static final TransactionContextLocal TRANSACTION_CONTEXT_LOCAL = new TransactionContextLocal();
 
     private TransactionContextLocal() {
-
     }
 
     public static TransactionContextLocal getInstance() {
         return TRANSACTION_CONTEXT_LOCAL;
     }
 
-
-    public void set(MythTransactionContext context) {
+    public void set(final MythTransactionContext context) {
         CURRENT_LOCAL.set(context);
     }
 

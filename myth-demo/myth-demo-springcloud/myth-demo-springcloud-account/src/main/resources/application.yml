@@ -7,23 +7,9 @@ server:
 spring:
     datasource:
         driver-class-name:  com.mysql.jdbc.Driver
-        url: jdbc:mysql://192.168.1.68:3306/myth_account?useUnicode=true&characterEncoding=utf8
-        username: xiaoyu
-        password: Wgj@555888
-        initialSize: 20
-        minIdle: 20
-        maxActive: 100
-        maxWait: 60000
-        timeBetweenEvictionRunsMillis: 60000
-        minEvictableIdleTimeMillis: 30000
-        validationQuery: select 'x'
-        testWhileIdle: true
-        testOnBorrow: false
-        testOnReturn: false
-        poolPreparedStatements: true
-        maxPoolPreparedStatementPerConnectionSize: 20
-        filters: stat,wall,slf4j
-        connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+        url: jdbc:mysql://192.168.1.88:3306/myth_account?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false
+        username: root
+        password: 123456
     application:
       name: account-service
    #activemq:
@@ -36,19 +22,19 @@ spring:
         #    port: 5672
         #    username: guest
         #    password: guest
-    rocketmq:
-          namesrvAddr: localhost:9876
-          consumerGroupName: account
-          instanceName: account
-   #kafka:
-          #  consumer:
-          #     bootstrap-servers: localhost:9092
-          #     group-id: test
-          #     auto-offset-reset: earliest
-          #     enable-auto-commit: true
-          #     auto-commit-interval: 100
-          #    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-          #     value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+    #rocketmq:
+          #namesrvAddr: localhost:9876
+          #consumerGroupName: account
+          #instanceName: account
+    kafka:
+            consumer:
+               bootstrap-servers: 192.168.1.91:9092
+               group-id: test
+               auto-offset-reset: earliest
+               enable-auto-commit: true
+               auto-commit-interval: 100
+               key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+               value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
 
 mybatis:
   type-aliases-package: com.github.myth.demo.springcloud.account.api.entity
@@ -58,6 +44,41 @@ eureka:
  client:
      serviceUrl:
        defaultZone: http://localhost:8761/eureka/
+
+com:
+  github :
+      myth :
+        serializer : kryo
+        repositorySupport : db
+        mythDbConfig :
+                 driverClassName  : com.mysql.jdbc.Driver
+                 url :  jdbc:mysql://192.168.1.88:3306/myth?useUnicode=true&amp;characterEncoding=utf8
+                 username : root
+                 password : 123456
+
+       # repositorySupport : redis
+       #         hostName  : 192.168.1.68
+       #         port      :  6379
+       #         password  :
+
+
+       # repositorySupport : zookeeper
+       #         host      : 192.168.1.73:2181
+       #         sessionTimeOut      :  100000
+       #         rootPath  : /myth
+
+       # repositorySupport : mongodb
+       #       mongoDbUrl  : 192.168.1.68:27017
+       #       mongoDbName  :  youname
+       #       mongoUserName  : xiaoyu
+       #       mongoUserPwd   : 123456
+
+       # repositorySupport : file
+       #         path      : /youpath
+       #         prefix    :  youpath
+
+
+
 
 account-service :
    ribbon.NFLoadBalancerRuleClassName : com.netflix.loadbalancer.RandomRule

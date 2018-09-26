@@ -1,47 +1,59 @@
 /*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * Copyright 2017-2018 549477611@qq.com(xiaoyu)
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * This copyrighted material is made available to anyone wishing to use, modify,
- * copy, or redistribute it subject to the terms and conditions of the GNU
- * Lesser General Public License, as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License
- * for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 package com.github.myth.common.utils;
 
 import java.util.UUID;
 
-
 /**
+ * snow .
  * @author xiaoyu
  */
 public final class IdWorkerUtils {
 
-    private final long twepoch = 1288834974657L;
-    private final long workerIdBits = 5L;
-    private final long datacenterIdBits = 5L;
-    private final long maxWorkerId = -1L ^ (-1L << workerIdBits);
-    private final long maxDatacenterId = -1L ^ (-1L << datacenterIdBits);
-    private final long sequenceBits = 12L;
-    private final long workerIdShift = sequenceBits;
-    private final long datacenterIdShift = sequenceBits + workerIdBits;
-    private final long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
-    private final long sequenceMask = -1L ^ (-1L << sequenceBits);
-
-    private long workerId = 0;
-    private long datacenterId = 0;
-    private long sequence = 0L;
-    private long lastTimestamp = -1L;
-
     private static final IdWorkerUtils ID_WORKER_UTILS = new IdWorkerUtils();
+
+    private final long twepoch = 1288834974657L;
+
+    private final long workerIdBits = 5L;
+
+    private final long datacenterIdBits = 5L;
+
+    private final long maxWorkerId = ~(-1L << workerIdBits);
+
+    private final long maxDatacenterId = ~(-1L << datacenterIdBits);
+
+    private final long sequenceBits = 12L;
+
+    private final long workerIdShift = sequenceBits;
+
+    private final long datacenterIdShift = sequenceBits + workerIdBits;
+
+    private final long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
+
+    private final long sequenceMask = ~(-1L << sequenceBits);
+
+    private long workerId;
+
+    private long datacenterId;
+
+    private long sequence = 0L;
+
+    private long lastTimestamp = -1L;
 
     public static IdWorkerUtils getInstance() {
         return ID_WORKER_UTILS;
@@ -51,7 +63,7 @@ public final class IdWorkerUtils {
 
     }
 
-    private IdWorkerUtils(long workerId, long datacenterId) {
+    private IdWorkerUtils(final long workerId, final long datacenterId) {
         if (workerId > maxWorkerId || workerId < 0) {
             throw new IllegalArgumentException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
         }
@@ -93,18 +105,11 @@ public final class IdWorkerUtils {
         return System.currentTimeMillis();
     }
 
-
+    public String buildPartNumber() {
+        return String.valueOf(ID_WORKER_UTILS.nextId());
+    }
 
     public String createUUID() {
         return String.valueOf(UUID.randomUUID().hashCode() & 0x7fffffff);
-    }
-
-    public long randomUUID() {
-        return ID_WORKER_UTILS.nextId();
-    }
-
-
-    public static void main(String[] args) {
-
     }
 }

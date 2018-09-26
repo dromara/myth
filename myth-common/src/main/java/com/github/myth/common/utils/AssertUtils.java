@@ -15,35 +15,24 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.github.myth.common.utils;
 
+package com.github.myth.common.utils;
 
 import com.github.myth.common.exception.MythRuntimeException;
 
 /**
+ * AssertUtils.
  * @author xiaoyu
  */
-public class AssertUtils {
+public final class AssertUtils {
 
     private AssertUtils() {
 
     }
 
-    public static void notNull(Object obj, String message) {
-        if (obj == null) {
-            throw new MythRuntimeException(message);
-        }
-    }
-
-    public static void notNull(Object obj) {
+    public static void notNull(final Object obj) {
         if (obj == null) {
             throw new MythRuntimeException("argument invalid,Please check");
-        }
-    }
-
-    public static void checkConditionArgument(boolean condition, String message) {
-        if (!condition) {
-            throw new MythRuntimeException(message);
         }
     }
 

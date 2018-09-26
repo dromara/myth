@@ -35,19 +35,15 @@
     <bean id="mythTransactionBootstrap" class="com.github.myth.core.bootstrap.MythTransactionBootstrap">
         <property name="repositorySuffix" value="account-service"/>
         <property name="serializer" value="kryo"/>
-        <property name="coordinatorQueueMax" value="5000"/>
-        <property name="coordinatorThreadMax" value="8"/>
-        <property name="rejectPolicy" value="Abort"/>
-        <property name="blockingQueueType" value="Linked"/>
         <property name="repositorySupport" value="db"/>
         <property name="retryMax" value="30"/>
         <property name="mythDbConfig">
             <bean class="com.github.myth.common.config.MythDbConfig">
                 <property name="url"
-                          value="jdbc:mysql://localhost:3306/myth?useUnicode=true&amp;characterEncoding=utf8"/>
+                          value="jdbc:mysql://10.4.4.202:3306/myth?useUnicode=true&amp;characterEncoding=utf8"/>
                 <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
                 <property name="username" value="root"/>
-                <property name="password" value="123456"/>
+                <property name="password" value="123123"/>
             </bean>
         </property>
     </bean>

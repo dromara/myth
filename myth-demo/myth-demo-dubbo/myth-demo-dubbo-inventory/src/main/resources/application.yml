@@ -1,14 +1,14 @@
 server:
-  port: 8084
+  port: 8020
   contextPath: /
   address: 0.0.0.0
 
 spring:
     datasource:
         driver-class-name:  com.mysql.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/myth_stock?useUnicode=true&characterEncoding=utf8
+        url: jdbc:mysql://10.4.4.202:3306/myth_stock?useUnicode=true&characterEncoding=utf8
         username: root
-        password: 123456
+        password: 123123
    #activemq:
     #   broker-url: tcp://120.76.52.162:61616
     #   user: happylife
@@ -19,10 +19,17 @@ spring:
     #    port: 5672
     #    username: guest
     #    password: guest
-    rocketmq:
-        namesrvAddr: localhost:9876
-        consumerGroupName: inventory
-        instanceName: inventory
+    aliyunmq:
+            broker-url: http://onsaddr-internet.aliyun.com/rocketmq/nsaddr4client-internet
+            accessKey: LTAI44DGK0oAutoj
+            secretKey: RBXTnPSVxHYfrn2IFFoVtgExZdw1M2
+            topic: ORDER_FLOW_BQ
+            consumerId: CID_ORDER_FLOW_BQ
+#    rocketmq:
+#            namesrvAddr: localhost:9876
+#            consumerGroupName: CID_ORDER_FLOW_BQ_INVENTORY
+#            instanceName: ORDER_FLOW_BQ_CONSUMER
+#            topic: ORDER_FLOW_BQ
    #kafka:
       #  consumer:
       #     bootstrap-servers: localhost:9092

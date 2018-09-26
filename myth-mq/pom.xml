@@ -34,6 +34,7 @@
         <module>myth-rabbitmq</module>
         <module>myth-kafka</module>
         <module>myth-rocketmq</module>
+        <module>myth-aliyunmq</module>
     </modules>
 
 

@@ -7,9 +7,9 @@ server:
 spring:
     datasource:
         driver-class-name:  com.mysql.jdbc.Driver
-        url: jdbc:mysql://192.168.1.68:3306/myth_order?useUnicode=true&characterEncoding=utf8
-        username: xiaoyu
-        password: Wgj@555888
+        url: jdbc:mysql://192.168.1.88:3306/myth_order?useUnicode=true&characterEncoding=utf8
+        username: root
+        password: 123456
         initialSize: 20
         minIdle: 20
         maxActive: 100
@@ -35,6 +35,44 @@ eureka:
  client:
      serviceUrl:
        defaultZone: http://localhost:8761/eureka/
+
+
+com:
+  github :
+      myth :
+        serializer : kryo
+        needRecover: true
+        recoverDelayTime : 128
+        retryMax : 30
+        scheduledDelay : 128
+        scheduledThreadMax :  10
+        repositorySupport : db
+        mythDbConfig :
+                 driverClassName  : com.mysql.jdbc.Driver
+                 url :  jdbc:mysql://192.168.1.88:3306/myth?useUnicode=true&amp;characterEncoding=utf8
+                 username : root
+                 password : 123456
+
+       # repositorySupport : redis
+       #         hostName  : 192.168.1.68
+       #         port      :  6379
+       #         password  :
+
+
+       # repositorySupport : zookeeper
+       #         host      : 192.168.1.73:2181
+       #         sessionTimeOut      :  100000
+       #         rootPath  : /myth
+
+       # repositorySupport : mongodb
+       #       mongoDbUrl  : 192.168.1.68:27017
+       #       mongoDbName  :  youname
+       #       mongoUserName  : xiaoyu
+       #       mongoUserPwd   : 123456
+
+       # repositorySupport : file
+       #         path      : /youpath
+       #         prefix    :  youpath
 
 
 logging:

@@ -20,11 +20,9 @@ package com.github.myth.admin.controller;
 
 import com.github.myth.admin.annotation.Permission;
 import com.github.myth.admin.dto.TransactionLogDTO;
-import com.github.myth.admin.page.CommonPager;
 import com.github.myth.admin.query.ConditionQuery;
-import com.github.myth.admin.service.ApplicationNameService;
+import com.github.myth.admin.service.AppNameService;
 import com.github.myth.admin.service.LogService;
-import com.github.myth.admin.vo.LogVO;
 import com.github.myth.common.utils.httpclient.AjaxResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,45 +34,36 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * <p>Description: .</p>
- * 事务恢复controller
- *
+ * TransactionLogController.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/10/18 10:31
- * @since JDK 1.8
  */
 @RestController
 @RequestMapping("/log")
 public class TransactionLogController {
 
-
     private final LogService logService;
 
-    private final ApplicationNameService applicationNameService;
+    private final AppNameService appNameService;
 
     @Value("${myth.retry.max}")
     private Integer recoverRetryMax;
 
     @Autowired
-    public TransactionLogController(LogService logService, ApplicationNameService applicationNameService) {
+    public TransactionLogController(final LogService logService,
+                                    final AppNameService appNameService) {
         this.logService = logService;
-        this.applicationNameService = applicationNameService;
+        this.appNameService = appNameService;
     }
 
     @Permission
     @PostMapping(value = "/listPage")
-    public AjaxResponse listPage(@RequestBody ConditionQuery recoverQuery) {
-        final CommonPager<LogVO> pager =
-                logService.listByPage(recoverQuery);
-        return AjaxResponse.success(pager);
+    public AjaxResponse listPage(@RequestBody final ConditionQuery recoverQuery) {
+        return AjaxResponse.success(logService.listByPage(recoverQuery));
     }
-
 
     @PostMapping(value = "/batchRemove")
     @Permission
-    public AjaxResponse batchRemove(@RequestBody TransactionLogDTO transactionLogDTO) {
-
+    public AjaxResponse batchRemove(@RequestBody final TransactionLogDTO transactionLogDTO) {
         final Boolean success = logService.batchRemove(transactionLogDTO.getIds(), transactionLogDTO.getApplicationName());
         return AjaxResponse.success(success);
 
@@ -82,7 +71,7 @@ public class TransactionLogController {
 
     @PostMapping(value = "/update")
     @Permission
-    public AjaxResponse update(@RequestBody TransactionLogDTO transactionLogDTO) {
+    public AjaxResponse update(@RequestBody final TransactionLogDTO transactionLogDTO) {
         final Boolean success = logService.updateRetry(transactionLogDTO.getId(),
                 transactionLogDTO.getRetry(), transactionLogDTO.getApplicationName());
         return AjaxResponse.success(success);
@@ -92,9 +81,8 @@ public class TransactionLogController {
     @PostMapping(value = "/listAppName")
     @Permission
     public AjaxResponse listAppName() {
-        final List<String> list = applicationNameService.list();
+        final List<String> list = appNameService.list();
         return AjaxResponse.success(list);
     }
-
 
 }

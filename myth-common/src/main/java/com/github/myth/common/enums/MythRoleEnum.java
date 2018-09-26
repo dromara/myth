@@ -15,6 +15,7 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.common.enums;
 
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public enum MythRoleEnum {
 
     private String desc;
 
-    MythRoleEnum(int code, String desc) {
+    MythRoleEnum(final int code, final String desc) {
         this.code = code;
         this.desc = desc;
     }
@@ -68,7 +69,7 @@ public enum MythRoleEnum {
      * @param code the code
      * @return the tcc action enum
      */
-    public static MythRoleEnum acquireByCode(int code) {
+    public static MythRoleEnum acquireByCode(final int code) {
         Optional<MythRoleEnum> tccRoleEnum =
                 Arrays.stream(MythRoleEnum.values())
                         .filter(v -> Objects.equals(v.getCode(), code))
@@ -91,7 +92,7 @@ public enum MythRoleEnum {
      *
      * @param code the code
      */
-    public void setCode(int code) {
+    public void setCode(final int code) {
         this.code = code;
     }
 
@@ -109,7 +110,7 @@ public enum MythRoleEnum {
      *
      * @param desc the desc
      */
-    public void setDesc(String desc) {
+    public void setDesc(final String desc) {
         this.desc = desc;
     }
 }

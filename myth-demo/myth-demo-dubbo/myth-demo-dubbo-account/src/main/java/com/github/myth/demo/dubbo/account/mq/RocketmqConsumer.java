@@ -1,5 +1,6 @@
 package com.github.myth.demo.dubbo.account.mq;
 
+import com.aliyun.openservices.ons.api.Consumer;
 import com.github.myth.common.config.MythConfig;
 import com.github.myth.core.service.MythMqReceiveService;
 
@@ -30,7 +31,7 @@ import java.util.List;
 public class RocketmqConsumer {
 
 
-    private static final String TOPIC = "account";
+    private static final String TAGS = "account";
 
     @Autowired
     private Environment env;
@@ -51,16 +52,16 @@ public class RocketmqConsumer {
                 new DefaultMQPushConsumer(env.getProperty("spring.rocketmq.consumerGroupName"));
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
         consumer.setNamesrvAddr(env.getProperty("spring.rocketmq.namesrvAddr"));
-        consumer.setInstanceName(env.getProperty("spring.rocketmq.instanceName"));
+//        consumer.setInstanceName(env.getProperty("spring.rocketmq.instanceName"));
         //设置批量消费，以提升消费吞吐量，默认是1
         consumer.setConsumeMessageBatchMaxSize(1);
         //RECONSUME_LATER的重试次数，RocketMQ默认是16次
         consumer.setMaxReconsumeTimes(mythConfig.getRetryMax());
-
         /**
          * 订阅指定topic下tags
          */
-        consumer.subscribe(TOPIC, TOPIC);
+        String topic = env.getProperty("spring.rocketmq.topic");
+        consumer.subscribe(topic, TAGS);
 
         consumer.registerMessageListener((List<MessageExt> msgList, ConsumeConcurrentlyContext context) -> {
 

@@ -19,26 +19,18 @@
 package com.github.myth.core.service;
 
 /**
- * <p>Description: .</p>
- *
+ * send mq message.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/11/30 11:06
- * @since JDK 1.8
  */
 @FunctionalInterface
 public interface MythMqSendService {
 
-
-
     /**
-     * 发送消息
-     * @param destination 队列
-     * @param pattern mq 模式
-     * @param message  MythTransaction实体对象转换成byte[]后的数据
+     * send message.
+     * @param destination destination
+     * @param pattern {@linkplain com.github.myth.annotation.MessageTypeEnum}
+     * @param message convert MythTransaction to byte[]
      */
-    void sendMessage(String destination ,Integer pattern, byte[] message);
-
-
+    void sendMessage(String destination, Integer pattern, byte[] message);
 
 }

@@ -15,14 +15,15 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.common.bean.context;
 
 import lombok.Data;
 
 import java.io.Serializable;
 
-
 /**
+ * MythTransactionContext.
  * @author xiaoyu
  */
 @Data
@@ -32,9 +33,8 @@ public class MythTransactionContext implements Serializable {
 
     private String transId;
 
-
     /**
-     * 事务参与的角色 {@linkplain com.github.myth.common.enums.MythRoleEnum}
+     * 事务参与的角色. {@linkplain com.github.myth.common.enums.MythRoleEnum}
      */
     private int role;
 

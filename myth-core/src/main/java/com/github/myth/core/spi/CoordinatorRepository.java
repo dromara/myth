@@ -15,8 +15,8 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.github.myth.core.spi;
 
+package com.github.myth.core.spi;
 
 import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.config.MythConfig;
@@ -26,107 +26,105 @@ import com.github.myth.common.serializer.ObjectSerializer;
 import java.util.Date;
 import java.util.List;
 
-
 /**
+ * CoordinatorRepository.
  * @author xiaoyu
  */
 public interface CoordinatorRepository {
 
     /**
-     * 创建本地事务对象
+     * create mythTransaction.
      *
-     * @param mythTransaction 事务对象
-     * @return rows 1 成功   0 失败
+     * @param mythTransaction {@linkplain MythTransaction}
+     * @return Influence row number
      */
     int create(MythTransaction mythTransaction);
 
     /**
-     * 删除对象
+     * delete mythTransaction.
      *
-     * @param transId 事务对象id
-     * @return rows 返回 1 成功  0 失败
+     * @param transId pk
+     * @return Influence row number
      */
     int remove(String transId);
 
 
     /**
-     * 更新数据
+     * update mythTransaction. {@linkplain MythTransaction}
      *
-     * @param tccTransaction 事务对象
-     * @return rows 1 成功 0 失败 失败需要抛异常
-     * @throws MythRuntimeException 异常
+     * @param mythTransaction 事务对象
+     * @return Influence row number
+     * @throws MythRuntimeException  ex {@linkplain MythRuntimeException}
      */
-    int update(MythTransaction tccTransaction) throws MythRuntimeException;
+    int update(MythTransaction mythTransaction) throws MythRuntimeException;
 
 
     /**
-     * 更新事务失败日志
-     * @param mythTransaction 实体对象
-     * @return rows 1 成功
-     * @throws MythRuntimeException 异常信息
+     * update fail info in mythTransaction.
+     * @param mythTransaction {@linkplain MythTransaction}
+     * @throws MythRuntimeException  ex {@linkplain MythRuntimeException}
      */
-    int updateFailTransaction(MythTransaction mythTransaction) throws  MythRuntimeException;
+    void updateFailTransaction(MythTransaction mythTransaction) throws MythRuntimeException;
 
 
     /**
-     * 更新 List<Participant>  只更新这一个字段数据
-     *
-     * @param tccTransaction 实体对象
-     * @return rows 1 成功
-     * @throws MythRuntimeException 异常
+     * update participants in mythTransaction.
+     * this have only update this participant filed.
+     * @param mythTransaction {@linkplain MythTransaction}
+     * @throws MythRuntimeException ex {@linkplain MythRuntimeException}
      */
-    int updateParticipant(MythTransaction tccTransaction) throws MythRuntimeException;
+    void updateParticipant(MythTransaction mythTransaction) throws MythRuntimeException;
 
 
     /**
-     * 更新补偿数据状态
+     * update status in mythTransaction.
      *
-     * @param transId 事务id
-     * @param status  状态
-     * @return rows 1 成功
-     * @throws MythRuntimeException 异常
+     * @param transId pk
+     * @param status  {@linkplain com.github.myth.common.enums.MythStatusEnum}
+     * @return Influence row number
+     * @throws MythRuntimeException ex {@linkplain MythRuntimeException}
      */
     int updateStatus(String transId, Integer status) throws MythRuntimeException;
 
     /**
-     * 根据id获取对象
+     * find mythTransaction by transId.
      *
-     * @param transId transId
-     * @return TccTransaction
+     * @param transId pk
+     * @return {@linkplain MythTransaction}
      */
     MythTransaction findByTransId(String transId);
 
 
     /**
-     * 获取延迟多长时间后的事务信息,只要为了防止并发的时候，刚新增的数据被执行
+     * list all mythTransaction by delay date.
      *
-     * @param date 延迟后的时间
-     * @return List<MythTransaction>
+     * @param date delay date
+     * @return list mythTransaction
      */
     List<MythTransaction> listAllByDelay(Date date);
 
 
     /**
-     * 初始化操作
+     * init CoordinatorRepository.
      *
-     * @param modelName  模块名称
-     * @param mythConfig 配置信息
-     * @throws MythRuntimeException 自定义异常
+     * @param modelName  model name
+     * @param mythConfig {@linkplain MythConfig}
+     * @throws MythRuntimeException ex {@linkplain MythRuntimeException}
      */
     void init(String modelName, MythConfig mythConfig) throws MythRuntimeException;
 
     /**
-     * 设置scheme
+     *  get scheme.
      *
-     * @return scheme 命名
+     * @return scheme
      */
     String getScheme();
 
 
     /**
-     * 设置序列化信息
+     * set objectSerializer.
      *
-     * @param objectSerializer 序列化实现
+     * @param objectSerializer {@linkplain ObjectSerializer}
      */
     void setSerializer(ObjectSerializer objectSerializer);
 }

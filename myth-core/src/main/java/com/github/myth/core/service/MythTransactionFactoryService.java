@@ -15,23 +15,24 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.github.myth.core.service;
 
+package com.github.myth.core.service;
 
 import com.github.myth.common.bean.context.MythTransactionContext;
 
 /**
+ * MythTransactionFactoryService.
  * @author xiaoyu
  */
 @FunctionalInterface
 public interface MythTransactionFactoryService<T> {
 
     /**
-     * 返回 实现TxTransactionHandler类的名称
+     * product MythTransactionHandler.
      *
-     * @param context 事务上下文
-     * @return Class<T>
-     * @throws Throwable 抛出异常
+     * @param context {@linkplain MythTransactionContext}
+     * @return  {@linkplain MythTransactionHandler}
+     * @throws Throwable ex
      */
     Class<T> factoryOf(MythTransactionContext context) throws Throwable;
 }

@@ -32,7 +32,6 @@ import org.springframework.context.annotation.ImportResource;
 @SpringBootApplication(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @EnableEurekaClient
 @EnableFeignClients
-@ImportResource({"classpath:applicationContext.xml"})
 @MapperScan("com.github.myth.demo.springcloud.inventory.mapper")
 public class SpringCloudInventoryApplication {
 

@@ -15,6 +15,7 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.core.spi.repository;
 
 import com.github.myth.common.bean.adapter.MongoAdapter;
@@ -45,21 +46,21 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
+ * use mongo save mythTransaction log.
  * @author xiaoyu
  */
 public class MongoCoordinatorRepository implements CoordinatorRepository {
 
-    /**
-     * logger
-     */
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoCoordinatorRepository.class);
+
+    private static final String ERROR = "mongo update exception!";
 
     private ObjectSerializer objectSerializer;
 
@@ -67,15 +68,8 @@ public class MongoCoordinatorRepository implements CoordinatorRepository {
 
     private String collectionName;
 
-
-    /**
-     * 创建本地事务对象
-     *
-     * @param mythTransaction 事务对象
-     * @return rows
-     */
     @Override
-    public int create(MythTransaction mythTransaction) {
+    public int create(final MythTransaction mythTransaction) {
         try {
             MongoAdapter mongoBean = new MongoAdapter();
             mongoBean.setTransId(mythTransaction.getTransId());
@@ -97,35 +91,22 @@ public class MongoCoordinatorRepository implements CoordinatorRepository {
         }
     }
 
-    /**
-     * 删除对象
-     *
-     * @param transId transId
-     * @return rows
-     */
     @Override
-    public int remove(String transId) {
+    public int remove(final String transId) {
         Query query = new Query();
         query.addCriteria(new Criteria("transId").is(transId));
         template.remove(query, collectionName);
         return CommonConstant.SUCCESS;
     }
 
-    /**
-     * 更新数据
-     *
-     * @param mythTransaction 事务对象
-     * @return rows 1 成功  失败需要抛异常
-     */
     @Override
-    public int update(MythTransaction mythTransaction) throws MythRuntimeException {
+    public int update(final MythTransaction mythTransaction) throws MythRuntimeException {
         Query query = new Query();
         query.addCriteria(new Criteria("transId").is(mythTransaction.getTransId()));
         Update update = new Update();
         update.set("lastTime", new Date());
         update.set("retriedCount", mythTransaction.getRetriedCount() + 1);
         update.set("version", mythTransaction.getVersion() + 1);
-
         try {
             if (CollectionUtils.isNotEmpty(mythTransaction.getMythParticipants())) {
                 update.set("contents", objectSerializer.serialize(mythTransaction.getMythParticipants()));
@@ -133,46 +114,30 @@ public class MongoCoordinatorRepository implements CoordinatorRepository {
         } catch (MythException e) {
             e.printStackTrace();
         }
-
         final WriteResult writeResult = template.updateFirst(query, update, MongoAdapter.class, collectionName);
         if (writeResult.getN() <= 0) {
-            throw new MythRuntimeException("更新数据异常!");
+            throw new MythRuntimeException(ERROR);
         }
         return CommonConstant.SUCCESS;
     }
 
-    /**
-     * 更新事务失败日志
-     *
-     * @param mythTransaction 实体对象
-     * @return rows 1 成功
-     * @throws MythRuntimeException 异常信息
-     */
     @Override
-    public int updateFailTransaction(MythTransaction mythTransaction) throws MythRuntimeException {
+    public void updateFailTransaction(final MythTransaction mythTransaction) throws MythRuntimeException {
         Query query = new Query();
         query.addCriteria(new Criteria("transId").is(mythTransaction.getTransId()));
         Update update = new Update();
-
         update.set("status", mythTransaction.getStatus());
         update.set("errorMsg", mythTransaction.getErrorMsg());
         update.set("lastTime", new Date());
         update.set("retriedCount", mythTransaction.getRetriedCount());
-
         final WriteResult writeResult = template.updateFirst(query, update, MongoAdapter.class, collectionName);
         if (writeResult.getN() <= 0) {
-            throw new MythRuntimeException("更新数据异常!");
+            throw new MythRuntimeException(ERROR);
         }
-        return CommonConstant.SUCCESS;
     }
 
-    /**
-     * 更新 List<Participant>  只更新这一个字段数据
-     *
-     * @param mythTransaction 实体对象
-     */
     @Override
-    public int updateParticipant(MythTransaction mythTransaction) throws MythRuntimeException {
+    public void updateParticipant(final MythTransaction mythTransaction) throws MythRuntimeException {
         Query query = new Query();
         query.addCriteria(new Criteria("transId").is(mythTransaction.getTransId()));
         Update update = new Update();
@@ -183,40 +148,25 @@ public class MongoCoordinatorRepository implements CoordinatorRepository {
         }
         final WriteResult writeResult = template.updateFirst(query, update, MongoAdapter.class, collectionName);
         if (writeResult.getN() <= 0) {
-            throw new MythRuntimeException("更新数据异常!");
+            throw new MythRuntimeException(ERROR);
         }
-        return CommonConstant.SUCCESS;
     }
 
-    /**
-     * 更新补偿数据状态
-     *
-     * @param id     事务id
-     * @param status 状态
-     * @return rows 1 成功 0 失败
-     */
     @Override
-    public int updateStatus(String id, Integer status) throws MythRuntimeException {
+    public int updateStatus(final String id, final Integer status) throws MythRuntimeException {
         Query query = new Query();
         query.addCriteria(new Criteria("transId").is(id));
         Update update = new Update();
         update.set("status", status);
         final WriteResult writeResult = template.updateFirst(query, update, MongoAdapter.class, collectionName);
         if (writeResult.getN() <= 0) {
-            throw new MythRuntimeException("更新数据异常!");
+            throw new MythRuntimeException(ERROR);
         }
         return CommonConstant.SUCCESS;
     }
 
-
-    /**
-     * 根据transId获取对象
-     *
-     * @param transId transId
-     * @return TccTransaction
-     */
     @Override
-    public MythTransaction findByTransId(String transId) {
+    public MythTransaction findByTransId(final String transId) {
         Query query = new Query();
         query.addCriteria(new Criteria("transId").is(transId));
         MongoAdapter cache = template.findOne(query, MongoAdapter.class, collectionName);
@@ -224,34 +174,20 @@ public class MongoCoordinatorRepository implements CoordinatorRepository {
 
     }
 
-    /**
-     * 获取延迟多长时间后的事务信息,只要为了防止并发的时候，刚新增的数据被执行
-     *
-     * @param date 延迟后的时间
-     * @return List<MythTransaction>
-     */
     @Override
-    public List<MythTransaction> listAllByDelay(Date date) {
+    public List<MythTransaction> listAllByDelay(final Date date) {
         Query query = new Query();
         query.addCriteria(Criteria.where("lastTime").lt(date))
                 .addCriteria(Criteria.where("status").is(MythStatusEnum.BEGIN.getCode()));
-        final List<MongoAdapter> mongoBeans =
-                template.find(query, MongoAdapter.class, collectionName);
+        final List<MongoAdapter> mongoBeans = template.find(query, MongoAdapter.class, collectionName);
         if (CollectionUtils.isNotEmpty(mongoBeans)) {
             return mongoBeans.stream().map(this::buildByCache).collect(Collectors.toList());
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
-
-    /**
-     * 初始化操作
-     *
-     * @param modelName  模块名称
-     * @param mythConfig 配置信息
-     */
     @Override
-    public void init(String modelName, MythConfig mythConfig) {
+    public void init(final String modelName, final MythConfig mythConfig) {
         collectionName = RepositoryPathUtils.buildMongoTableName(modelName);
         final MythMongoConfig tccMongoConfig = mythConfig.getMythMongoConfig();
         MongoClientFactoryBean clientFactoryBean = buildMongoClientFactoryBean(tccMongoConfig);
@@ -259,59 +195,38 @@ public class MongoCoordinatorRepository implements CoordinatorRepository {
             clientFactoryBean.afterPropertiesSet();
             template = new MongoTemplate(clientFactoryBean.getObject(), tccMongoConfig.getMongoDbName());
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new MythRuntimeException(e);
         }
     }
 
-    /**
-     * 生成mongoClientFacotryBean
-     *
-     * @param mythMongoConfig 配置信息
-     * @return bean
-     */
-    private MongoClientFactoryBean buildMongoClientFactoryBean(MythMongoConfig mythMongoConfig) {
+    private MongoClientFactoryBean buildMongoClientFactoryBean(final MythMongoConfig mythMongoConfig) {
         MongoClientFactoryBean clientFactoryBean = new MongoClientFactoryBean();
         MongoCredential credential = MongoCredential.createScramSha1Credential(mythMongoConfig.getMongoUserName(),
                 mythMongoConfig.getMongoDbName(),
                 mythMongoConfig.getMongoUserPwd().toCharArray());
-        clientFactoryBean.setCredentials(new MongoCredential[]{
-                credential
-        });
+        clientFactoryBean.setCredentials(new MongoCredential[]{credential});
         List<String> urls = Splitter.on(",").trimResults().splitToList(mythMongoConfig.getMongoDbUrl());
-
         final ServerAddress[] sds = urls.stream().map(url -> {
             List<String> adds = Splitter.on(":").trimResults().splitToList(url);
             InetSocketAddress address = new InetSocketAddress(adds.get(0), Integer.parseInt(adds.get(1)));
             return new ServerAddress(address);
         }).collect(Collectors.toList()).toArray(new ServerAddress[]{});
-
         clientFactoryBean.setReplicaSetSeeds(sds);
         return clientFactoryBean;
     }
 
-    /**
-     * 设置scheme
-     *
-     * @return scheme 命名
-     */
     @Override
     public String getScheme() {
         return RepositorySupportEnum.MONGODB.getSupport();
     }
 
-    /**
-     * 设置序列化信息
-     *
-     * @param objectSerializer 序列化实现
-     */
     @Override
-    public void setSerializer(ObjectSerializer objectSerializer) {
+    public void setSerializer(final ObjectSerializer objectSerializer) {
         this.objectSerializer = objectSerializer;
     }
 
-
     @SuppressWarnings("unchecked")
-    private MythTransaction buildByCache(MongoAdapter cache) {
+    private MythTransaction buildByCache(final MongoAdapter cache) {
         MythTransaction mythTransaction = new MythTransaction();
         mythTransaction.setTransId(cache.getTransId());
         mythTransaction.setCreateTime(cache.getCreateTime());

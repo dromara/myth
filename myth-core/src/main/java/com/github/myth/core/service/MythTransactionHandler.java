@@ -15,24 +15,26 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.core.service;
 
 import com.github.myth.common.bean.context.MythTransactionContext;
 import org.aspectj.lang.ProceedingJoinPoint;
 
 /**
+ * MythTransactionHandler.
  * @author xiaoyu
  */
 @FunctionalInterface
 public interface MythTransactionHandler {
 
     /**
-     * Myth分布式事务处理接口
+     * MythTransactionHandler.
      *
-     * @param point                  point 切点
-     * @param mythTransactionContext myth事务上下文
+     * @param point                  point
+     * @param mythTransactionContext {@linkplain MythTransactionContext}
      * @return Object
-     * @throws Throwable 异常
+     * @throws Throwable ex
      */
     Object handler(ProceedingJoinPoint point, MythTransactionContext mythTransactionContext) throws Throwable;
 }

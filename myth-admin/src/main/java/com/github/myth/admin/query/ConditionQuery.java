@@ -24,38 +24,20 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * <p>Description: .</p>
- *
+ * ConditionQuery.
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/10/19 16:46
- * @since JDK 1.8
  */
 @Data
 public class ConditionQuery implements Serializable {
 
     private static final long serialVersionUID = 3297929795348894462L;
 
-    /**
-     * 应用名称
-     */
     private String applicationName;
 
-    /**
-     * 事务id
-     */
     private String transId;
 
-    /**
-     * 重试次数
-     */
     private Integer retry;
 
-
-    /**
-     * 分页信息
-     */
     private PageParameter pageParameter;
-
 
 }

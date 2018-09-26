@@ -34,6 +34,7 @@
         <module>myth-rpc</module>
         <module>myth-mq</module>
         <module>myth-admin</module>
+        <module>myth-spring-boot-starter</module>
     </modules>
 
     <parent>
@@ -88,12 +89,14 @@
         <gson.verions>2.6.2</gson.verions>
         <druid.version>1.0.29</druid.version>
         <springfox.version>2.6.1</springfox.version>
-        <lombok.version>1.16.14</lombok.version>
+        <lombok.version>1.16.20</lombok.version>
         <spring-rabbit.version>1.7.4.RELEASE</spring-rabbit.version>
         <amqp-client.version>4.0.3</amqp-client.version>
         <spring-amqp.version>1.7.4.RELEASE</spring-amqp.version>
         <spring-kafka.version>1.1.2.RELEASE</spring-kafka.version>
         <rocketmq.version>4.1.0-incubating</rocketmq.version>
+        <disruptor.version>3.4.0</disruptor.version>
+        <ons.clent.version>1.7.1.Final</ons.clent.version>
     </properties>
 
 
@@ -163,6 +166,49 @@
                 <groupId>com.github.myth</groupId>
                 <artifactId>myth-rocketmq</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-aliyunmq</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-spring-boot-start-parent</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-spring-boot-starter-dubbo</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-spring-boot-starter-springcloud</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.myth</groupId>
+                <artifactId>myth-spring-boot-starter-motan</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.lmax</groupId>
+                <artifactId>disruptor</artifactId>
+                <version>${disruptor.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.aliyun.openservices</groupId>
+                <artifactId>ons-client</artifactId>
+                <version>${ons.clent.version}</version>
             </dependency>
 
             <dependency>

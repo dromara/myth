@@ -15,33 +15,35 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package com.github.myth.common.config;
 
+package com.github.myth.common.config;
 
 import lombok.Data;
 
 /**
+ * MythMongoConfig.
  * @author xiaoyu
  */
 @Data
 public class MythMongoConfig {
 
     /**
-     * mongo数据库设置
+     * mongo数据库设置.
      */
     private String mongoDbName;
 
     /**
-     * mongo数据库URL
+     * mongo数据库URL.
      */
     private String mongoDbUrl;
+
     /**
-     * mongo数据库用户名
+     * mongo数据库用户名.
      */
     private String mongoUserName;
 
     /**
-     * mongo数据库密码
+     * mongo数据库密码.
      */
     private String mongoUserPwd;
 

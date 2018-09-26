@@ -15,6 +15,7 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.springcloud.interceptor;
 
 import com.github.myth.core.interceptor.AbstractMythTransactionAspect;
@@ -24,21 +25,16 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 /**
+ * SpringCloudMythTransactionAspect.
  * @author xiaoyu
  */
 @Aspect
 @Component
 public class SpringCloudMythTransactionAspect extends AbstractMythTransactionAspect implements Ordered {
 
-
     @Autowired
-    public SpringCloudMythTransactionAspect(SpringCloudMythTransactionInterceptor springCloudMythTransactionInterceptor) {
+    public SpringCloudMythTransactionAspect(final SpringCloudMythTransactionInterceptor springCloudMythTransactionInterceptor) {
         this.setMythTransactionInterceptor(springCloudMythTransactionInterceptor);
-    }
-
-
-    public void init() {
-
     }
 
     @Override

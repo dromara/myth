@@ -15,10 +15,11 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.common.exception;
 
-
 /**
+ * MythRuntimeException.
  * @author xiaoyu
  */
 public class MythRuntimeException extends RuntimeException {
@@ -27,15 +28,15 @@ public class MythRuntimeException extends RuntimeException {
     public MythRuntimeException() {
     }
 
-    public MythRuntimeException(String message) {
+    public MythRuntimeException(final String message) {
         super(message);
     }
 
-    public MythRuntimeException(String message, Throwable cause) {
+    public MythRuntimeException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public MythRuntimeException(Throwable cause) {
+    public MythRuntimeException(final Throwable cause) {
         super(cause);
     }
 }

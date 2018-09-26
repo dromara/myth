@@ -32,7 +32,7 @@
     <dependencies>
         <dependency>
             <groupId>com.github.myth</groupId>
-            <artifactId>myth-springcloud</artifactId>
+            <artifactId>myth-spring-boot-starter-springcloud</artifactId>
         </dependency>
 
         <dependency>

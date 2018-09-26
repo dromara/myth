@@ -15,6 +15,7 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package com.github.myth.springcloud.feign;
 
 import com.github.myth.annotation.Myth;
@@ -23,11 +24,9 @@ import com.github.myth.common.bean.entity.MythInvocation;
 import com.github.myth.common.bean.entity.MythParticipant;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.helper.SpringBeanUtils;
-import com.github.myth.core.service.impl.MythTransactionManager;
+import com.github.myth.core.service.engine.MythTransactionEngine;
 import feign.InvocationHandlerFactory.MethodHandler;
 import feign.Target;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -35,80 +34,63 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
+ * MythFeignHandler.
  * @author xiaoyu
  */
 public class MythFeignHandler implements InvocationHandler {
-    /**
-     * logger
-     */
-    private static final Logger LOGGER = LoggerFactory.getLogger(MythFeignHandler.class);
 
     private Target<?> target;
+
     private Map<Method, MethodHandler> handlers;
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
         if (Object.class.equals(method.getDeclaringClass())) {
             return method.invoke(this, args);
         } else {
-
             final Myth myth = method.getAnnotation(Myth.class);
             if (Objects.isNull(myth)) {
                 return this.handlers.get(method).invoke(args);
             }
             try {
-                final MythTransactionManager mythTransactionManager =
-                        SpringBeanUtils.getInstance().getBean(MythTransactionManager.class);
-
+                final MythTransactionEngine mythTransactionEngine =
+                        SpringBeanUtils.getInstance().getBean(MythTransactionEngine.class);
                 final MythParticipant participant = buildParticipant(myth, method, args);
                 if (Objects.nonNull(participant)) {
-                    mythTransactionManager.registerParticipant(participant);
+                    mythTransactionEngine.registerParticipant(participant);
                 }
                 return this.handlers.get(method).invoke(args);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
                 return null;
             }
-
-
         }
     }
 
+    private MythParticipant buildParticipant(final Myth myth, final Method method, final Object[] args) {
+        final MythTransactionContext mythTransactionContext = TransactionContextLocal.getInstance().get();
 
-    private MythParticipant buildParticipant(Myth myth, Method method, Object[] args) {
-
-        final MythTransactionContext mythTransactionContext =
-                TransactionContextLocal.getInstance().get();
         MythParticipant participant;
         if (Objects.nonNull(mythTransactionContext)) {
-
             final Class declaringClass = myth.target();
-
-            MythInvocation mythInvocation = new MythInvocation(declaringClass,
-                    method.getName(),
-                    method.getParameterTypes(), args);
-
+            MythInvocation mythInvocation =
+                    new MythInvocation(declaringClass, method.getName(), method.getParameterTypes(), args);
             final Integer pattern = myth.pattern().getCode();
-
             //封装调用点
-            participant = new MythParticipant(
-                    mythTransactionContext.getTransId(),
+            participant = new MythParticipant(mythTransactionContext.getTransId(),
                     myth.destination(),
                     pattern,
                     mythInvocation);
-
             return participant;
         }
         return null;
     }
 
-
-    public void setTarget(Target<?> target) {
+    public void setTarget(final Target<?> target) {
         this.target = target;
     }
 
-
-    public void setHandlers(Map<Method, MethodHandler> handlers) {
+    public void setHandlers(final Map<Method, MethodHandler> handlers) {
         this.handlers = handlers;
     }
 
