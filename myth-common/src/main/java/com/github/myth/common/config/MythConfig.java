@@ -74,7 +74,7 @@ public class MythConfig {
     /**
      * disruptor  bufferSize.
      */
-    private int bufferSize = 1024;
+    private int bufferSize = 4096;
 
     /**
      * db配置.

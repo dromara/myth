@@ -23,36 +23,41 @@ import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.enums.EventTypeEnum;
 import com.github.myth.core.coordinator.CoordinatorService;
 import com.github.myth.core.disruptor.event.MythTransactionEvent;
-import com.lmax.disruptor.EventHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import com.lmax.disruptor.WorkHandler;
+
+import java.util.concurrent.Executor;
 
 /**
  * MythTransactionEventHandler.
+ *
  * @author xiaoyu(Myth)
  */
-@Component
-public class MythTransactionEventHandler implements EventHandler<MythTransactionEvent> {
+public class MythTransactionEventHandler implements WorkHandler<MythTransactionEvent> {
 
     private final CoordinatorService coordinatorService;
 
-    @Autowired
-    public MythTransactionEventHandler(CoordinatorService coordinatorService) {
+    private Executor executor;
+
+    public MythTransactionEventHandler(final CoordinatorService coordinatorService,
+                                       final Executor executor) {
         this.coordinatorService = coordinatorService;
+        this.executor = executor;
     }
 
     @Override
-    public void onEvent(final MythTransactionEvent mythTransactionEvent, final long sequence, final boolean endOfBatch) {
-        if (mythTransactionEvent.getType() == EventTypeEnum.SAVE.getCode()) {
-            coordinatorService.save(mythTransactionEvent.getMythTransaction());
-        } else if (mythTransactionEvent.getType() == EventTypeEnum.UPDATE_PARTICIPANT.getCode()) {
-            coordinatorService.updateParticipant(mythTransactionEvent.getMythTransaction());
-        } else if (mythTransactionEvent.getType() == EventTypeEnum.UPDATE_STATUS.getCode()) {
-            final MythTransaction mythTransaction = mythTransactionEvent.getMythTransaction();
-            coordinatorService.updateStatus(mythTransaction.getTransId(), mythTransaction.getStatus());
-        } else if (mythTransactionEvent.getType() == EventTypeEnum.UPDATE_FAIR.getCode()) {
-            coordinatorService.updateFailTransaction(mythTransactionEvent.getMythTransaction());
-        }
-        mythTransactionEvent.clear();
+    public void onEvent(final MythTransactionEvent mythTransactionEvent) {
+        executor.execute(() -> {
+            if (mythTransactionEvent.getType() == EventTypeEnum.SAVE.getCode()) {
+                coordinatorService.save(mythTransactionEvent.getMythTransaction());
+            } else if (mythTransactionEvent.getType() == EventTypeEnum.UPDATE_PARTICIPANT.getCode()) {
+                coordinatorService.updateParticipant(mythTransactionEvent.getMythTransaction());
+            } else if (mythTransactionEvent.getType() == EventTypeEnum.UPDATE_STATUS.getCode()) {
+                final MythTransaction mythTransaction = mythTransactionEvent.getMythTransaction();
+                coordinatorService.updateStatus(mythTransaction.getTransId(), mythTransaction.getStatus());
+            } else if (mythTransactionEvent.getType() == EventTypeEnum.UPDATE_FAIR.getCode()) {
+                coordinatorService.updateFailTransaction(mythTransactionEvent.getMythTransaction());
+            }
+            mythTransactionEvent.clear();
+        });
     }
 }

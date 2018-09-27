@@ -21,19 +21,17 @@ package com.github.myth.core.disruptor.publisher;
 
 import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.enums.EventTypeEnum;
-import com.github.myth.common.utils.LogUtil;
 import com.github.myth.core.concurrent.threadpool.MythTransactionThreadFactory;
+import com.github.myth.core.coordinator.CoordinatorService;
 import com.github.myth.core.disruptor.event.MythTransactionEvent;
 import com.github.myth.core.disruptor.factory.MythTransactionEventFactory;
 import com.github.myth.core.disruptor.handler.MythTransactionEventHandler;
 import com.github.myth.core.disruptor.translator.MythTransactionEventTranslator;
 import com.lmax.disruptor.BlockingWaitStrategy;
-import com.lmax.disruptor.ExceptionHandler;
+import com.lmax.disruptor.IgnoreExceptionHandler;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -52,19 +50,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class MythTransactionEventPublisher implements DisposableBean {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MythTransactionEventPublisher.class);
-
     private static final int MAX_THREAD = Runtime.getRuntime().availableProcessors() << 1;
-
-    private Executor executor;
 
     private Disruptor<MythTransactionEvent> disruptor;
 
-    private final MythTransactionEventHandler mythTransactionEventHandler;
+    private final CoordinatorService coordinatorService;
 
     @Autowired
-    public MythTransactionEventPublisher(MythTransactionEventHandler mythTransactionEventHandler) {
-        this.mythTransactionEventHandler = mythTransactionEventHandler;
+    public MythTransactionEventPublisher(CoordinatorService coordinatorService) {
+        this.coordinatorService = coordinatorService;
     }
 
     /**
@@ -73,35 +67,22 @@ public class MythTransactionEventPublisher implements DisposableBean {
      * @param bufferSize bufferSize
      */
     public void start(final int bufferSize) {
-
         disruptor = new Disruptor<>(new MythTransactionEventFactory(), bufferSize, r -> {
             AtomicInteger index = new AtomicInteger(1);
             return new Thread(null, r, "disruptor-thread-" + index.getAndIncrement());
         }, ProducerType.MULTI, new BlockingWaitStrategy());
 
-        executor = new ThreadPoolExecutor(MAX_THREAD, MAX_THREAD, 0, TimeUnit.MILLISECONDS,
+        final Executor executor = new ThreadPoolExecutor(MAX_THREAD, MAX_THREAD, 0, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>(),
                 MythTransactionThreadFactory.create("myth-log-disruptor", false),
                 new ThreadPoolExecutor.AbortPolicy());
-        disruptor.handleEventsWith(mythTransactionEventHandler);
-        disruptor.setDefaultExceptionHandler(new ExceptionHandler<MythTransactionEvent>() {
-            @Override
-            public void handleEventException(Throwable ex, long sequence, MythTransactionEvent event) {
-                LogUtil.error(LOGGER, () -> "Disruptor handleEventException:"
-                        + event.getType() + event.getMythTransaction().toString() + ex.getMessage());
-            }
 
-            @Override
-            public void handleOnStartException(Throwable ex) {
-                LogUtil.error(LOGGER, () -> "Disruptor start exception");
-            }
-
-            @Override
-            public void handleOnShutdownException(Throwable ex) {
-                LogUtil.error(LOGGER, () -> "Disruptor close Exception ");
-            }
-        });
-
+        MythTransactionEventHandler[] consumers = new MythTransactionEventHandler[MAX_THREAD];
+        for (int i = 0; i < MAX_THREAD; i++) {
+            consumers[i] = new MythTransactionEventHandler(coordinatorService, executor);
+        }
+        disruptor.handleEventsWithWorkerPool(consumers);
+        disruptor.setDefaultExceptionHandler(new IgnoreExceptionHandler());
         disruptor.start();
     }
 
@@ -113,11 +94,8 @@ public class MythTransactionEventPublisher implements DisposableBean {
      * @param type            {@linkplain EventTypeEnum}
      */
     public void publishEvent(final MythTransaction mythTransaction, final int type) {
-        executor.execute(() -> {
-            final RingBuffer<MythTransactionEvent> ringBuffer = disruptor.getRingBuffer();
-            ringBuffer.publishEvent(new MythTransactionEventTranslator(type), mythTransaction);
-        });
-
+        final RingBuffer<MythTransactionEvent> ringBuffer = disruptor.getRingBuffer();
+        ringBuffer.publishEvent(new MythTransactionEventTranslator(type), mythTransaction);
     }
 
     @Override
