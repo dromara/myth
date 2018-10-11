@@ -33,6 +33,7 @@ import com.weibo.api.motan.core.extension.Activation;
 import com.weibo.api.motan.core.extension.SpiMeta;
 import com.weibo.api.motan.filter.Filter;
 import com.weibo.api.motan.rpc.Caller;
+import com.weibo.api.motan.rpc.DefaultResponse;
 import com.weibo.api.motan.rpc.Request;
 import com.weibo.api.motan.rpc.Response;
 import com.weibo.api.motan.util.ReflectUtil;
@@ -43,6 +44,7 @@ import java.util.stream.Stream;
 
 /**
  * MotanMythTransactionFilter.
+ *
  * @author xiaoyu
  */
 @SpiMeta(name = "motanMythTransactionFilter")
@@ -64,9 +66,9 @@ public class MotanMythTransactionFilter implements Filter {
             clazz = ReflectUtil.forName(interfaceName);
             final Method[] methods = clazz.getMethods();
             args = Stream.of(methods)
-                            .filter(m -> m.getName().equals(methodName))
-                            .findFirst()
-                            .map(Method::getParameterTypes).get();
+                    .filter(m -> m.getName().equals(methodName))
+                    .findFirst()
+                    .map(Method::getParameterTypes).get();
             method = clazz.getDeclaredMethod(methodName, args);
             myth = method.getAnnotation(Myth.class);
         } catch (Exception e) {
@@ -87,7 +89,7 @@ public class MotanMythTransactionFilter implements Filter {
                 return caller.call(request);
             } catch (Exception e) {
                 e.printStackTrace();
-                return null;
+                return new DefaultResponse();
             }
         } else {
             return caller.call(request);

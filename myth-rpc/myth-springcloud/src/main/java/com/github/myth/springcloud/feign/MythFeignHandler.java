@@ -22,6 +22,7 @@ import com.github.myth.annotation.Myth;
 import com.github.myth.common.bean.context.MythTransactionContext;
 import com.github.myth.common.bean.entity.MythInvocation;
 import com.github.myth.common.bean.entity.MythParticipant;
+import com.github.myth.common.utils.DefaultValueUtils;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.helper.SpringBeanUtils;
 import com.github.myth.core.service.engine.MythTransactionEngine;
@@ -62,7 +63,7 @@ public class MythFeignHandler implements InvocationHandler {
                 return this.handlers.get(method).invoke(args);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
-                return null;
+                return DefaultValueUtils.getDefaultValue(method.getReturnType());
             }
         }
     }
