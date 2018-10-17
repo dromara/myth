@@ -58,8 +58,8 @@ public class SpringCloudMythTransactionInterceptor implements MythTransactionInt
             mythTransactionContext = TransactionContextLocal.getInstance().get();
         } else {
             RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-            HttpServletRequest request = requestAttributes == null ? null : ((ServletRequestAttributes) requestAttributes).getRequest();
-            String context = request == null ? null : request.getHeader(CommonConstant.MYTH_TRANSACTION_CONTEXT);
+            HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+            String context = request.getHeader(CommonConstant.MYTH_TRANSACTION_CONTEXT);
             if (StringUtils.isNoneBlank(context)) {
                 mythTransactionContext = GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
             }
