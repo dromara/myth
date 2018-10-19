@@ -19,6 +19,7 @@
 package com.github.myth.core.service.handler;
 
 import com.github.myth.common.bean.context.MythTransactionContext;
+import com.github.myth.common.enums.MythStatusEnum;
 import com.github.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import com.github.myth.core.service.MythTransactionHandler;
 import com.github.myth.core.service.engine.MythTransactionEngine;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * this myth transaction starter.
+ *
  * @author xiaoyu(Myth)
  */
 @Component
@@ -44,7 +46,9 @@ public class StartMythTransactionHandler implements MythTransactionHandler {
     public Object handler(final ProceedingJoinPoint point, final MythTransactionContext mythTransactionContext) throws Throwable {
         try {
             mythTransactionEngine.begin(point);
-            return point.proceed();
+            final Object proceed = point.proceed();
+            mythTransactionEngine.updateStatus(MythStatusEnum.COMMIT.getCode());
+            return proceed;
         } catch (Throwable throwable) {
             //更新失败的日志信息
             mythTransactionEngine.failTransaction(throwable.getMessage());

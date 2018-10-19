@@ -21,15 +21,11 @@ package com.github.myth.core.service.mq.send;
 import com.github.myth.common.bean.entity.MythParticipant;
 import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.bean.mq.MessageEntity;
-import com.github.myth.common.enums.EventTypeEnum;
-import com.github.myth.common.enums.MythStatusEnum;
 import com.github.myth.common.serializer.ObjectSerializer;
-import com.github.myth.core.disruptor.publisher.MythTransactionEventPublisher;
 import com.github.myth.core.helper.SpringBeanUtils;
 import com.github.myth.core.service.MythMqSendService;
 import com.github.myth.core.service.MythSendMessageService;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,9 +41,6 @@ public class MythSendMessageServiceImpl implements MythSendMessageService {
     private volatile ObjectSerializer serializer;
 
     private volatile MythMqSendService mythMqSendService;
-
-    @Autowired
-    private MythTransactionEventPublisher publisher;
 
     @Override
     public Boolean sendMessage(final MythTransaction mythTransaction) {
@@ -72,10 +65,6 @@ public class MythSendMessageServiceImpl implements MythSendMessageService {
                     return Boolean.FALSE;
                 }
             }
-            //这里为什么要这么做呢？ 主要是为了防止在极端情况下，发起者执行过程中，突然自身down 机
-            //造成消息未发送，新增一个状态标记，如果出现这种情况，通过定时任务发送消息
-            mythTransaction.setStatus(MythStatusEnum.COMMIT.getCode());
-            publisher.publishEvent(mythTransaction, EventTypeEnum.UPDATE_STATUS.getCode());
         }
         return Boolean.TRUE;
     }

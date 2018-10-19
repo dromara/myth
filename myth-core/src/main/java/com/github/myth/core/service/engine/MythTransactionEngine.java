@@ -19,6 +19,7 @@
 package com.github.myth.core.service.engine;
 
 import com.github.myth.common.bean.context.MythTransactionContext;
+import com.github.myth.common.bean.entity.MythInvocation;
 import com.github.myth.common.bean.entity.MythParticipant;
 import com.github.myth.common.bean.entity.MythTransaction;
 import com.github.myth.common.enums.EventTypeEnum;
@@ -58,11 +59,15 @@ public class MythTransactionEngine {
      */
     private static final ThreadLocal<MythTransaction> CURRENT = new ThreadLocal<>();
 
-    @Autowired
-    private MythSendMessageService mythSendMessageService;
+    private final MythSendMessageService mythSendMessageService;
+
+    private final MythTransactionEventPublisher publishEvent;
 
     @Autowired
-    private MythTransactionEventPublisher publishEvent;
+    public MythTransactionEngine(MythSendMessageService mythSendMessageService, MythTransactionEventPublisher publishEvent) {
+        this.mythSendMessageService = mythSendMessageService;
+        this.publishEvent = publishEvent;
+    }
 
     /**
      * this is stater begin MythTransaction.
@@ -136,7 +141,7 @@ public class MythTransactionEngine {
      * send message.
      */
     public void sendMessage() {
-        Optional.ofNullable(getCurrentTransaction()).ifPresent(c -> mythSendMessageService.sendMessage(c));
+        Optional.ofNullable(getCurrentTransaction()).ifPresent(mythSendMessageService::sendMessage);
     }
 
     /**
@@ -179,6 +184,7 @@ public class MythTransactionEngine {
         MethodSignature signature = (MethodSignature) point.getSignature();
         Method method = signature.getMethod();
         Class<?> clazz = point.getTarget().getClass();
+        Object[] args = point.getArgs();
         mythTransaction.setStatus(status);
         mythTransaction.setRole(role);
         mythTransaction.setTargetClass(clazz.getName());
