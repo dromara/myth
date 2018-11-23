@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>myth-spring-boot-starter</artifactId>
-        <groupId>com.github.myth</groupId>
+        <groupId>org.dromara</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -14,11 +14,11 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.myth</groupId>
+            <groupId>org.dromara</groupId>
             <artifactId>myth-spring-boot-start-parent</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.myth</groupId>
+            <groupId>org.dromara</groupId>
             <artifactId>myth-dubbo</artifactId>
         </dependency>
     </dependencies>

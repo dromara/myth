@@ -22,8 +22,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.myth</groupId>
-    <artifactId>github-myth</artifactId>
+    <groupId>org.dromara</groupId>
+    <artifactId>myth</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
@@ -103,97 +103,95 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-admin</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-annotation</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-dubbo</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-springcloud</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-motan</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
-
-
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-jms</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-rabbitmq</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-kafka</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-rocketmq</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-aliyunmq</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-spring-boot-start-parent</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-spring-boot-starter-dubbo</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-spring-boot-starter-springcloud</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-spring-boot-starter-motan</artifactId>
                 <version>${project.version}</version>
             </dependency>

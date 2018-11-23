@@ -35,11 +35,11 @@
     <dubbo:consumer proxy="mythJdkProxy"/>
 
     <dubbo:reference timeout="10000"
-                     interface="com.github.myth.demo.dubbo.inventory.api.service.InventoryService"
+                     interface="org.dromara.myth.demo.dubbo.inventory.api.service.InventoryService"
                      id="inventoryService"
                      retries="0" check="false" proxy="mythJdkProxy"/>
     <dubbo:reference timeout="10000"
-                     interface="com.github.myth.demo.dubbo.account.api.service.AccountService"
+                     interface="org.dromara.myth.demo.dubbo.account.api.service.AccountService"
                      id="accountService"
                      retries="0" check="false" proxy="mythJdkProxy"/>
 </beans>

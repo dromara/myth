@@ -46,7 +46,7 @@
     </bean>
 
 
-    <bean id="activemqSendService" class="com.github.myth.jms.service.ActivemqSendServiceImpl">
+    <bean id="activemqSendService" class="org.dromara.myth.jms.service.ActivemqSendServiceImpl">
         <property name="jmsTemplate" ref="jmsTemplate"/>
     </bean>
 

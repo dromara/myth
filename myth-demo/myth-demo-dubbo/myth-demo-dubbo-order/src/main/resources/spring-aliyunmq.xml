@@ -16,7 +16,7 @@
         </property>
     </bean>
 
-    <bean id="aliyunmqSendService" class="com.github.myth.aliyunmq.service.AliyunmqSendServiceImpl">
+    <bean id="aliyunmqSendService" class="org.dromara.myth.aliyunmq.service.AliyunmqSendServiceImpl">
         <property name="producer" ref="producer"/>
     </bean>
 

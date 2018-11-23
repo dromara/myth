@@ -1,1 +1,1 @@
-MythTransactionFilter=com.github.myth.dubbo.filter.DubboMythTransactionFilter
+MythTransactionFilter=org.dromara.myth.dubbo.filter.DubboMythTransactionFilter

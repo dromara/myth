@@ -31,7 +31,7 @@
 
     <dubbo:protocol accesslog="true" name="dubbo" port="20888"/>
 
-    <dubbo:service interface="com.github.myth.demo.dubbo.account.api.service.AccountService"
+    <dubbo:service interface="org.dromara.myth.demo.dubbo.account.api.service.AccountService"
                    ref="accountService"/>
 
 

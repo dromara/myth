@@ -31,7 +31,7 @@
 
     <dubbo:protocol accesslog="true" name="dubbo" port="20887"/>
 
-    <dubbo:service interface="com.github.myth.demo.dubbo.inventory.api.service.InventoryService"
+    <dubbo:service interface="org.dromara.myth.demo.dubbo.inventory.api.service.InventoryService"
                    ref="inventoryService"/>
 
 

@@ -47,7 +47,7 @@
         <property name="retryMax" value="30"/>
         <property name="repositorySupport" value="db"/>
         <property name="mythDbConfig">
-            <bean class="com.github.myth.common.config.MythDbConfig">
+            <bean class="MythDbConfig">
                 <property name="url"
                           value="jdbc:mysql://10.4.4.202:3306/myth?useUnicode=true&amp;characterEncoding=utf8"/>
                 <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
@@ -71,7 +71,7 @@
     <!--
        <property name="repositorySupport" value="db"/>
        <property name="mythDbConfig">
-           <bean class="com.github.myth.common.config.MythDbConfig">
+           <bean class="MythDbConfig">
                <property name="url"
                          value="jdbc:mysql://192.168.1.68:3306/myth?useUnicode=true&amp;characterEncoding=utf8"/>
                <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
@@ -83,7 +83,7 @@
 
        <property name="repositorySupport" value="redis" />
        <property name="mythRedisConfig">
-           <bean class="com.github.myth.common.config.MythRedisConfig">
+           <bean class="MythRedisConfig">
                <property name="hostName"
                          value="192.168.1.68"/>
                <property name="port" value="6379"/>
@@ -93,17 +93,17 @@
 
        <property name="repositorySupport" value="zookeeper"/>
        <property name="mythZookeeperConfig">
-           <bean class="com.github.myth.common.config.MythZookeeperConfig">
+           <bean class="MythZookeeperConfig">
                <property name="host"  value="192.168.1.73:2181"/>
                <property name="sessionTimeOut" value="100000"/>
-               <property name="rootPath" value="/tcc"/>
+               <property name="rootPath" value="/hmily"/>
            </bean>
        </property>
 
 
      <property name="repositorySupport" value="mongodb"/>
        <property name="mythMongoConfig">
-           <bean class="com.github.myth.common.config.MythMongoConfig">
+           <bean class="MythMongoConfig">
                <property name="mongoDbUrl"  value="192.168.1.68:27017"/>
                <property name="mongoDbName" value="happylife"/>
                <property name="mongoUserName" value="xiaoyu"/>
@@ -114,7 +114,7 @@
 
       <property name="repositorySupport" value="file"/>
        <property name="mythFileConfig">
-           <bean class="com.github.myth.common.config.MythFileConfig">
+           <bean class="MythFileConfig">
                <property name="path"  value="/order"/>
                <property name="prefix" value="order"/>
            </bean>

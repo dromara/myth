@@ -1,0 +1,4 @@
+org.dromara.myth.common.serializer.KryoSerializer
+org.dromara.myth.common.serializer.ProtostuffSerializer
+org.dromara.myth.common.serializer.HessianSerializer
+org.dromara.myth.common.serializer.JavaSerializer

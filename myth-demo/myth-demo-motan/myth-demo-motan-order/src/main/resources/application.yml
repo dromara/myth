@@ -14,7 +14,7 @@ spring:
 
 
 mybatis:
-  type-aliases-package: com.github.myth.demo.motan.order.entity
+  type-aliases-package: org.dromara.myth.demo.motan.order.entity
   config-location: classpath:mybatis/mybatis-config.xml
 
 logging:
@@ -22,9 +22,9 @@ logging:
         root: error
         org.springframework.web: info
         org.apache.ibatis: info
-        com.github.myth.bonuspoint: info
-        com.github.myth.lottery: debug
-        com.github.myth: debug
+        org.dromara.myth.bonuspoint: info
+        org.dromara.myth.lottery: debug
+        org.dromara.myth: debug
         io.netty: info
 
     path: "./logs"

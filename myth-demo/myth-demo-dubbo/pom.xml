@@ -22,7 +22,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>myth-demo</artifactId>
-        <groupId>com.github.myth</groupId>
+        <groupId>org.dromara</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -41,30 +41,30 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-demo-dubbo-order</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-demo-dubbo-inventory</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-demo-dubbo-inventory-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-demo-dubbo-account</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>com.github.myth</groupId>
+                <groupId>org.dromara</groupId>
                 <artifactId>myth-demo-dubbo-account-api</artifactId>
                 <version>${project.version}</version>
             </dependency>

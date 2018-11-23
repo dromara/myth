@@ -27,7 +27,7 @@
     <rabbit:template id="amqpTemplate" connection-factory="connectionFactory" exchange="directExchange"/>
 
 
-    <bean id="rabbitmqSendService" class="com.github.myth.rabbitmq.service.RabbitmqSendServiceImpl">
+    <bean id="rabbitmqSendService" class="org.dromara.myth.rabbitmq.service.RabbitmqSendServiceImpl">
         <property name="amqpTemplate" ref="amqpTemplate"/>
     </bean>
 

@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.github.myth.spring.boot.starter.parent.configuration.MythAutoConfiguration
+org.dromara.myth.spring.boot.starter.parent.configuration.MythAutoConfiguration

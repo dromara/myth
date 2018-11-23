@@ -22,7 +22,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>myth-demo-dubbo</artifactId>
-        <groupId>com.github.myth</groupId>
+        <groupId>org.dromara</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -33,27 +33,27 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.myth</groupId>
+            <groupId>org.dromara</groupId>
             <artifactId>myth-demo-dubbo-account-api</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.github.myth</groupId>
+            <groupId>org.dromara</groupId>
             <artifactId>myth-demo-dubbo-inventory-api</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.github.myth</groupId>
+            <groupId>org.dromara</groupId>
             <artifactId>myth-dubbo</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.github.myth</groupId>
+            <groupId>org.dromara</groupId>
             <artifactId>myth-jms</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.github.myth</groupId>
+            <groupId>org.dromara</groupId>
             <artifactId>myth-rabbitmq</artifactId>
         </dependency>
 
@@ -64,7 +64,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.myth</groupId>
+            <groupId>org.dromara</groupId>
             <artifactId>myth-kafka</artifactId>
         </dependency>
 
@@ -75,12 +75,12 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.myth</groupId>
+            <groupId>org.dromara</groupId>
             <artifactId>myth-rocketmq</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.github.myth</groupId>
+            <groupId>org.dromara</groupId>
             <artifactId>myth-aliyunmq</artifactId>
         </dependency>
 

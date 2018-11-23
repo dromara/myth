@@ -1,1 +1,1 @@
-mythJdkProxy=com.github.myth.dubbo.proxy.MythJdkProxyFactory
+mythJdkProxy=org.dromara.myth.dubbo.proxy.MythJdkProxyFactory

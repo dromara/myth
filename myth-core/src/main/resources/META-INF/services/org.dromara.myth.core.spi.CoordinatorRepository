@@ -1,0 +1,5 @@
+org.dromara.myth.core.spi.repository.JdbcCoordinatorRepository
+org.dromara.myth.core.spi.repository.FileCoordinatorRepository
+org.dromara.myth.core.spi.repository.MongoCoordinatorRepository
+org.dromara.myth.core.spi.repository.RedisCoordinatorRepository
+org.dromara.myth.core.spi.repository.ZookeeperCoordinatorRepository

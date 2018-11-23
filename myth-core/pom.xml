@@ -21,8 +21,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>github-myth</artifactId>
-        <groupId>com.github.myth</groupId>
+        <artifactId>myth</artifactId>
+        <groupId>org.dromara</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -30,13 +30,14 @@
     <artifactId>myth-core</artifactId>
 
     <packaging>jar</packaging>
+
     <dependencies>
         <dependency>
-            <groupId>com.github.myth</groupId>
+            <groupId>org.dromara</groupId>
             <artifactId>myth-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.myth</groupId>
+            <groupId>org.dromara</groupId>
             <artifactId>myth-annotation</artifactId>
         </dependency>
         <dependency>
@@ -100,7 +101,6 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>org.apache.zookeeper</groupId>
             <artifactId>zookeeper</artifactId>
@@ -111,9 +111,8 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-
     </dependencies>
+
     <build>
         <finalName>myth-core</finalName>
         <plugins>

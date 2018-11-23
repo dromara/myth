@@ -37,7 +37,7 @@
         <property name="defaultTopic" value="defaultTopic" />
     </bean>
 
-    <bean id="KafkaSendService" class="com.github.myth.kafka.service.KafkaSendServiceImpl" >
+    <bean id="KafkaSendService" class="org.dromara.myth.kafka.service.KafkaSendServiceImpl" >
         <property name="kafkaTemplate" ref="kafkaTemplate"/>
     </bean>
 
