@@ -15,7 +15,7 @@
     <modules>
         <module>myth-spring-boot-starter-dubbo</module>
         <module>myth-spring-boot-starter-springcloud</module>
-        <module>myth-spring-boot-starter-motan</module>
+       <!-- <module>myth-spring-boot-starter-motan</module>-->
         <module>myth-spring-boot-starter-parent</module>
     </modules>
 
