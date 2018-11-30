@@ -31,7 +31,7 @@ import org.springframework.context.annotation.ImportResource;
  */
 @SpringBootApplication
 @ImportResource({"classpath:applicationContext.xml"})
-@MapperScan("com.github.myth.demo.dubbo.inventory.mapper")
+@MapperScan("org.dromara.myth.demo.dubbo.inventory.mapper")
 public class DubboInventoryApplication {
 
 

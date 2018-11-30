@@ -29,12 +29,20 @@ import javax.jms.ConnectionFactory;
 
 
 /**
+ * The type Jms config.
+ *
  * @author xiaoyu
  */
 @Configuration
 @EnableJms
 public class JmsConfig {
 
+    /**
+     * Jms listener container queue jms listener container factory.
+     *
+     * @param activeMQConnectionFactory the active mq connection factory
+     * @return the jms listener container factory
+     */
     @Bean(name = "queueListenerContainerFactory")
     @ConditionalOnProperty(prefix = "spring.activemq", name = "broker-url")
     public JmsListenerContainerFactory<?> jmsListenerContainerQueue(ConnectionFactory activeMQConnectionFactory) {

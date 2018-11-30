@@ -8,12 +8,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>Description: .</p>
+ * RabbitConsumer.
  *
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/12/7 17:19
- * @since JDK 1.8
  */
 @Component
 @ConditionalOnProperty(prefix = "spring.rabbitmq", name = "host")
@@ -22,12 +19,22 @@ public class RabbitConsumer {
 
     private final MythMqReceiveService mythMqReceiveService;
 
+    /**
+     * Instantiates a new Rabbit consumer.
+     *
+     * @param mythMqReceiveService the myth mq receive service
+     */
     @Autowired
     public RabbitConsumer(MythMqReceiveService mythMqReceiveService) {
         this.mythMqReceiveService = mythMqReceiveService;
     }
 
 
+    /**
+     * Process.
+     *
+     * @param msg the msg
+     */
     @RabbitHandler
     public void process(byte[] msg) {
         mythMqReceiveService.processMessage(msg);

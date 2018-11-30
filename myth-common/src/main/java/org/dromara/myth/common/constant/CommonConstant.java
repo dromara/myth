@@ -25,6 +25,11 @@ package org.dromara.myth.common.constant;
 public interface CommonConstant {
 
     /**
+     * The constant LINE_SEPARATOR.
+     */
+    String LINE_SEPARATOR = System.getProperty("line.separator");
+
+    /**
      * The constant DB_MYSQL.
      */
     String DB_MYSQL = "mysql";

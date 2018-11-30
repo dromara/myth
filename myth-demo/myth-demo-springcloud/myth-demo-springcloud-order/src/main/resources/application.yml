@@ -7,7 +7,7 @@ server:
 spring:
     datasource:
         driver-class-name:  com.mysql.jdbc.Driver
-        url: jdbc:mysql://192.168.1.88:3306/myth_order?useUnicode=true&characterEncoding=utf8
+        url: jdbc:mysql://192.168.1.98:3306/myth_order?useUnicode=true&characterEncoding=utf8
         username: root
         password: 123456
         initialSize: 20
@@ -37,8 +37,8 @@ eureka:
        defaultZone: http://localhost:8761/eureka/
 
 
-com:
-  github :
+org:
+   dromara:
       myth :
         serializer : kryo
         needRecover: true
@@ -49,7 +49,7 @@ com:
         repositorySupport : db
         mythDbConfig :
                  driverClassName  : com.mysql.jdbc.Driver
-                 url :  jdbc:mysql://192.168.1.88:3306/myth?useUnicode=true&amp;characterEncoding=utf8
+                 url :  jdbc:mysql://192.168.1.98:3306/myth?useUnicode=true&amp;characterEncoding=utf8
                  username : root
                  password : 123456
 
@@ -80,9 +80,9 @@ logging:
         root: error
         org.springframework.web: info
         org.apache.ibatis: info
-        com.github.myth.bonuspoint: info
-        com.github.myth.lottery: debug
-        com.github.myth: debug
+        org.dromara.myth.bonuspoint: info
+        org.dromara.myth.lottery: debug
+        org.dromara.myth: debug
 
 
     path: "./logs"

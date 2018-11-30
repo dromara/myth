@@ -1,45 +1,44 @@
 package org.dromara.myth.demo.dubbo.inventory.mq;
 
-import java.util.List;
-
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.apache.rocketmq.common.message.MessageExt;
+import org.dromara.myth.common.config.MythConfig;
+import org.dromara.myth.core.service.MythMqReceiveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import org.dromara.myth.common.config.MythConfig;
-import org.dromara.myth.core.service.MythMqReceiveService;
+import java.util.List;
 
 /**
- * <p>Description: .</p>
+ * RocketmqConsumer.
  *
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/12/12 14:29
- * @since JDK 1.8
  */
 @Configuration
 @ConditionalOnProperty(prefix = "spring.rocketmq", name = "namesrvAddr")
 public class RocketmqConsumer {
 
-
     private static final String TAGS = "inventory";
 
-    @Autowired
-    private Environment env;
+    private final Environment env;
+
+    private final MythMqReceiveService mythMqReceiveService;
+
+    private final MythConfig mythConfig;
 
     @Autowired
-    private MythMqReceiveService mythMqReceiveService;
-    
-    @Autowired
-    private MythConfig mythConfig;
+    public RocketmqConsumer(Environment env, MythMqReceiveService mythMqReceiveService, MythConfig mythConfig) {
+        this.env = env;
+        this.mythMqReceiveService = mythMqReceiveService;
+        this.mythConfig = mythConfig;
+    }
 
     @Bean
     public DefaultMQPushConsumer pushConsumer() throws MQClientException {
@@ -51,8 +50,6 @@ public class RocketmqConsumer {
                 new DefaultMQPushConsumer(env.getProperty("spring.rocketmq.consumerGroupName"));
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
         consumer.setNamesrvAddr(env.getProperty("spring.rocketmq.namesrvAddr"));
-//        consumer.setInstanceName(env.getProperty("spring.rocketmq.instanceName"));
-        //设置批量消费，以提升消费吞吐量，默认是1
         consumer.setConsumeMessageBatchMaxSize(2);
         //RECONSUME_LATER的重试次数，RocketMQ默认是16次
         consumer.setMaxReconsumeTimes(mythConfig.getRetryMax());

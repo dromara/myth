@@ -51,8 +51,6 @@ public class RocketmqConsumer {
                 new DefaultMQPushConsumer(env.getProperty("spring.rocketmq.consumerGroupName"));
         consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
         consumer.setNamesrvAddr(env.getProperty("spring.rocketmq.namesrvAddr"));
-//        consumer.setInstanceName(env.getProperty("spring.rocketmq.instanceName"));
-        //设置批量消费，以提升消费吞吐量，默认是1
         consumer.setConsumeMessageBatchMaxSize(1);
         //RECONSUME_LATER的重试次数，RocketMQ默认是16次
         consumer.setMaxReconsumeTimes(mythConfig.getRetryMax());

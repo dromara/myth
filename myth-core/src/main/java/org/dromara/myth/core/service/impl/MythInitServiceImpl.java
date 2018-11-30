@@ -27,6 +27,7 @@ import org.dromara.myth.common.utils.ServiceBootstrap;
 import org.dromara.myth.core.coordinator.MythCoordinatorService;
 import org.dromara.myth.core.disruptor.publisher.MythTransactionEventPublisher;
 import org.dromara.myth.core.helper.SpringBeanUtils;
+import org.dromara.myth.core.logo.MythLogo;
 import org.dromara.myth.core.schedule.ScheduledService;
 import org.dromara.myth.core.service.MythInitService;
 import org.dromara.myth.core.spi.MythCoordinatorRepository;
@@ -90,7 +91,7 @@ public class MythInitServiceImpl implements MythInitService {
             //非正常关闭
             System.exit(1);
         }
-        LogUtil.info(LOGGER, () -> "Myth init success");
+        new MythLogo().logo();
     }
 
     /**

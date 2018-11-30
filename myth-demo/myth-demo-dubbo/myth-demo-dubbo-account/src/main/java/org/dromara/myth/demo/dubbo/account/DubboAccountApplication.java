@@ -24,12 +24,20 @@ import org.springframework.context.annotation.ImportResource;
 
 
 /**
+ * The type Dubbo account application.
+ *
  * @author xiaoyu
  */
 @SpringBootApplication
 @ImportResource({"classpath:applicationContext.xml"})
 @MapperScan("org.dromara.myth.demo.dubbo.account.mapper")
 public class DubboAccountApplication {
+
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         SpringApplication.run(DubboAccountApplication.class, args);
     }

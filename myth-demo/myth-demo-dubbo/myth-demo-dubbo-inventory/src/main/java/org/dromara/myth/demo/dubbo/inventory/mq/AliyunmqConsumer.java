@@ -15,25 +15,27 @@ import org.springframework.core.env.Environment;
 import java.util.Properties;
 
 /**
- * <p>Description: .</p>
+ * AliyunmqConsumer.
  *
  * @author xiaoyu(Myth)
- * @version 1.0
- * @date 2017/12/12 14:29
- * @since JDK 1.8
  */
 @Configuration
 @ConditionalOnProperty(prefix = "spring.aliyunmq", name = "broker-url")
+@SuppressWarnings("all")
 public class AliyunmqConsumer {
 
 
     private static final String TAG = "inventory";
 
-    @Autowired
-    private Environment env;
+    private final Environment env;
+
+    private final MythMqReceiveService mythMqReceiveService;
 
     @Autowired
-    private MythMqReceiveService mythMqReceiveService;
+    public AliyunmqConsumer(Environment env, MythMqReceiveService mythMqReceiveService) {
+        this.env = env;
+        this.mythMqReceiveService = mythMqReceiveService;
+    }
 
     @Bean
     public Consumer pushConsumer() throws MQClientException {
@@ -42,10 +44,10 @@ public class AliyunmqConsumer {
          * 注意：ConsumerGroupName需要由应用来保证唯一
          */
         Properties properties = new Properties();
-        properties.setProperty(PropertyKeyConst.ConsumerId,env.getProperty("spring.aliyunmq.consumerId"));
-        properties.setProperty(PropertyKeyConst.AccessKey,env.getProperty("spring.aliyunmq.accessKey"));
-        properties.setProperty(PropertyKeyConst.SecretKey,env.getProperty("spring.aliyunmq.secretKey"));
-        properties.setProperty(PropertyKeyConst.ONSAddr,env.getProperty("spring.aliyunmq.broker-url"));
+        properties.setProperty(PropertyKeyConst.ConsumerId, env.getProperty("spring.aliyunmq.consumerId"));
+        properties.setProperty(PropertyKeyConst.AccessKey, env.getProperty("spring.aliyunmq.accessKey"));
+        properties.setProperty(PropertyKeyConst.SecretKey, env.getProperty("spring.aliyunmq.secretKey"));
+        properties.setProperty(PropertyKeyConst.ONSAddr, env.getProperty("spring.aliyunmq.broker-url"));
 
         Consumer consumer = ONSFactory.createConsumer(properties);
 
@@ -55,7 +57,7 @@ public class AliyunmqConsumer {
                 final byte[] body = message.getBody();
                 mythMqReceiveService.processMessage(body);
                 return Action.CommitMessage;
-            }catch (Exception e) {
+            } catch (Exception e) {
                 //消费失败
                 return Action.ReconsumeLater;
             }

@@ -36,7 +36,7 @@ public class SqlHelper {
         String dbType = DbTypeUtils.buildByDriverClassName(driverClassName);
         switch (dbType) {
             case "mysql":
-                createTableSql.append("CREATE TABLE `")
+                createTableSql.append("CREATE TABLE IF NOT EXISTS `")
                         .append(tableName).append("` (\n")
                         .append("  `trans_id` varchar(64) NOT NULL,\n")
                         .append("  `target_class` varchar(256) ,\n")
@@ -56,7 +56,7 @@ public class SqlHelper {
 
             case "oracle":
                 createTableSql
-                        .append("CREATE TABLE `")
+                        .append("CREATE TABLE IF NOT EXISTS `")
                         .append(tableName)
                         .append("` (\n")
                         .append("  `trans_id` varchar(64) NOT NULL,\n")
@@ -75,7 +75,7 @@ public class SqlHelper {
                 break;
             case "sqlserver":
                 createTableSql
-                        .append("CREATE TABLE `")
+                        .append("CREATE TABLE IF NOT EXISTS `")
                         .append(tableName)
                         .append("` (\n")
                         .append("  `trans_id` varchar(64) NOT NULL,\n")
