@@ -1,5 +1,6 @@
 myth  
 ================
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/07957f764c344f8ca01ebb52bccf088c)](https://app.codacy.com/app/yu199195/myth?utm_source=github.com&utm_medium=referral&utm_content=yu199195/myth&utm_campaign=Badge_Grade_Dashboard)
 [![Total lines](https://tokei.rs/b1/github/yu199195/myth?category=lines)](https://github.com/yu199195/myth)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?label=license)](https://github.com/yu199195/myth/blob/master/LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/org.dromara/myth.svg?label=maven%20central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.dromara%22%20AND%20myth)
