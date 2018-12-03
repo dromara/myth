@@ -17,11 +17,10 @@
 
 package org.dromara.myth.springcloud.feign;
 
-import feign.Feign;
 import feign.InvocationHandlerFactory;
+import feign.RequestInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
 /**
  * MythRestTemplateConfiguration.
@@ -32,15 +31,13 @@ import org.springframework.context.annotation.Scope;
 public class MythRestTemplateConfiguration {
 
     /**
-     * Feign builder feign . builder.
+     * Request interceptor request interceptor.
      *
-     * @return the feign . builder
+     * @return the request interceptor
      */
     @Bean
-    @Scope("prototype")
-    public Feign.Builder feignBuilder() {
-        return Feign.builder().requestInterceptor(new MythRestTemplateInterceptor())
-                .invocationHandlerFactory(invocationHandlerFactory());
+    public RequestInterceptor requestInterceptor() {
+        return new MythRestTemplateInterceptor();
     }
 
     /**

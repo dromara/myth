@@ -133,7 +133,7 @@ public class MythMqReceiveServiceImpl implements MythMqReceiveService {
 
                     } catch (Throwable e) {
                         //执行失败，设置失败原因和重试次数
-                        mythTransaction.setErrorMsg(e.getCause().getMessage());
+                        mythTransaction.setErrorMsg(e.getMessage());
                         mythTransaction.setRetriedCount(mythTransaction.getRetriedCount() + 1);
                         publisher.publishEvent(mythTransaction, EventTypeEnum.UPDATE_FAIR.getCode());
                         throw new MythRuntimeException(e);
