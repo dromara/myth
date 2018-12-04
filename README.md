@@ -6,7 +6,7 @@ myth
 [![Maven Central](https://img.shields.io/maven-central/v/org.dromara/myth.svg?label=maven%20central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.dromara%22%20AND%20myth)
 [![Javadocs](http://www.javadoc.io/badge/org.dromara/myth.svg)](http://www.javadoc.io/doc/org.dromara/myth)
 [![Build Status](https://travis-ci.org/yu199195/myth.svg?branch=master)](https://travis-ci.org/yu199195/myth)
-
+[![QQ群](https://img.shields.io/badge/chat-on%20QQ-ff69b4.svg?style=flat-square)](https://shang.qq.com/wpa/qunwpa?idkey=2e9e353fa10924812bc58c10ab46de0ca6bef80e34168bccde275f7ca0cafd85)
 #####  采用消息队列解决分布式事务的开源框架, 基于java语言来开发（JDK1.8），支持dubbo，springcloud,motan等rpc框架进行分布式事务。
 
 #  Features
