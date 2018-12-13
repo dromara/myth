@@ -81,7 +81,6 @@ public class MythInitServiceImpl implements MythInitService {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> LOGGER.error("myth have error!")));
         try {
             loadSpiSupport(mythConfig);
-            publisher.start(mythConfig.getBufferSize());
             mythCoordinatorService.start(mythConfig);
             if (mythConfig.getNeedRecover()) {
                 scheduledService.scheduledAutoRecover(mythConfig);

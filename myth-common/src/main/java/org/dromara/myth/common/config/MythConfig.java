@@ -75,6 +75,11 @@ public class MythConfig {
     private int bufferSize = 4096;
 
     /**
+     * this is disruptor consumerThreads.
+     */
+    private int consumerThreads = Runtime.getRuntime().availableProcessors() << 1;
+
+    /**
      * db config.
      */
     private MythDbConfig mythDbConfig;
@@ -125,6 +130,7 @@ public class MythConfig {
         this.mythRedisConfig = builder.mythRedisConfig;
         this.mythZookeeperConfig = builder.mythZookeeperConfig;
         this.mythFileConfig = builder.mythFileConfig;
+        this.consumerThreads = builder.consumerThreads;
     }
 
     public static class Builder {
@@ -146,6 +152,8 @@ public class MythConfig {
         private int recoverDelayTime = 60;
 
         private int bufferSize = 1024;
+
+        private int consumerThreads = Runtime.getRuntime().availableProcessors() << 1;
 
         private MythDbConfig mythDbConfig;
 
@@ -199,6 +207,15 @@ public class MythConfig {
 
         public Builder setBufferSize(int bufferSize) {
             this.bufferSize = bufferSize;
+            return this;
+        }
+
+        public int getConsumerThreads() {
+            return consumerThreads;
+        }
+
+        public Builder setConsumerThreads(int consumerThreads) {
+            this.consumerThreads = consumerThreads;
             return this;
         }
 

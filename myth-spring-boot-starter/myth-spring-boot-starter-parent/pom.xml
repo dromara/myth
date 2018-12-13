@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>myth-spring-boot-start-parent</artifactId>
+    <artifactId>myth-spring-boot-starter-parent</artifactId>
 
     <dependencies>
         <dependency>

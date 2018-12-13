@@ -81,6 +81,7 @@ public class MythAutoConfiguration {
                 .setRepositorySupport(mythConfigProperties.getRepositorySupport())
                 .setNeedRecover(mythConfigProperties.getNeedRecover())
                 .setBufferSize(mythConfigProperties.getBufferSize())
+                .setConsumerThreads(mythConfigProperties.getConsumerThreads())
                 .setScheduledThreadMax(mythConfigProperties.getScheduledThreadMax())
                 .setScheduledDelay(mythConfigProperties.getScheduledDelay())
                 .setRetryMax(mythConfigProperties.getRetryMax())
