@@ -15,6 +15,7 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 package org.dromara.myth.demo.springcloud.order;
 
 import org.mybatis.spring.annotation.MapperScan;
@@ -27,7 +28,7 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.ImportResource;
 
 /**
- * The type Springcloud order application.
+ * The type SpringCloud order application.
  *
  * @author xiaoyu
  */
@@ -36,7 +37,7 @@ import org.springframework.context.annotation.ImportResource;
 @EnableFeignClients
 @ImportResource({"classpath:applicationContext.xml"})
 @MapperScan("org.dromara.myth.demo.springcloud.order.mapper")
-public class SpringcloudOrderApplication {
+public class SpringCloudOrderApplication {
 
     /**
      * The entry point of application.
@@ -44,7 +45,7 @@ public class SpringcloudOrderApplication {
      * @param args the input arguments
      */
     public static void main(String[] args) {
-        SpringApplication.run(SpringcloudOrderApplication.class, args);
+        SpringApplication.run(SpringCloudOrderApplication.class, args);
     }
 
 

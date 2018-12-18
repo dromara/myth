@@ -6,7 +6,6 @@ import org.dromara.myth.annotation.Myth;
 import org.dromara.myth.demo.springcloud.inventory.api.dto.InventoryDTO;
 import org.dromara.myth.demo.springcloud.inventory.api.entity.InventoryDO;
 import org.dromara.myth.demo.springcloud.inventory.api.service.InventoryService;
-import org.dromara.myth.demo.springcloud.order.configuration.MyConfiguration;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  *
  * @author xiaoyu
  */
-@FeignClient(value = "inventory-service", configuration = MyConfiguration.class)
+@FeignClient(value = "inventory-service")
 public interface InventoryClient {
 
     /**

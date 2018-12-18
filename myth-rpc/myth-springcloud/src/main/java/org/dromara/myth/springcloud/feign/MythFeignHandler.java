@@ -17,8 +17,6 @@
 
 package org.dromara.myth.springcloud.feign;
 
-import feign.InvocationHandlerFactory.MethodHandler;
-import feign.Target;
 import org.dromara.myth.annotation.Myth;
 import org.dromara.myth.common.bean.context.MythTransactionContext;
 import org.dromara.myth.common.bean.entity.MythInvocation;
@@ -30,7 +28,6 @@ import org.dromara.myth.core.service.engine.MythTransactionEngine;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -40,9 +37,7 @@ import java.util.Objects;
  */
 public class MythFeignHandler implements InvocationHandler {
 
-    private Target<?> target;
-
-    private Map<Method, MethodHandler> handlers;
+    private InvocationHandler delegate;
 
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
@@ -51,7 +46,7 @@ public class MythFeignHandler implements InvocationHandler {
         } else {
             final Myth myth = method.getAnnotation(Myth.class);
             if (Objects.isNull(myth)) {
-                return this.handlers.get(method).invoke(args);
+                return this.delegate.invoke(proxy, method, args);
             }
             try {
                 final MythTransactionEngine mythTransactionEngine =
@@ -60,7 +55,7 @@ public class MythFeignHandler implements InvocationHandler {
                 if (Objects.nonNull(participant)) {
                     mythTransactionEngine.registerParticipant(participant);
                 }
-                return this.handlers.get(method).invoke(args);
+                return this.delegate.invoke(proxy, method, args);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
                 return DefaultValueUtils.getDefaultValue(method.getReturnType());
@@ -87,22 +82,7 @@ public class MythFeignHandler implements InvocationHandler {
         return null;
     }
 
-    /**
-     * Sets target.
-     *
-     * @param target the target
-     */
-    public void setTarget(final Target<?> target) {
-        this.target = target;
+    public void setDelegate(InvocationHandler delegate) {
+        this.delegate = delegate;
     }
-
-    /**
-     * Sets handlers.
-     *
-     * @param handlers the handlers
-     */
-    public void setHandlers(final Map<Method, MethodHandler> handlers) {
-        this.handlers = handlers;
-    }
-
 }

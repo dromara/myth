@@ -17,9 +17,12 @@
 
 package org.dromara.myth.springcloud.service;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.dromara.myth.core.service.MythApplicationService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * SpringCloudRpcApplicationServiceImpl.
@@ -29,11 +32,17 @@ import org.springframework.stereotype.Service;
 @Service("applicationService")
 public class SpringCloudMythApplicationServiceImpl implements MythApplicationService {
 
+    private static final String DEFAULT_APPLICATION_NAME = "mythSpringCloud";
+
     @Value("${spring.application.name}")
     private String appName;
 
     @Override
     public String acquireName() {
-        return appName;
+        return Optional.ofNullable(appName).orElse(buildDefaultApplicationName());
+    }
+
+    private String buildDefaultApplicationName() {
+        return DEFAULT_APPLICATION_NAME + RandomUtils.nextInt(1, 10);
     }
 }

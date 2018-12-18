@@ -15,15 +15,16 @@
  * limitations under the License.
  */
 
-package org.dromara.myth.springcloud.feign;
+package org.dromara.myth.springcloud.configuration;
 
-import feign.InvocationHandlerFactory;
 import feign.RequestInterceptor;
+import org.dromara.myth.springcloud.feign.MythFeignBeanPostProcessor;
+import org.dromara.myth.springcloud.feign.MythFeignInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * MythRestTemplateConfiguration.
+ * The type Myth rest template configuration.
  *
  * @author xiaoyu
  */
@@ -37,22 +38,17 @@ public class MythRestTemplateConfiguration {
      */
     @Bean
     public RequestInterceptor requestInterceptor() {
-        return new MythRestTemplateInterceptor();
+        return new MythFeignInterceptor();
     }
 
     /**
-     * Invocation handler factory invocation handler factory.
+     * Mythfeign post processor myth feign bean post processor.
      *
-     * @return the invocation handler factory
+     * @return the myth feign bean post processor
      */
     @Bean
-    public InvocationHandlerFactory invocationHandlerFactory() {
-        return (target, dispatch) -> {
-            MythFeignHandler handler = new MythFeignHandler();
-            handler.setTarget(target);
-            handler.setHandlers(dispatch);
-            return handler;
-        };
+    public MythFeignBeanPostProcessor mythfeignPostProcessor() {
+        return new MythFeignBeanPostProcessor();
     }
 
 }

@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
  * @author xiaoyu
  */
 @Configuration
-public class MythRestTemplateInterceptor implements RequestInterceptor {
+public class MythFeignInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(final RequestTemplate requestTemplate) {
