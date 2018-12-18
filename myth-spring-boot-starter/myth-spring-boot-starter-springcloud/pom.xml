@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>
-            <artifactId>myth-spring-boot-start-parent</artifactId>
+            <artifactId>myth-spring-boot-starter-parent</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dromara</groupId>
