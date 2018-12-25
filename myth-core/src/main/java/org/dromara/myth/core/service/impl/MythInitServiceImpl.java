@@ -25,10 +25,8 @@ import org.dromara.myth.common.serializer.ObjectSerializer;
 import org.dromara.myth.common.utils.LogUtil;
 import org.dromara.myth.common.utils.ServiceBootstrap;
 import org.dromara.myth.core.coordinator.MythCoordinatorService;
-import org.dromara.myth.core.disruptor.publisher.MythTransactionEventPublisher;
 import org.dromara.myth.core.helper.SpringBeanUtils;
 import org.dromara.myth.core.logo.MythLogo;
-import org.dromara.myth.core.schedule.ScheduledService;
 import org.dromara.myth.core.service.MythInitService;
 import org.dromara.myth.core.spi.MythCoordinatorRepository;
 import org.dromara.myth.core.spi.repository.JdbcCoordinatorRepository;
@@ -56,24 +54,14 @@ public class MythInitServiceImpl implements MythInitService {
 
     private final MythCoordinatorService mythCoordinatorService;
 
-    private final MythTransactionEventPublisher publisher;
-
-    private final ScheduledService scheduledService;
-
     /**
      * Instantiates a new Myth init service.
      *
      * @param mythCoordinatorService the myth coordinator service
-     * @param publisher              the publisher
-     * @param scheduledService       the scheduled service
      */
     @Autowired
-    public MythInitServiceImpl(final MythCoordinatorService mythCoordinatorService,
-                               final MythTransactionEventPublisher publisher,
-                               final ScheduledService scheduledService) {
+    public MythInitServiceImpl(final MythCoordinatorService mythCoordinatorService) {
         this.mythCoordinatorService = mythCoordinatorService;
-        this.publisher = publisher;
-        this.scheduledService = scheduledService;
     }
 
     @Override
@@ -82,9 +70,6 @@ public class MythInitServiceImpl implements MythInitService {
         try {
             loadSpiSupport(mythConfig);
             mythCoordinatorService.start(mythConfig);
-            if (mythConfig.getNeedRecover()) {
-                scheduledService.scheduledAutoRecover(mythConfig);
-            }
         } catch (Exception ex) {
             LogUtil.error(LOGGER, "Myth init fail:{}", ex::getMessage);
             //非正常关闭

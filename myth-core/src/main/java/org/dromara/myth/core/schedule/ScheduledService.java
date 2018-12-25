@@ -30,6 +30,8 @@ import org.dromara.myth.core.service.MythSendMessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -45,7 +47,7 @@ import java.util.concurrent.TimeUnit;
  * @author xiaoyu(Myth)
  */
 @Component
-public class ScheduledService {
+public class ScheduledService implements ApplicationListener<ContextRefreshedEvent> {
 
     /**
      * logger.
@@ -58,6 +60,8 @@ public class ScheduledService {
 
     private final MythTransactionEventPublisher publisher;
 
+    private final MythConfig mythConfig;
+
     /**
      * Instantiates a new Scheduled service.
      *
@@ -66,18 +70,20 @@ public class ScheduledService {
      * @param publisher              the publisher
      */
     @Autowired
-    public ScheduledService(MythSendMessageService mythSendMessageService, MythCoordinatorService mythCoordinatorService, MythTransactionEventPublisher publisher) {
+    public ScheduledService(final MythSendMessageService mythSendMessageService,
+                            final MythCoordinatorService mythCoordinatorService,
+                            final MythTransactionEventPublisher publisher,
+                            final MythConfig mythConfig) {
         this.mythSendMessageService = mythSendMessageService;
         this.mythCoordinatorService = mythCoordinatorService;
         this.publisher = publisher;
+        this.mythConfig = mythConfig;
     }
 
     /**
      * Scheduled auto recover.
-     *
-     * @param mythConfig the myth config
      */
-    public void scheduledAutoRecover(final MythConfig mythConfig) {
+    private void scheduledAutoRecover() {
         new ScheduledThreadPoolExecutor(1, MythTransactionThreadFactory.create("MythAutoRecoverService", true))
                 .scheduleWithFixedDelay(() -> {
                     LogUtil.debug(LOGGER, "auto recover execute delayTime:{}", mythConfig::getScheduledDelay);
@@ -106,4 +112,10 @@ public class ScheduledService {
                 .toInstant().toEpochMilli() - (mythConfig.getRecoverDelayTime() * 1000));
     }
 
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+        if (mythConfig.getNeedRecover()) {
+            scheduledAutoRecover();
+        }
+    }
 }

@@ -29,7 +29,7 @@
 
     <dubbo:registry protocol="zookeeper" address="localhost:2181"/>
 
-    <dubbo:protocol accesslog="true" name="dubbo" port="20888"/>
+    <dubbo:protocol accesslog="true" name="dubbo" port="20666"/>
 
     <dubbo:service interface="org.dromara.myth.demo.dubbo.account.api.service.AccountService"
                    ref="accountService"/>
