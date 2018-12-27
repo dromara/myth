@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
  * @author xiaoyu
  */
 @SuppressWarnings("all")
-public class DefaultValueUtils {
+public final class DefaultValueUtils {
 
     private static final int ZERO = 0;
 
@@ -17,7 +17,7 @@ public class DefaultValueUtils {
      * return default object.
      *
      * @param clazz class
-     * @return Object
+     * @return Object obj
      */
     public static Object getDefaultValue(final Class clazz) throws IllegalAccessException, InvocationTargetException, InstantiationException {
         if (boolean.class.equals(clazz) || Boolean.class.equals(clazz)) {

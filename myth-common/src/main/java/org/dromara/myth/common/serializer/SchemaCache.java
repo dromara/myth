@@ -51,7 +51,7 @@ public class SchemaCache {
      * acquire Schema with class.
      *
      * @param clazz Class
-     * @return Schema<?>
+     * @return Schema
      */
     public Schema<?> get(final Class<?> clazz) {
         return get(clazz, cache);
