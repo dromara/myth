@@ -37,7 +37,7 @@ public class EurekaServerApplication {
      * @param args the input arguments
      */
     public static void main(String[] args) {
-        new SpringApplicationBuilder(EurekaServerApplication.class).web(true).run(args);
+        new SpringApplicationBuilder(EurekaServerApplication.class).run(args);
     }
 
 }

@@ -10,8 +10,8 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.ChannelAwareMessageListener;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +28,9 @@ public class AmqpConfig {
     private static final String EXCHANGE = "account";
     private static final String ROUTING_KEY = "account";
 
-    /** logger */
+    /**
+     * logger
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(AmqpConfig.class);
 
 
@@ -72,12 +74,12 @@ public class AmqpConfig {
         return BindingBuilder.bind(queue()).to(defaultExchange()).with(AmqpConfig.ROUTING_KEY);
     }
 
-    @Autowired
+    @Autowired(required = false)
     private MythMqReceiveService mythMqReceiveService;
 
 
     @Autowired
-    private  ConnectionFactory connectionFactory;
+    private ConnectionFactory connectionFactory;
 
     /**
      * Message container simple message listener container.
@@ -97,7 +99,7 @@ public class AmqpConfig {
         container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
         container.setMessageListener((ChannelAwareMessageListener) (message, channel) -> {
             byte[] messageBody = message.getBody();
-            LogUtil.debug(LOGGER,()->"springcloud  account服务  amqp接收消息");
+            LogUtil.debug(LOGGER, () -> "springcloud  account服务  amqp接收消息");
             //确认消息成功消费
             final Boolean success = mythMqReceiveService.processMessage(messageBody);
             if (success) {
