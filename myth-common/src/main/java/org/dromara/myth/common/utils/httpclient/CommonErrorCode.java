@@ -33,6 +33,6 @@ public class CommonErrorCode {
     /**
      * The constant SUCCESSFUL.
      */
-    public static final int SUCCESSFUL = 500;
+    public static final int SUCCESSFUL = 200;
 
 }

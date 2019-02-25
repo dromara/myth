@@ -22,8 +22,8 @@ import org.dromara.myth.core.service.MythMqSendService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.rabbit.support.CorrelationData;
 
 /**
  * RabbitmqSendServiceImpl.
@@ -70,4 +70,6 @@ public class RabbitmqSendServiceImpl implements MythMqSendService, RabbitTemplat
 
         }
     }
+
+
 }

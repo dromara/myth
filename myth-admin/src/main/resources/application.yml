@@ -1,6 +1,8 @@
 server:
    port: 8888
-   context-path: /myth-admin
+   servlet:
+     context-path: /myth-admin
+
 
 spring:
    application:

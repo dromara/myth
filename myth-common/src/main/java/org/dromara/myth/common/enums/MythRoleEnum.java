@@ -47,10 +47,6 @@ public enum MythRoleEnum {
     PROVIDER(3, "提供者");
 
 
-
-
-
-
     private int code;
 
     private String desc;

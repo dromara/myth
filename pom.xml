@@ -8,7 +8,7 @@
     <groupId>org.dromara</groupId>
     <artifactId>myth</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>2.0.1-RELEASE</version>
     <modules>
         <module>myth-common</module>
         <module>myth-core</module>
@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.9.RELEASE</version>
+        <version>2.1.1.RELEASE</version>
     </parent>
 
     <licenses>
@@ -52,12 +52,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
-        <spring.version>4.3.9.RELEASE</spring.version>
         <spring-cloud.version>Dalston.SR1</spring-cloud.version>
-        <dubbo.version>2.5.3</dubbo.version>
+        <dubbo.version>2.6.2</dubbo.version>
         <motan.version>1.0.0</motan.version>
         <mongo.driver.version>3.5.0</mongo.driver.version>
-        <mysql-connector-java>5.1.40</mysql-connector-java>
+        <mysql-connector-java>8.0.11</mysql-connector-java>
         <commons-lang3.version>3.3.2</commons-lang3.version>
         <guava.version>21.0</guava.version>
         <spring.data.mongodb.version>1.9.1.RELEASE</spring.data.mongodb.version>
@@ -73,10 +72,10 @@
         <druid.version>1.0.29</druid.version>
         <springfox.version>2.6.1</springfox.version>
         <lombok.version>1.16.20</lombok.version>
-        <spring-rabbit.version>1.7.4.RELEASE</spring-rabbit.version>
+      <!--  <spring-rabbit.version>1.7.4.RELEASE</spring-rabbit.version>
         <amqp-client.version>4.0.3</amqp-client.version>
         <spring-amqp.version>1.7.4.RELEASE</spring-amqp.version>
-        <spring-kafka.version>1.1.2.RELEASE</spring-kafka.version>
+        <spring-kafka.version>1.1.2.RELEASE</spring-kafka.version>-->
         <rocketmq.version>4.1.0-incubating</rocketmq.version>
         <disruptor.version>3.4.0</disruptor.version>
         <ons.clent.version>1.7.1.Final</ons.clent.version>
@@ -227,7 +226,7 @@
                 <version>${gson.verions}</version>
             </dependency>
 
-            <dependency>
+         <!--   <dependency>
                 <groupId>org.springframework.amqp</groupId>
                 <artifactId>spring-rabbit</artifactId>
                 <version>${spring-rabbit.version}</version>
@@ -249,7 +248,7 @@
                 <groupId>org.springframework.kafka</groupId>
                 <artifactId>spring-kafka</artifactId>
                 <version>${spring-kafka.version}</version>
-            </dependency>
+            </dependency>-->
 
 
             <!-- RocketMQ 客户端相关依赖 -->
@@ -343,7 +342,7 @@
                 <version>${commons-lang3.version}</version>
             </dependency>
             <!-- Spring Dependency Begin -->
-            <dependency>
+           <!-- <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-aop</artifactId>
                 <version>${spring.version}</version>
@@ -434,7 +433,7 @@
                 <artifactId>spring-webmvc-portlet</artifactId>
                 <version>${spring.version}</version>
             </dependency>
-
+-->
 
             <dependency>
                 <groupId>org.springframework.cloud</groupId>

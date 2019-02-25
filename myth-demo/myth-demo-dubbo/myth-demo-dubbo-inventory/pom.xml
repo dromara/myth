@@ -23,7 +23,7 @@
     <parent>
         <artifactId>myth-demo-dubbo</artifactId>
         <groupId>org.dromara</groupId>
-        <version>2.0.1-SNAPSHOT</version>
+        <version>2.0.1-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>myth-demo-dubbo-inventory</artifactId>
@@ -79,7 +79,6 @@
         <dependency>
             <groupId>com.rabbitmq</groupId>
             <artifactId>amqp-client</artifactId>
-            <version>4.3.0</version>
         </dependency>
         <!--aop支持-->
         <dependency>
@@ -115,7 +114,6 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.38</version>
         </dependency>
 
         <dependency>
