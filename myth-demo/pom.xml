@@ -2,18 +2,169 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>myth</artifactId>
-        <groupId>org.dromara</groupId>
-        <version>2.0.1-RELEASE</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>myth-demo</artifactId>
+    <groupId>org.dromara</groupId>
+    <version>2.0.1-RELEASE</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.1.RELEASE</version>
+    </parent>
     <modules>
         <module>myth-demo-dubbo</module>
         <module>myth-demo-springcloud</module>
         <module>myth-demo-motan</module>
     </modules>
-    <packaging>pom</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jdk.version>1.8</jdk.version>
+        <myth.version>2.0.1-RELEASE</myth.version>
+        <spring-cloud.version>Dalston.SR1</spring-cloud.version>
+        <springfox.version>2.6.1</springfox.version>
+        <rocketmq.version>4.1.0-incubating</rocketmq.version>
+        <ons.clent.version>1.7.1.Final</ons.clent.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>myth-annotation</artifactId>
+                <version>${myth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>myth-core</artifactId>
+                <version>${myth.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>myth-dubbo</artifactId>
+                <version>${myth.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>myth-motan</artifactId>
+                <version>${myth.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>myth-springcloud</artifactId>
+                <version>${myth.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>myth-jms</artifactId>
+                <version>${myth.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>myth-rabbitmq</artifactId>
+                <version>${myth.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>myth-kafka</artifactId>
+                <version>${myth.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>myth-rocketmq</artifactId>
+                <version>${myth.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>myth-aliyunmq</artifactId>
+                <version>${myth.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>myth-spring-boot-starter-dubbo</artifactId>
+                <version>${myth.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>myth-spring-boot-starter-springcloud</artifactId>
+                <version>${myth.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara</groupId>
+                <artifactId>myth-spring-boot-starter-motan</artifactId>
+                <version>${myth.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${springfox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${springfox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-bean-validators</artifactId>
+                <version>${springfox.version}</version>
+            </dependency>
+
+
+            <!-- RocketMQ 客户端相关依赖 -->
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-client</artifactId>
+                <version>${rocketmq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-common</artifactId>
+                <version>${rocketmq.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.aliyun.openservices</groupId>
+                <artifactId>ons-client</artifactId>
+                <version>${ons.clent.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+
+
 </project>

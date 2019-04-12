@@ -13,7 +13,6 @@
         <module>myth-common</module>
         <module>myth-core</module>
         <module>myth-annotation</module>
-        <module>myth-demo</module>
         <module>myth-rpc</module>
         <module>myth-mq</module>
         <module>myth-admin</module>
@@ -23,7 +22,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.1.1.RELEASE</version>
+        <version>2.0.2.RELEASE</version>
     </parent>
 
     <licenses>
@@ -72,10 +71,10 @@
         <druid.version>1.0.29</druid.version>
         <springfox.version>2.6.1</springfox.version>
         <lombok.version>1.16.20</lombok.version>
-      <!--  <spring-rabbit.version>1.7.4.RELEASE</spring-rabbit.version>
+        <spring-rabbit.version>1.7.4.RELEASE</spring-rabbit.version>
         <amqp-client.version>4.0.3</amqp-client.version>
         <spring-amqp.version>1.7.4.RELEASE</spring-amqp.version>
-        <spring-kafka.version>1.1.2.RELEASE</spring-kafka.version>-->
+        <spring-kafka.version>1.1.2.RELEASE</spring-kafka.version>
         <rocketmq.version>4.1.0-incubating</rocketmq.version>
         <disruptor.version>3.4.0</disruptor.version>
         <ons.clent.version>1.7.1.Final</ons.clent.version>
@@ -226,7 +225,7 @@
                 <version>${gson.verions}</version>
             </dependency>
 
-         <!--   <dependency>
+            <dependency>
                 <groupId>org.springframework.amqp</groupId>
                 <artifactId>spring-rabbit</artifactId>
                 <version>${spring-rabbit.version}</version>
@@ -248,7 +247,7 @@
                 <groupId>org.springframework.kafka</groupId>
                 <artifactId>spring-kafka</artifactId>
                 <version>${spring-kafka.version}</version>
-            </dependency>-->
+            </dependency>
 
 
             <!-- RocketMQ 客户端相关依赖 -->

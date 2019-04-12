@@ -32,6 +32,7 @@
     <packaging>jar</packaging>
 
     <dependencies>
+
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>myth-demo-dubbo-account-api</artifactId>
@@ -41,6 +42,7 @@
             <groupId>org.dromara</groupId>
             <artifactId>myth-demo-dubbo-inventory-api</artifactId>
         </dependency>
+
 
         <dependency>
             <groupId>org.dromara</groupId>
@@ -58,18 +60,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.rabbitmq</groupId>
-            <artifactId>amqp-client</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>myth-kafka</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
         </dependency>
 
         <dependency>
@@ -81,6 +73,17 @@
             <groupId>org.dromara</groupId>
             <artifactId>myth-aliyunmq</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+        </dependency>
+
 
         <!--spring boot的核心启动器-->
         <dependency>

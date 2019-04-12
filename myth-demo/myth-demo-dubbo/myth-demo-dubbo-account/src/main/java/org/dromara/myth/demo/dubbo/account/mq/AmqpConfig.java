@@ -14,6 +14,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.IOException;
+
 /**
  * <p>Description: .</p>
  *
@@ -61,7 +63,7 @@ public class AmqpConfig {
 
 
     @Autowired
-    private  ConnectionFactory connectionFactory;
+    private ConnectionFactory connectionFactory;
 
     @Bean
     @ConditionalOnProperty(prefix = "spring.rabbitmq", name = "host")
@@ -79,7 +81,11 @@ public class AmqpConfig {
             //确认消息成功消费
             final Boolean success = mythMqReceiveService.processMessage(messageBody);
             if (success) {
-                channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+                try {
+                    channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
         return container;

@@ -79,6 +79,9 @@ public class MythInitServiceImpl implements MythInitService {
         //spi serialize
         final ObjectSerializer serializer = ExtensionLoader.getExtensionLoader(ObjectSerializer.class)
                 .getActivateExtension(mythConfig.getSerializer());
+
+        SpringBeanUtils.getInstance().registerBean(ObjectSerializer.class.getName(), serializer);
+
         //spi repository
         final MythCoordinatorRepository repository = ExtensionLoader.getExtensionLoader(MythCoordinatorRepository.class)
                 .getActivateExtension(mythConfig.getRepositorySupport());

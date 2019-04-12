@@ -30,31 +30,40 @@
     <artifactId>myth-motan</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.weibo</groupId>
-            <artifactId>motan-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.weibo</groupId>
-            <artifactId>motan-springsupport</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.weibo</groupId>
-            <artifactId>motan-transport-netty</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>myth-core</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.weibo</groupId>
+            <artifactId>motan-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.weibo</groupId>
+            <artifactId>motan-springsupport</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.weibo</groupId>
+            <artifactId>motan-transport-netty</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

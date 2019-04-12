@@ -19,9 +19,31 @@
         <module>myth-demo-motan-order</module>
     </modules>
 
+    <properties>
+        <motan.version>1.0.0</motan.version>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>com.weibo</groupId>
+                <artifactId>motan-core</artifactId>
+                <version>${motan.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.weibo</groupId>
+                <artifactId>motan-springsupport</artifactId>
+                <version>${motan.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.weibo</groupId>
+                <artifactId>motan-transport-netty</artifactId>
+                <version>${motan.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.dromara</groupId>
                 <artifactId>myth-demo-motan-order</artifactId>
@@ -49,6 +71,13 @@
                 <groupId>org.dromara</groupId>
                 <artifactId>myth-demo-motan-account-api</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>1.0.29</version>
             </dependency>
         </dependencies>
 

@@ -106,10 +106,5 @@ public interface MythCoordinatorService {
      */
     int updateStatus(String transId, Integer status) throws MythRuntimeException;
 
-    /**
-     * set ObjectSerializer.
-     * @param serializer {@linkplain ObjectSerializer}
-     */
-    void setSerializer(ObjectSerializer serializer);
 
 }

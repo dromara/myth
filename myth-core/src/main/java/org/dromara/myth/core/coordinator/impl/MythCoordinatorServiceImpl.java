@@ -55,10 +55,6 @@ public class MythCoordinatorServiceImpl implements MythCoordinatorService {
     }
 
     @Override
-    public void setSerializer(final ObjectSerializer serializer) {
-    }
-
-    @Override
     public void start(final MythConfig mythConfig) {
         mythCoordinatorRepository = SpringBeanUtils.getInstance().getBean(MythCoordinatorRepository.class);
         final String repositorySuffix = buildRepositorySuffix(mythConfig.getRepositorySuffix());

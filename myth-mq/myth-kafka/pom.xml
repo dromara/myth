@@ -26,7 +26,7 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
-            <version>1.2.0.RELEASE</version>
+            <scope>provided</scope>
         </dependency>
 
 

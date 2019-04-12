@@ -83,10 +83,6 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.rabbitmq</groupId>
-            <artifactId>amqp-client</artifactId>
-        </dependency>
         <!--自动配置-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

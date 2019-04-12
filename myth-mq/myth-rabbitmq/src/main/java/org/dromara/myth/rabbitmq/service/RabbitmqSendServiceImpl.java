@@ -22,8 +22,8 @@ import org.dromara.myth.core.service.MythMqSendService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.support.CorrelationData;
 
 /**
  * RabbitmqSendServiceImpl.
@@ -62,7 +62,7 @@ public class RabbitmqSendServiceImpl implements MythMqSendService, RabbitTemplat
      * @param cause           An optional cause, for nack, when available, otherwise null.
      */
     @Override
-    public void confirm(final CorrelationData correlationData, final boolean ack, final String cause) {
+    public void confirm(CorrelationData correlationData, boolean ack, String cause) {
         if (ack) {
             LogUtil.info(LOGGER, () -> "rabbit mq send message success！");
         } else {
@@ -70,6 +70,4 @@ public class RabbitmqSendServiceImpl implements MythMqSendService, RabbitTemplat
 
         }
     }
-
-
 }

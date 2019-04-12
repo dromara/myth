@@ -19,6 +19,7 @@
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
             <artifactId>ons-client</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

@@ -28,6 +28,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>myth-demo-dubbo</artifactId>
+
     <packaging>pom</packaging>
     <modules>
         <module>myth-demo-dubbo-order</module>
@@ -37,9 +38,39 @@
         <module>myth-demo-dubbo-inventory</module>
     </modules>
 
+    <properties>
+        <curator.version>4.0.1</curator.version>
+        <dubbo.version>2.6.5</dubbo.version>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>dubbo</artifactId>
+                <version>${dubbo.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-client</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-framework</artifactId>
+                <version>${curator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.zookeeper</groupId>
+                <artifactId>zookeeper</artifactId>
+                <version>3.4.9</version>
+            </dependency>
+
+
             <dependency>
                 <groupId>org.dromara</groupId>
                 <artifactId>myth-demo-dubbo-order</artifactId>
@@ -69,16 +100,6 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.apache.curator</groupId>
-                <artifactId>curator-client</artifactId>
-                <version>2.12.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.curator</groupId>
-                <artifactId>curator-framework</artifactId>
-                <version>2.12.0</version>
-            </dependency>
         </dependencies>
 
     </dependencyManagement>
