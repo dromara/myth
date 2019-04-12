@@ -19,7 +19,7 @@ package org.dromara.myth.common.serializer;
 
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
-import org.dromara.myth.common.enums.SerializeEnum;
+import org.dromara.myth.annotation.MythSPI;
 import org.dromara.myth.common.exception.MythException;
 
 import java.io.ByteArrayInputStream;
@@ -32,6 +32,7 @@ import java.io.IOException;
  * @author xiaoyu
  */
 @SuppressWarnings("unchecked")
+@MythSPI("hessian")
 public class HessianSerializer implements ObjectSerializer {
 
     @Override
@@ -57,15 +58,5 @@ public class HessianSerializer implements ObjectSerializer {
         } catch (IOException e) {
             throw new MythException("Hessian deSerialize error " + e.getMessage());
         }
-    }
-
-    /**
-     * 设置scheme.
-     *
-     * @return scheme 命名
-     */
-    @Override
-    public String getScheme() {
-        return SerializeEnum.HESSIAN.getSerialize();
     }
 }

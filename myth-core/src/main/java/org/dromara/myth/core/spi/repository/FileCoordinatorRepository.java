@@ -18,6 +18,7 @@
 package org.dromara.myth.core.spi.repository;
 
 import com.google.common.collect.Lists;
+import org.dromara.myth.annotation.MythSPI;
 import org.dromara.myth.common.bean.adapter.CoordinatorRepositoryAdapter;
 import org.dromara.myth.common.bean.entity.MythTransaction;
 import org.dromara.myth.common.config.MythConfig;
@@ -46,6 +47,7 @@ import java.util.stream.Collectors;
  * @author xiaoyu
  */
 @SuppressWarnings("all")
+@MythSPI("file")
 public class FileCoordinatorRepository implements MythCoordinatorRepository {
 
     private String filePath;
@@ -172,11 +174,6 @@ public class FileCoordinatorRepository implements MythCoordinatorRepository {
             file.getParentFile().mkdirs();
             file.mkdirs();
         }
-    }
-
-    @Override
-    public String getScheme() {
-        return RepositorySupportEnum.FILE.getSupport();
     }
 
     private MythTransaction readTransaction(final File file) throws Exception {

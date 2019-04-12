@@ -17,14 +17,12 @@
 
 package org.dromara.myth.springcloud.interceptor;
 
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.dromara.myth.common.bean.context.MythTransactionContext;
-import org.dromara.myth.common.constant.CommonConstant;
 import org.dromara.myth.common.enums.MythRoleEnum;
-import org.dromara.myth.common.utils.GsonUtils;
 import org.dromara.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import org.dromara.myth.core.interceptor.MythTransactionInterceptor;
+import org.dromara.myth.core.mediator.RpcMediator;
 import org.dromara.myth.core.service.MythTransactionAspectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -59,10 +57,7 @@ public class SpringCloudMythTransactionInterceptor implements MythTransactionInt
         } else {
             RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
             HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-            String context = request.getHeader(CommonConstant.MYTH_TRANSACTION_CONTEXT);
-            if (StringUtils.isNoneBlank(context)) {
-                mythTransactionContext = GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
-            }
+            mythTransactionContext = RpcMediator.getInstance().acquire(request::getHeader);
         }
         return mythTransactionAspectService.invoke(mythTransactionContext, pjp);
     }

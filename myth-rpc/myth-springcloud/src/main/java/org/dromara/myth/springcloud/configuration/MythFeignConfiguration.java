@@ -17,9 +17,12 @@
 
 package org.dromara.myth.springcloud.configuration;
 
+import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
 import feign.RequestInterceptor;
 import org.dromara.myth.springcloud.feign.MythFeignBeanPostProcessor;
 import org.dromara.myth.springcloud.feign.MythFeignInterceptor;
+import org.dromara.myth.springcloud.hystrix.MythHystrixConcurrencyStrategy;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,7 +32,7 @@ import org.springframework.context.annotation.Configuration;
  * @author xiaoyu
  */
 @Configuration
-public class MythRestTemplateConfiguration {
+public class MythFeignConfiguration {
 
     /**
      * Request interceptor request interceptor.
@@ -42,13 +45,23 @@ public class MythRestTemplateConfiguration {
     }
 
     /**
-     * Mythfeign post processor myth feign bean post processor.
+     * MythFeign post processor myth feign bean post processor.
      *
      * @return the myth feign bean post processor
      */
     @Bean
-    public MythFeignBeanPostProcessor mythfeignPostProcessor() {
+    public MythFeignBeanPostProcessor mythFeignPostProcessor() {
         return new MythFeignBeanPostProcessor();
     }
 
+    /**
+     * Hystrix concurrency strategy hystrix concurrency strategy.
+     *
+     * @return the hystrix concurrency strategy
+     */
+    @Bean
+    @ConditionalOnProperty(name = "feign.hystrix.enabled")
+    public HystrixConcurrencyStrategy hystrixConcurrencyStrategy() {
+        return new MythHystrixConcurrencyStrategy();
+    }
 }

@@ -18,26 +18,18 @@
 package org.dromara.myth.core.service.impl;
 
 import org.dromara.myth.common.config.MythConfig;
-import org.dromara.myth.common.enums.RepositorySupportEnum;
-import org.dromara.myth.common.enums.SerializeEnum;
-import org.dromara.myth.common.serializer.KryoSerializer;
 import org.dromara.myth.common.serializer.ObjectSerializer;
 import org.dromara.myth.common.utils.LogUtil;
-import org.dromara.myth.common.utils.ServiceBootstrap;
+import org.dromara.myth.common.utils.extension.ExtensionLoader;
 import org.dromara.myth.core.coordinator.MythCoordinatorService;
 import org.dromara.myth.core.helper.SpringBeanUtils;
 import org.dromara.myth.core.logo.MythLogo;
 import org.dromara.myth.core.service.MythInitService;
 import org.dromara.myth.core.spi.MythCoordinatorRepository;
-import org.dromara.myth.core.spi.repository.JdbcCoordinatorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
-import java.util.ServiceLoader;
-import java.util.stream.StreamSupport;
 
 /**
  * myth init.
@@ -84,25 +76,13 @@ public class MythInitServiceImpl implements MythInitService {
      * @param mythConfig {@linkplain MythConfig}
      */
     private void loadSpiSupport(final MythConfig mythConfig) {
-        //spi  serialize
-        final SerializeEnum serializeEnum = SerializeEnum.acquire(mythConfig.getSerializer());
-        final ServiceLoader<ObjectSerializer> objectSerializers = ServiceBootstrap.loadAll(ObjectSerializer.class);
-        final ObjectSerializer serializer =
-                StreamSupport.stream(objectSerializers.spliterator(),
-                        true)
-                        .filter(objectSerializer -> Objects.equals(objectSerializer.getScheme(), serializeEnum.getSerialize()))
-                        .findFirst()
-                        .orElse(new KryoSerializer());
-        mythCoordinatorService.setSerializer(serializer);
-        SpringBeanUtils.getInstance().registerBean(ObjectSerializer.class.getName(), serializer);
-        //spi  repository support
-        final RepositorySupportEnum repositorySupportEnum = RepositorySupportEnum.acquire(mythConfig.getRepositorySupport());
-        final ServiceLoader<MythCoordinatorRepository> recoverRepositories = ServiceBootstrap.loadAll(MythCoordinatorRepository.class);
-        final MythCoordinatorRepository repository =
-                StreamSupport.stream(recoverRepositories.spliterator(), false)
-                        .filter(recoverRepository -> Objects.equals(recoverRepository.getScheme(), repositorySupportEnum.getSupport()))
-                        .findFirst()
-                        .orElse(new JdbcCoordinatorRepository());
+        //spi serialize
+        final ObjectSerializer serializer = ExtensionLoader.getExtensionLoader(ObjectSerializer.class)
+                .getActivateExtension(mythConfig.getSerializer());
+        //spi repository
+        final MythCoordinatorRepository repository = ExtensionLoader.getExtensionLoader(MythCoordinatorRepository.class)
+                .getActivateExtension(mythConfig.getRepositorySupport());
+
         repository.setSerializer(serializer);
         SpringBeanUtils.getInstance().registerBean(MythCoordinatorRepository.class.getName(), repository);
     }

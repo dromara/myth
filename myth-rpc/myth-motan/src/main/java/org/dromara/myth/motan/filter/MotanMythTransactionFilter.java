@@ -35,6 +35,8 @@ import org.dromara.myth.common.exception.MythRuntimeException;
 import org.dromara.myth.common.utils.GsonUtils;
 import org.dromara.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import org.dromara.myth.core.helper.SpringBeanUtils;
+import org.dromara.myth.core.mediator.RpcMediator;
+import org.dromara.myth.core.mediator.RpcTransmit;
 import org.dromara.myth.core.service.engine.MythTransactionEngine;
 
 import java.lang.reflect.Method;
@@ -76,7 +78,7 @@ public class MotanMythTransactionFilter implements Filter {
         if (Objects.nonNull(myth)) {
             final MythTransactionContext mythTransactionContext = TransactionContextLocal.getInstance().get();
             if (Objects.nonNull(mythTransactionContext)) {
-                request.setAttachment(CommonConstant.MYTH_TRANSACTION_CONTEXT, GsonUtils.getInstance().toJson(mythTransactionContext));
+                RpcMediator.getInstance().transmit(request::setAttachment,mythTransactionContext);
             }
             final MythParticipant participant =
                     buildParticipant(mythTransactionContext, myth,

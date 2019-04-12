@@ -20,7 +20,7 @@ package org.dromara.myth.common.serializer;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import org.dromara.myth.common.enums.SerializeEnum;
+import org.dromara.myth.annotation.MythSPI;
 import org.dromara.myth.common.exception.MythException;
 
 import java.io.ByteArrayInputStream;
@@ -32,6 +32,7 @@ import java.io.IOException;
  *
  * @author xiaoyu
  */
+@MythSPI("kryo")
 public class KryoSerializer implements ObjectSerializer {
 
     @Override
@@ -61,10 +62,5 @@ public class KryoSerializer implements ObjectSerializer {
             throw new MythException("kryo deSerialize error" + e.getMessage());
         }
         return object;
-    }
-
-    @Override
-    public String getScheme() {
-        return SerializeEnum.KRYO.getSerialize();
     }
 }

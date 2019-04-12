@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.myth.common.utils;
+package org.dromara.myth.common.utils.extension;
 
 import java.util.Iterator;
 import java.util.ServiceLoader;

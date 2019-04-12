@@ -18,16 +18,16 @@
 package org.dromara.myth.dubbo.interceptor;
 
 import com.alibaba.dubbo.rpc.RpcContext;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.dromara.myth.common.bean.context.MythTransactionContext;
-import org.dromara.myth.common.constant.CommonConstant;
-import org.dromara.myth.common.utils.GsonUtils;
 import org.dromara.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import org.dromara.myth.core.interceptor.MythTransactionInterceptor;
+import org.dromara.myth.core.mediator.RpcMediator;
 import org.dromara.myth.core.service.MythTransactionAspectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 /**
  * DubboMythTransactionInterceptor.
@@ -51,11 +51,9 @@ public class DubboMythTransactionInterceptor implements MythTransactionIntercept
 
     @Override
     public Object interceptor(final ProceedingJoinPoint pjp) throws Throwable {
-        final String context = RpcContext.getContext().getAttachment(CommonConstant.MYTH_TRANSACTION_CONTEXT);
-        MythTransactionContext mythTransactionContext;
-        if (StringUtils.isNoneBlank(context)) {
-            mythTransactionContext = GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
-        } else {
+        MythTransactionContext mythTransactionContext =
+                RpcMediator.getInstance().acquire(RpcContext.getContext()::getAttachment);
+        if (Objects.isNull(mythTransactionContext)) {
             mythTransactionContext = TransactionContextLocal.getInstance().get();
         }
         return mythTransactionAspectService.invoke(mythTransactionContext, pjp);

@@ -20,7 +20,7 @@ package org.dromara.myth.common.serializer;
 import com.dyuproject.protostuff.LinkedBuffer;
 import com.dyuproject.protostuff.ProtostuffIOUtil;
 import com.dyuproject.protostuff.Schema;
-import org.dromara.myth.common.enums.SerializeEnum;
+import org.dromara.myth.annotation.MythSPI;
 import org.dromara.myth.common.exception.MythException;
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
@@ -35,6 +35,7 @@ import java.io.IOException;
  * @author xiaoyu
  */
 @SuppressWarnings("unchecked")
+@MythSPI("protostuff")
 public class ProtostuffSerializer implements ObjectSerializer {
 
     private static final SchemaCache CACHED_SCHEMA = SchemaCache.getInstance();
@@ -71,11 +72,6 @@ public class ProtostuffSerializer implements ObjectSerializer {
         } catch (IOException e) {
             throw new MythException(e.getMessage(), e);
         }
-    }
-
-    @Override
-    public String getScheme() {
-        return SerializeEnum.PROTOSTUFF.getSerialize();
     }
 }
 

@@ -17,6 +17,7 @@
 
 package org.dromara.myth.common.serializer;
 
+import org.dromara.myth.annotation.MythSPI;
 import org.dromara.myth.common.exception.MythException;
 
 /**
@@ -24,6 +25,7 @@ import org.dromara.myth.common.exception.MythException;
  *
  * @author xiaoyu
  */
+@MythSPI
 public interface ObjectSerializer {
 
     /**
@@ -45,11 +47,4 @@ public interface ObjectSerializer {
      * @throws MythException the myth exception
      */
     <T> T deSerialize(byte[] param, Class<T> clazz) throws MythException;
-
-    /**
-     * Gets scheme.
-     *
-     * @return the scheme
-     */
-    String getScheme();
 }

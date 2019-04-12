@@ -20,13 +20,13 @@ package org.dromara.myth.core.spi.repository;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.myth.annotation.MythSPI;
 import org.dromara.myth.common.bean.adapter.CoordinatorRepositoryAdapter;
 import org.dromara.myth.common.bean.entity.MythTransaction;
 import org.dromara.myth.common.config.MythConfig;
 import org.dromara.myth.common.config.MythRedisConfig;
 import org.dromara.myth.common.constant.CommonConstant;
 import org.dromara.myth.common.enums.MythStatusEnum;
-import org.dromara.myth.common.enums.RepositorySupportEnum;
 import org.dromara.myth.common.exception.MythException;
 import org.dromara.myth.common.exception.MythRuntimeException;
 import org.dromara.myth.common.jedis.JedisClient;
@@ -57,6 +57,7 @@ import java.util.stream.Collectors;
  *
  * @author xiaoyu
  */
+@MythSPI("redis")
 public class RedisCoordinatorRepository implements MythCoordinatorRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisCoordinatorRepository.class);
@@ -194,11 +195,6 @@ public class RedisCoordinatorRepository implements MythCoordinatorRepository {
             LogUtil.error(LOGGER, "redis init error please check your config ! ex:{}", e::getMessage);
             throw new MythRuntimeException(e);
         }
-    }
-
-    @Override
-    public String getScheme() {
-        return RepositorySupportEnum.REDIS.getSupport();
     }
 
     @Override

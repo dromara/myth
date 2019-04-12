@@ -17,7 +17,7 @@
 
 package org.dromara.myth.common.serializer;
 
-import org.dromara.myth.common.enums.SerializeEnum;
+import org.dromara.myth.annotation.MythSPI;
 import org.dromara.myth.common.exception.MythException;
 
 import java.io.ByteArrayInputStream;
@@ -34,6 +34,7 @@ import java.io.ObjectOutputStream;
  * @author xiaoyu
  */
 @SuppressWarnings("unchecked")
+@MythSPI("jdk")
 public class JavaSerializer implements ObjectSerializer {
 
     @Override
@@ -54,15 +55,5 @@ public class JavaSerializer implements ObjectSerializer {
         } catch (IOException | ClassNotFoundException e) {
             throw new MythException("java deSerialize error " + e.getMessage());
         }
-    }
-
-    /**
-     * set scheme.
-     *
-     * @return scheme
-     */
-    @Override
-    public String getScheme() {
-        return SerializeEnum.JDK.getSerialize();
     }
 }

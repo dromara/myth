@@ -25,13 +25,13 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
+import org.dromara.myth.annotation.MythSPI;
 import org.dromara.myth.common.bean.adapter.CoordinatorRepositoryAdapter;
 import org.dromara.myth.common.bean.entity.MythTransaction;
 import org.dromara.myth.common.config.MythConfig;
 import org.dromara.myth.common.config.MythZookeeperConfig;
 import org.dromara.myth.common.constant.CommonConstant;
 import org.dromara.myth.common.enums.MythStatusEnum;
-import org.dromara.myth.common.enums.RepositorySupportEnum;
 import org.dromara.myth.common.exception.MythRuntimeException;
 import org.dromara.myth.common.serializer.ObjectSerializer;
 import org.dromara.myth.common.utils.LogUtil;
@@ -51,6 +51,7 @@ import java.util.stream.Collectors;
  *
  * @author xiaoyu
  */
+@MythSPI("zookeeper")
 public class ZookeeperCoordinatorRepository implements MythCoordinatorRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperCoordinatorRepository.class);
@@ -213,11 +214,6 @@ public class ZookeeperCoordinatorRepository implements MythCoordinatorRepository
             throw new MythRuntimeException(e);
         }
 
-    }
-
-    @Override
-    public String getScheme() {
-        return RepositorySupportEnum.ZOOKEEPER.getSupport();
     }
 
     @Override

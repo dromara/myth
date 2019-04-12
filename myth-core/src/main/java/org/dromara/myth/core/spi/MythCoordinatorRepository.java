@@ -17,6 +17,7 @@
 
 package org.dromara.myth.core.spi;
 
+import org.dromara.myth.annotation.MythSPI;
 import org.dromara.myth.common.bean.entity.MythTransaction;
 import org.dromara.myth.common.config.MythConfig;
 import org.dromara.myth.common.enums.MythStatusEnum;
@@ -31,6 +32,7 @@ import java.util.List;
  *
  * @author xiaoyu
  */
+@MythSPI
 public interface MythCoordinatorRepository {
 
     /**
@@ -53,7 +55,7 @@ public interface MythCoordinatorRepository {
     /**
      * update mythTransaction. {@linkplain MythTransaction}
      *
-     * @param mythTransaction 事务对象
+     * @param mythTransaction {@linkplain MythTransaction}
      * @return Influence row number
      * @throws MythRuntimeException ex {@linkplain MythRuntimeException}
      */
@@ -115,14 +117,6 @@ public interface MythCoordinatorRepository {
      * @throws MythRuntimeException ex {@linkplain MythRuntimeException}
      */
     void init(String modelName, MythConfig mythConfig) throws MythRuntimeException;
-
-    /**
-     * get scheme.
-     *
-     * @return scheme
-     */
-    String getScheme();
-
 
     /**
      * set objectSerializer.

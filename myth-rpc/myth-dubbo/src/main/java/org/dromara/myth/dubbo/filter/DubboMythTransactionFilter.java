@@ -27,9 +27,8 @@ import com.alibaba.dubbo.rpc.RpcContext;
 import com.alibaba.dubbo.rpc.RpcException;
 import org.dromara.myth.annotation.Myth;
 import org.dromara.myth.common.bean.context.MythTransactionContext;
-import org.dromara.myth.common.constant.CommonConstant;
-import org.dromara.myth.common.utils.GsonUtils;
 import org.dromara.myth.core.concurrent.threadlocal.TransactionContextLocal;
+import org.dromara.myth.core.mediator.RpcMediator;
 
 import java.lang.reflect.Method;
 import java.util.Objects;
@@ -59,8 +58,8 @@ public class DubboMythTransactionFilter implements Filter {
         if (Objects.nonNull(myth)) {
             final MythTransactionContext mythTransactionContext = TransactionContextLocal.getInstance().get();
             if (Objects.nonNull(mythTransactionContext)) {
-                RpcContext.getContext()
-                        .setAttachment(CommonConstant.MYTH_TRANSACTION_CONTEXT, GsonUtils.getInstance().toJson(mythTransactionContext));
+                RpcMediator.getInstance().transmit(RpcContext.getContext()::setAttachment,
+                        mythTransactionContext);
             }
         }
         return invoker.invoke(invocation);

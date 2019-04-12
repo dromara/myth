@@ -21,10 +21,9 @@ import com.weibo.api.motan.rpc.Request;
 import com.weibo.api.motan.rpc.RpcContext;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.dromara.myth.common.bean.context.MythTransactionContext;
-import org.dromara.myth.common.constant.CommonConstant;
-import org.dromara.myth.common.utils.GsonUtils;
 import org.dromara.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import org.dromara.myth.core.interceptor.MythTransactionInterceptor;
+import org.dromara.myth.core.mediator.RpcMediator;
 import org.dromara.myth.core.service.MythTransactionAspectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -59,8 +58,10 @@ public class MotanMythTransactionInterceptor implements MythTransactionIntercept
         if (Objects.nonNull(request)) {
             final Map<String, String> attachments = request.getAttachments();
             if (attachments != null && !attachments.isEmpty()) {
-                String context = attachments.get(CommonConstant.MYTH_TRANSACTION_CONTEXT);
-                mythTransactionContext = GsonUtils.getInstance().fromJson(context, MythTransactionContext.class);
+                mythTransactionContext = RpcMediator.getInstance().acquire(attachments::get);
+                if (Objects.isNull(mythTransactionContext)) {
+                    mythTransactionContext = TransactionContextLocal.getInstance().get();
+                }
             }
         } else {
             mythTransactionContext = TransactionContextLocal.getInstance().get();

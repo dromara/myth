@@ -15,27 +15,21 @@
  * limitations under the License.
  */
 
-package org.dromara.myth.springcloud.feign;
-
-import feign.RequestInterceptor;
-import feign.RequestTemplate;
-import org.dromara.myth.common.bean.context.MythTransactionContext;
-import org.dromara.myth.core.concurrent.threadlocal.TransactionContextLocal;
-import org.dromara.myth.core.mediator.RpcMediator;
-import org.springframework.context.annotation.Configuration;
+package org.dromara.myth.core.mediator;
 
 /**
- * MythRestTemplateInterceptor.
+ * The interface Rpc mediator.
  *
- * @author xiaoyu
+ * @author xiaoyu(Myth)
  */
-@Configuration
-public class MythFeignInterceptor implements RequestInterceptor {
+public interface RpcTransmit {
 
-    @Override
-    public void apply(final RequestTemplate requestTemplate) {
-        final MythTransactionContext mythTransactionContext = TransactionContextLocal.getInstance().get();
-        RpcMediator.getInstance().transmit(requestTemplate::header, mythTransactionContext);
-    }
+    /**
+     * Transmit.
+     *
+     * @param key   the key
+     * @param value the value
+     */
+    void transmit(String key, String value);
 
 }

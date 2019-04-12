@@ -22,6 +22,7 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteResult;
 import org.apache.commons.collections.CollectionUtils;
+import org.dromara.myth.annotation.MythSPI;
 import org.dromara.myth.common.bean.adapter.MongoAdapter;
 import org.dromara.myth.common.bean.entity.MythParticipant;
 import org.dromara.myth.common.bean.entity.MythTransaction;
@@ -29,7 +30,6 @@ import org.dromara.myth.common.config.MythConfig;
 import org.dromara.myth.common.config.MythMongoConfig;
 import org.dromara.myth.common.constant.CommonConstant;
 import org.dromara.myth.common.enums.MythStatusEnum;
-import org.dromara.myth.common.enums.RepositorySupportEnum;
 import org.dromara.myth.common.exception.MythException;
 import org.dromara.myth.common.exception.MythRuntimeException;
 import org.dromara.myth.common.serializer.ObjectSerializer;
@@ -48,6 +48,7 @@ import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -56,6 +57,7 @@ import java.util.stream.Collectors;
  *
  * @author xiaoyu
  */
+@MythSPI("mongodb")
 public class MongoCoordinatorRepository implements MythCoordinatorRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoCoordinatorRepository.class);
@@ -193,7 +195,7 @@ public class MongoCoordinatorRepository implements MythCoordinatorRepository {
         MongoClientFactoryBean clientFactoryBean = buildMongoClientFactoryBean(tccMongoConfig);
         try {
             clientFactoryBean.afterPropertiesSet();
-            template = new MongoTemplate(clientFactoryBean.getObject(), tccMongoConfig.getMongoDbName());
+            template = new MongoTemplate(Objects.requireNonNull(clientFactoryBean.getObject()), tccMongoConfig.getMongoDbName());
         } catch (Exception e) {
             throw new MythRuntimeException(e);
         }
@@ -213,11 +215,6 @@ public class MongoCoordinatorRepository implements MythCoordinatorRepository {
         }).collect(Collectors.toList()).toArray(new ServerAddress[]{});
         clientFactoryBean.setReplicaSetSeeds(sds);
         return clientFactoryBean;
-    }
-
-    @Override
-    public String getScheme() {
-        return RepositorySupportEnum.MONGODB.getSupport();
     }
 
     @Override

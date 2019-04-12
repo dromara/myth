@@ -19,13 +19,13 @@ package org.dromara.myth.core.spi.repository;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import org.apache.commons.collections.CollectionUtils;
+import org.dromara.myth.annotation.MythSPI;
 import org.dromara.myth.common.bean.entity.MythParticipant;
 import org.dromara.myth.common.bean.entity.MythTransaction;
 import org.dromara.myth.common.config.MythConfig;
 import org.dromara.myth.common.config.MythDbConfig;
 import org.dromara.myth.common.constant.CommonConstant;
 import org.dromara.myth.common.enums.MythStatusEnum;
-import org.dromara.myth.common.enums.RepositorySupportEnum;
 import org.dromara.myth.common.exception.MythException;
 import org.dromara.myth.common.exception.MythRuntimeException;
 import org.dromara.myth.common.serializer.ObjectSerializer;
@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
  *
  * @author xiaoyu
  */
-@SuppressWarnings("unchecked")
+@MythSPI("db")
 public class JdbcCoordinatorRepository implements MythCoordinatorRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcCoordinatorRepository.class);
@@ -176,6 +176,7 @@ public class JdbcCoordinatorRepository implements MythCoordinatorRepository {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private MythTransaction buildByResultMap(final Map<String, Object> map) {
         MythTransaction mythTransaction = new MythTransaction();
         mythTransaction.setTransId((String) map.get("trans_id"));
@@ -215,11 +216,6 @@ public class JdbcCoordinatorRepository implements MythCoordinatorRepository {
         dataSource.setMaxPoolPreparedStatementPerConnectionSize(tccDbConfig.getMaxPoolPreparedStatementPerConnectionSize());
         this.tableName = RepositoryPathUtils.buildDbTableName(modelName);
         executeUpdate(SqlHelper.buildCreateTableSql(tccDbConfig.getDriverClassName(), tableName));
-    }
-
-    @Override
-    public String getScheme() {
-        return RepositorySupportEnum.DB.getSupport();
     }
 
     private int executeUpdate(final String sql, final Object... params) {

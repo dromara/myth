@@ -22,7 +22,7 @@ package org.dromara.myth.common.exception;
  *
  * @author xiaoyu
  */
-public class MythException extends Exception {
+public class MythException extends RuntimeException {
     private static final long serialVersionUID = -948934144333391208L;
 
     /**
