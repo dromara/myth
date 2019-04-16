@@ -5,7 +5,7 @@
     <parent>
         <artifactId>myth-mq</artifactId>
         <groupId>org.dromara</groupId>
-        <version>2.0.1-RELEASE</version>
+        <version>2.0.2-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -17,13 +17,6 @@
             <artifactId>myth-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-
-        <!-- RocketMQ 客户端相关依赖 -->
-
-        <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-client</artifactId>
             <scope>provided</scope>
@@ -33,7 +26,6 @@
             <artifactId>rocketmq-common</artifactId>
             <scope>provided</scope>
         </dependency>
-
 
     </dependencies>
 

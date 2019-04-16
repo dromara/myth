@@ -63,7 +63,7 @@ public class RocketmqSendServiceImpl implements MythMqSendService {
                 msg = new Message(destination, "", message);
             }
             final SendResult sendResult = defaultMQProducer.send(msg);
-            LogUtil.debug(LOGGER, sendResult::toString);
+            LogUtil.info(LOGGER, sendResult::toString);
         } catch (Exception e) {
             e.printStackTrace();
             LogUtil.error(LOGGER, e::getMessage);

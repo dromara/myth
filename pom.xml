@@ -8,14 +8,14 @@
     <groupId>org.dromara</groupId>
     <artifactId>myth</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.1-RELEASE</version>
+    <version>2.0.2-RELEASE</version>
     <modules>
         <module>myth-common</module>
         <module>myth-core</module>
         <module>myth-annotation</module>
         <module>myth-rpc</module>
         <module>myth-mq</module>
-        <module>myth-admin</module>
+<!--        <module>myth-admin</module>-->
         <module>myth-spring-boot-starter</module>
     </modules>
 
@@ -542,38 +542,37 @@
 
     <build>
         <plugins>
-           <!-- <plugin>
-               <groupId>org.sonatype.plugins</groupId>
-               <artifactId>nexus-staging-maven-plugin</artifactId>
-               <version>1.6.3</version>
-               <extensions>true</extensions>
-               <configuration>
-                   <serverId>ossrh</serverId>
-                   <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                   <autoReleaseAfterClose>true</autoReleaseAfterClose>
-               </configuration>
-           </plugin>
-           <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-gpg-plugin</artifactId>
-               <version>1.5</version>
-               <executions>
-                   <execution>
-                       <phase>verify</phase>
-                       <goals>
-                           <goal>sign</goal>
-                       </goals>
-                   </execution>
-               </executions>
-           </plugin>-->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.3</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.2</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>jar-no-fork</goal>
                         </goals>
@@ -582,12 +581,16 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                </configuration>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
