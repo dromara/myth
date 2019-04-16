@@ -1,5 +1,5 @@
 server:
-  port: 8083
+  port: 8088
   contextPath: /
   address: 0.0.0.0
 

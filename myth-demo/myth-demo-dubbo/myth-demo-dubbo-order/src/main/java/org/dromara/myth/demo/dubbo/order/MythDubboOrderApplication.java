@@ -15,23 +15,23 @@
  * along with this distribution; if not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.dromara.myth.demo.dubbo.account;
+
+package org.dromara.myth.demo.dubbo.order;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
 
-
 /**
- * The type Dubbo account application.
+ * The type Dubbo order application.
  *
  * @author xiaoyu
  */
 @SpringBootApplication
 @ImportResource({"classpath:applicationContext.xml"})
-@MapperScan("org.dromara.myth.demo.dubbo.account.mapper")
-public class DubboAccountApplication {
+@MapperScan("org.dromara.myth.demo.dubbo.order.mapper")
+public class MythDubboOrderApplication {
 
     /**
      * The entry point of application.
@@ -39,7 +39,7 @@ public class DubboAccountApplication {
      * @param args the input arguments
      */
     public static void main(String[] args) {
-        SpringApplication.run(DubboAccountApplication.class, args);
+        SpringApplication.run(MythDubboOrderApplication.class, args);
     }
 
 

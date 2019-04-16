@@ -53,9 +53,6 @@ public class DubboMythTransactionInterceptor implements MythTransactionIntercept
     public Object interceptor(final ProceedingJoinPoint pjp) throws Throwable {
         MythTransactionContext mythTransactionContext =
                 RpcMediator.getInstance().acquire(RpcContext.getContext()::getAttachment);
-        if (Objects.isNull(mythTransactionContext)) {
-            mythTransactionContext = TransactionContextLocal.getInstance().get();
-        }
         return mythTransactionAspectService.invoke(mythTransactionContext, pjp);
     }
 }

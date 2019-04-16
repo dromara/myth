@@ -32,7 +32,7 @@ import org.springframework.context.annotation.ImportResource;
 @SpringBootApplication
 @ImportResource({"classpath:applicationContext.xml"})
 @MapperScan("org.dromara.myth.demo.dubbo.inventory.mapper")
-public class DubboInventoryApplication {
+public class MythDubboInventoryApplication {
 
 
     /**
@@ -41,7 +41,7 @@ public class DubboInventoryApplication {
      * @param args the input arguments
      */
     public static void main(String[] args) {
-        SpringApplication.run(DubboInventoryApplication.class, args);
+        SpringApplication.run(MythDubboInventoryApplication.class, args);
     }
 
 
