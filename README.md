@@ -4,58 +4,82 @@ myth
 [![Total lines](https://tokei.rs/b1/github/yu199195/myth?category=lines)](https://github.com/yu199195/myth)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?label=license)](https://github.com/yu199195/myth/blob/master/LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/org.dromara/myth.svg?label=maven%20central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.dromara%22%20AND%20myth)
-[![Javadocs](http://www.javadoc.io/badge/org.dromara/myth.svg)](http://www.javadoc.io/doc/org.dromara/myth)
 [![Build Status](https://travis-ci.org/yu199195/myth.svg?branch=master)](https://travis-ci.org/yu199195/myth)
 [![QQ群](https://img.shields.io/badge/chat-on%20QQ-ff69b4.svg?style=flat-square)](https://shang.qq.com/wpa/qunwpa?idkey=2e9e353fa10924812bc58c10ab46de0ca6bef80e34168bccde275f7ca0cafd85)
-#####  采用消息队列解决分布式事务的开源框架, 基于java语言来开发（JDK1.8），支持dubbo，springcloud,motan等rpc框架进行分布式事务。
+###  Reliable messages resolve distributed transactions
 
+
+# Modules
+  
+  * myth-admin: Transaction log management background
+  
+  * myth-annotation : Framework common annotations
+  
+  * myth-common :  Framework common class
+    
+  * myth-core : Framework core package (annotation processing, log storage...)              
+    
+  * myth-dashboard : Management background front-end
+    
+  * myth-dubbo : Support for the dubbo framework Less than 2.7 version
+    
+  * myth-motan : Support for the motan rpc framework
+    
+  * myth-springcloud : Support for the spring cloud rpc framework
+    
+  * myth-spring-boot-starter : Support for the spring boot starter
+  
+  * myth-aliyunmq: Support for aliyunmq
+  
+  * myth-jms : support for Mq for the JMS protocol(amq...)
+  
+  * myth-kafka : support for kafka
+  
+  * myth-rabbitmq : support for rabbitmq
+  
+  * myth-rocketmq : support for rocketmq
+    
+  * hmily-demo : Examples using the hmily framework
+ 
 #  Features
+   
+   *  All spring versions are supported and Seamless integration
+   
+   *  Provides support for the springcloud dubbo motan RPC framework
+   
+   *  Provides integration of the spring boot starter approach
+   
+   * Support for a lot of messaging middleware (rabbitmq jms kafka rabbitmq rocketmq)  
+   
+   *  Local transaction storage support :  redis mongodb zookeeper file mysql
+   
+   *  Transaction log serialization support : java hessian kryo protostuff
+   
+   *  Spi extension : Users can customize the storage of serialization and transaction logs
 
-  * ##### 天然无缝集成 spring-boot-starter 。
+# Prerequisite 
+
+  * You must use jdk1.8 +
   
-  * ##### RPC框架支持 : dubbo,motan,springcloud。
-
-  * ##### 消息中间件支持 : jms(activimq),amqp(rabbitmq),kafka,roceketmq。
-
-  * ##### 本地事务存储支持 : redis,mogondb,zookeeper,file,mysql。
-
-  * ##### 事务日志序列化支持 ：java，hessian，kryo，protostuff。
-
-  * ##### 采用Aspect AOP 切面思想与Spring无缝集成，天然支持集群,高可用,高并发。
-
-  * #####  配置简单，集成简单，源码简洁，稳定性高，已在生产环境使用。
-
-  * ##### 内置经典的分布式事务场景demo工程，并有swagger-ui可视化界面可以快速体验。
-
-
-#  源码解析
-
-  * ## https://juejin.im/post/5a5c63986fb9a01cb64ec517 
+  * You must be a user of the spring framework
   
-#  视频详解
-
-  * ## 环境搭建以及运行 : http://www.iqiyi.com/w_19rw5zuigl.html
-  * ## 原理讲解（1）：http://www.iqiyi.com/w_19rw5ztpkh.html
-  * ## 原理讲解（2）：http://www.iqiyi.com/w_19rw5zslm1.html
+  * You must use  messaging middleware
   
+  * You must use one of the dubbo, motan, and springcloud RPC frameworks
+  
+# About 
 
-
-# Prerequisite
-
-  *   #### JDK 1.8+
-
-  *   #### Maven 3.2.x
-
-  *   #### Git
-
-  *   ####  RPC framework dubbo or motan or springcloud。
-
-  *   #### Message Oriented Middleware
-
-
+   Myth is a Reliable messages solution for distributed transactions, Its rapid integration, zero penetration high performance has been run by a number of companies  in the production environment.
+   
+   Myth is not a framework for exception rollbacks .
+   
+   Myth To ensure that your RPC interface can be executed, use mq to execute the RPC you need to call when your RPC interface is down
+  
+   If you want to use it or get a quick look at it. [Quick Start](http://dromara.org/website/zh-cn/docs/myth/index.html)
+  
 # Quick Start
 
-* #### Clone & Build
+  * #### Clone & Build
    ```
    > git clone https://github.com/yu199195/myth.git
 
@@ -64,60 +88,17 @@ myth
    > mvn -DskipTests clean install -U
    ```
 
-* #### execute this sql       
- https://github.com/yu199195/myth/tree/master/myth-demo/sql/myth-mysql-demo.sql
+  * #### execute this sql       
+     https://github.com/yu199195/myth/tree/master/myth-demo/sql/myth-mysql-demo.sql
 
-* #### Find the RPC framework that works for you
- https://github.com/yu199195/myth/tree/master/myth-demo
+  * #### Find the RPC framework that works for you
+    https://github.com/yu199195/myth/tree/master/myth-demo
 
+# Stargazers
 
-* ## [Dubbo Quick Start](https://github.com/yu199195/myth/wiki/Dubbo-Quick-Start)
-
-* ##  [SpringCloud Quick Start](https://github.com/yu199195/myth/wiki/SpringCloud--Quick-Start)
-
-* ##  [Motan Quick Start](https://github.com/yu199195/myth/wiki/Motan-Quick-Start)
-
-# Configuration
-
-* ####  [配置详解](https://github.com/yu199195/myth/wiki/Configuration)
-
-# User Guide
-
-* #### 关于jar包引用问题，现在jar包还未上传到maven的中央仓库，所以使用者需要自行获取代码，然后打包上传到自己maven私服
-
-   ```
-   > git clone https://github.com/yu199195/myth.git
-
-   > mvn -DskipTests clean deploy -U
-   ```
-* #### 关于jar包版本问题 ，现在因为没有传到中央仓库，如果引用的话，请自行设置相应的版本。
-
-
-*  ## [Dubbo User Guide](https://github.com/yu199195/myth/wiki/Dubbo-User-Guide)
-
-*  ## [Motan User Guide](https://github.com/yu199195/myth/wiki/Motan-User-Guide)
-
-*  ## [SpringCloud User Guide](https://github.com/yu199195/myth/wiki/SpringCloud-User-Guide)
-
-# FAQ
-
-* ### 为什么我下载的代码后，用idea打开没有相应的get set 方法呢？
-   ##### 答：因为框架使用了Lombok包，它是在编译的时期，自动生成get set方法，并不影响运行，如果觉得提示错误难受，请自行下载lombok包插件，[lombok官网](http://projectlombok.org/)
-
-* ### 为什么我运行demo工程，找不到applicationContent.xml呢？
-  ##### 答：请设置项目的资源文件夹。
-  
-* ### 为什么我启动myth-admin项目的时候，会报mongo 集群连接错误呢？
-  ##### 答：这是因为项目里面有mongo代码，spring boot会自动配置，该错误没有关系，只要admin项目能正常启动就行。
-
+[![Stargazers over time](https://starchart.cc/yu199195/myth.svg)](https://starchart.cc/yu199195/myth)
+ 
 # Support
 
- * ###  如有任何问题欢迎加入QQ群进行讨论
- 
-   ![](https://yu199195.github.io/images/qq.png)
-   
-   
- * ###  微信公众号
-   ![](https://yu199195.github.io/images/public.jpg)
+  ![](https://yu199195.github.io/images/qq.png)    ![](https://yu199195.github.io/images/public.jpg)
 
-# Contribution
