@@ -1,7 +1,8 @@
 server:
   port: 8882
-  contextPath: /account-service
   address: 0.0.0.0
+  servlet :
+    contextPath: /account-service
 
 
 spring:
@@ -46,7 +47,8 @@ eureka:
  client:
      serviceUrl:
        defaultZone: http://localhost:8761/eureka/
-
+ instance:
+    prefer-ip-address: true
 org:
   dromara :
       myth :

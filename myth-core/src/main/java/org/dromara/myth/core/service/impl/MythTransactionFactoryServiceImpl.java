@@ -51,12 +51,12 @@ public class MythTransactionFactoryServiceImpl implements MythTransactionFactory
     @Override
     public Class factoryOf(final MythTransactionContext context) {
         if (Objects.isNull(context)) {
-            return StartMythTransactionHandler.class;
-        } else {
             //上下文不为空，并且当前事务存在threadLocal里面，那只可能是内嵌调用，或者走了多个切面
             if (mythTransactionEngine.isBegin()) {
                 return LocalMythTransactionHandler.class;
             }
+            return StartMythTransactionHandler.class;
+        } else {
             return ActorMythTransactionHandler.class;
         }
     }

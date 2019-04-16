@@ -37,7 +37,7 @@ import org.springframework.context.annotation.ImportResource;
 @EnableFeignClients
 @ImportResource({"classpath:applicationContext.xml"})
 @MapperScan("org.dromara.myth.demo.springcloud.order.mapper")
-public class SpringCloudOrderApplication {
+public class MythSpringCloudOrderApplication {
 
     /**
      * The entry point of application.
@@ -45,7 +45,7 @@ public class SpringCloudOrderApplication {
      * @param args the input arguments
      */
     public static void main(String[] args) {
-        SpringApplication.run(SpringCloudOrderApplication.class, args);
+        SpringApplication.run(MythSpringCloudOrderApplication.class, args);
     }
 
 

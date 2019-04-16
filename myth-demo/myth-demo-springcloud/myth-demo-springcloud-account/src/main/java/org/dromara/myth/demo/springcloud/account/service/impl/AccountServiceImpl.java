@@ -74,7 +74,6 @@ public class AccountServiceImpl implements AccountService {
      */
     @Override
     public AccountDO findByUserId(String userId) {
-        final AccountDO byUserId = accountMapper.findByUserId(userId);
-        return byUserId;
+        return accountMapper.findByUserId(userId);
     }
 }

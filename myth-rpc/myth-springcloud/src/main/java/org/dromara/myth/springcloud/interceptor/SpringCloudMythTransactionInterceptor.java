@@ -19,8 +19,6 @@ package org.dromara.myth.springcloud.interceptor;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.dromara.myth.common.bean.context.MythTransactionContext;
-import org.dromara.myth.common.enums.MythRoleEnum;
-import org.dromara.myth.core.concurrent.threadlocal.TransactionContextLocal;
 import org.dromara.myth.core.interceptor.MythTransactionInterceptor;
 import org.dromara.myth.core.mediator.RpcMediator;
 import org.dromara.myth.core.service.MythTransactionAspectService;
@@ -31,7 +29,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
 
 /**
  * SpringCloudMythTransactionInterceptor.
@@ -50,15 +47,9 @@ public class SpringCloudMythTransactionInterceptor implements MythTransactionInt
 
     @Override
     public Object interceptor(final ProceedingJoinPoint pjp) throws Throwable {
-        MythTransactionContext mythTransactionContext = TransactionContextLocal.getInstance().get();
-        if (Objects.nonNull(mythTransactionContext)
-                && mythTransactionContext.getRole() == MythRoleEnum.LOCAL.getCode()) {
-            mythTransactionContext = TransactionContextLocal.getInstance().get();
-        } else {
-            RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-            HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-            mythTransactionContext = RpcMediator.getInstance().acquire(request::getHeader);
-        }
+        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+        MythTransactionContext mythTransactionContext = RpcMediator.getInstance().acquire(request::getHeader);
         return mythTransactionAspectService.invoke(mythTransactionContext, pjp);
     }
 
