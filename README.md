@@ -4,7 +4,6 @@ myth
 [![Total lines](https://tokei.rs/b1/github/yu199195/myth?category=lines)](https://github.com/yu199195/myth)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?label=license)](https://github.com/yu199195/myth/blob/master/LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/org.dromara/myth.svg?label=maven%20central)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.dromara%22%20AND%20myth)
-[![Build Status](https://travis-ci.org/yu199195/myth.svg?branch=master)](https://travis-ci.org/yu199195/myth)
 [![QQ群](https://img.shields.io/badge/chat-on%20QQ-ff69b4.svg?style=flat-square)](https://shang.qq.com/wpa/qunwpa?idkey=2e9e353fa10924812bc58c10ab46de0ca6bef80e34168bccde275f7ca0cafd85)
 ###  Reliable messages resolve distributed transactions
 
