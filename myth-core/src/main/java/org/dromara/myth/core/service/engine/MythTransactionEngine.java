@@ -45,7 +45,6 @@ import java.util.Optional;
  * @author xiaoyu
  */
 @Component
-@SuppressWarnings("unchecked")
 public class MythTransactionEngine {
 
     /**
@@ -140,7 +139,6 @@ public class MythTransactionEngine {
                     t.setStatus(status);
                     return t;
                 }).ifPresent(t -> publishEvent.publishEvent(t, EventTypeEnum.UPDATE_STATUS.getCode()));
-        mythTransaction.setStatus(MythStatusEnum.COMMIT.getCode());
     }
 
     /**

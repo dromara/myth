@@ -17,6 +17,10 @@
 
 package org.dromara.myth.common.enums;
 
+import org.dromara.myth.common.exception.MythRuntimeException;
+
+import java.util.Arrays;
+
 /**
  * The enum Coordinator action enum.
  *
@@ -95,5 +99,17 @@ public enum EventTypeEnum {
      */
     public void setDesc(final String desc) {
         this.desc = desc;
+    }
+
+
+    /**
+     * Build by code event type enum.
+     *
+     * @param code the code
+     * @return the event type enum
+     */
+    public static EventTypeEnum buildByCode(int code) {
+        return Arrays.stream(EventTypeEnum.values()).filter(e -> e.code == code).findFirst()
+                .orElseThrow(() -> new MythRuntimeException("can not support this code!"));
     }
 }

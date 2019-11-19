@@ -22,6 +22,8 @@ import org.dromara.myth.common.bean.context.MythTransactionContext;
 import org.dromara.myth.common.constant.CommonConstant;
 import org.dromara.myth.common.utils.GsonUtils;
 
+import java.util.Objects;
+
 /**
  * The type RpcMediator.
  *
@@ -48,8 +50,9 @@ public class RpcMediator {
      * @param context     the context
      */
     public void transmit(final RpcTransmit rpcTransmit, final MythTransactionContext context) {
-        rpcTransmit.transmit(CommonConstant.MYTH_TRANSACTION_CONTEXT,
-                GsonUtils.getInstance().toJson(context));
+        if (Objects.nonNull(context)) {
+            rpcTransmit.transmit(CommonConstant.MYTH_TRANSACTION_CONTEXT, GsonUtils.getInstance().toJson(context));
+        }
     }
 
     /**

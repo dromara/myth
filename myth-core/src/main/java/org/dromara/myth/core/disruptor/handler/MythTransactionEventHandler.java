@@ -43,19 +43,28 @@ public class MythTransactionEventHandler implements WorkHandler<MythTransactionE
     }
 
     @Override
-    public void onEvent(final MythTransactionEvent mythTransactionEvent) {
+    public void onEvent(final MythTransactionEvent event) {
         executor.execute(() -> {
-            if (mythTransactionEvent.getType() == EventTypeEnum.SAVE.getCode()) {
-                mythCoordinatorService.save(mythTransactionEvent.getMythTransaction());
-            } else if (mythTransactionEvent.getType() == EventTypeEnum.UPDATE_PARTICIPANT.getCode()) {
-                mythCoordinatorService.updateParticipant(mythTransactionEvent.getMythTransaction());
-            } else if (mythTransactionEvent.getType() == EventTypeEnum.UPDATE_STATUS.getCode()) {
-                final MythTransaction mythTransaction = mythTransactionEvent.getMythTransaction();
-                mythCoordinatorService.updateStatus(mythTransaction.getTransId(), mythTransaction.getStatus());
-            } else if (mythTransactionEvent.getType() == EventTypeEnum.UPDATE_FAIR.getCode()) {
-                mythCoordinatorService.updateFailTransaction(mythTransactionEvent.getMythTransaction());
+            EventTypeEnum eventTypeEnum = EventTypeEnum.buildByCode(event.getType());
+
+            switch (eventTypeEnum) {
+                case SAVE:
+                    mythCoordinatorService.save(event.getMythTransaction());
+                    break;
+                case UPDATE_FAIR:
+                    mythCoordinatorService.updateFailTransaction(event.getMythTransaction());
+                    break;
+                case UPDATE_STATUS:
+                    final MythTransaction mythTransaction = event.getMythTransaction();
+                    mythCoordinatorService.updateStatus(mythTransaction.getTransId(), mythTransaction.getStatus());
+                    break;
+                case UPDATE_PARTICIPANT:
+                    mythCoordinatorService.updateParticipant(event.getMythTransaction());
+                    break;
+                default:
+                    break;
             }
-            mythTransactionEvent.clear();
+            event.clear();
         });
     }
 }
