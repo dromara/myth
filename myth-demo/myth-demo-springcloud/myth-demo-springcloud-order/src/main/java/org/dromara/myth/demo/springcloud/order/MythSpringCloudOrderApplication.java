@@ -35,7 +35,6 @@ import org.springframework.context.annotation.ImportResource;
 @SpringBootApplication(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
 @EnableEurekaClient
 @EnableFeignClients
-@ImportResource({"classpath:applicationContext.xml"})
 @MapperScan("org.dromara.myth.demo.springcloud.order.mapper")
 public class MythSpringCloudOrderApplication {
 
