@@ -65,7 +65,15 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
+    <dependencyManagement>
+      <dependencies>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <version>1.5.8</version>
+        </dependency>
+      </dependencies>
+    </dependencyManagement>
     <build>
         <finalName>myth-motan</finalName>
         <plugins>
