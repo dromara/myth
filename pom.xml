@@ -52,7 +52,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>
         <spring-cloud.version>Dalston.SR1</spring-cloud.version>
-        <dubbo.version>2.6.2</dubbo.version>
+        <dubbo.version>2.6.9</dubbo.version>
         <motan.version>1.0.0</motan.version>
         <mongo.driver.version>3.5.0</mongo.driver.version>
         <mysql-connector-java>8.0.11</mysql-connector-java>
