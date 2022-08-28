@@ -56,7 +56,7 @@
         <dependency>
             <groupId>com.rabbitmq</groupId>
             <artifactId>amqp-client</artifactId>
-            <version>4.3.0</version>
+            <version>4.8.0</version>
         </dependency>
         <!--aop支持-->
         <dependency>
